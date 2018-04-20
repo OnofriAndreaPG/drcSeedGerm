@@ -6,7 +6,9 @@ export(makeDrm, makeDrm2, makeSurv, NLSLL.3, GR, jackGroupSE,
   GRT.Exb, GRT.Exb.fun, GRT.M, GRT.M.fun, GRT.RFb, GRT.RFb.fun,
   PmaxPsi1, PmaxPsi1.fun, HTE1, HTE1.fun, HTnorm, HTnorm.fun, HTLL, HTLL.fun,
   HTL, HTL.fun, HTG, HTG.fun, HTEx, HTEx.fun, HTW1, HTW1.fun, HTW2, HTW2.fun,
-  HTE2, HTE2.fun, HTE3, HTE3.fun, TTEM, TTEM.fun,
+  HTTnorm, HTTnorm.fun,
+  HTE2, HTE2.fun, HTE3, HTE3.fun, TTEM, TTEM.fun, TTERF, TTERF.fun,
+  TTERFc, TTERFc.fun,
   HTTEM, HTTEM.fun, HTTEMgr, HTTEMga,
   PmaxT1, PmaxT1.fun, PmaxTP1.fun, GR50TPM.fun)
 

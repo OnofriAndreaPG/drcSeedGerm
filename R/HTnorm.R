@@ -1,4 +1,4 @@
-#Hydrotime models ######################################
+#Hydrotime model with normal distribution of base water potential
 HTnorm.fun <- function(time, Psi, ThetaH, Psib50, sigmaPsib){
   pnorm((Psi - (ThetaH/time) - Psib50)/sigmaPsib) }
 "HTnorm" <- function(){
