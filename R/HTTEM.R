@@ -164,8 +164,55 @@ GR <- function(parms, respl, reference="control", type="relative", Psi, Temp){
   } }
 return(list(EDp, EDder))
 }
-text <- "Hydro-thermal-time-model"
-returnList <- list(fct=fct, ssfct=ss, names=names, edfct=GR, text=text)
+deriv1 <- function(x, parm){
+  #Approximation by using finite differences
+
+  d1.1 <- HTTEM.fun(x[,1], x[,2], x[,3], parm[,1], parm[,2], parm[,3],
+                   parm[,4], parm[,5], parm[,6], parm[,7])
+  d1.2 <- HTTEM.fun(x[,1], x[,2], x[,3], (parm[,1] + 10e-6), parm[,2], parm[,3],
+                   parm[,4], parm[,5], parm[,6], parm[,7])
+  d1 <- (d1.2 - d1.1)/10e-6
+
+  d2.1 <- HTTEM.fun(x[,1], x[,2], x[,3], parm[,1], parm[,2], parm[,3],
+                   parm[,4], parm[,5], parm[,6], parm[,7])
+  d2.2 <- HTTEM.fun(x[,1], x[,2], x[,3], parm[,1], (parm[,2] + 10e-6), parm[,3],
+                   parm[,4], parm[,5], parm[,6], parm[,7])
+  d2 <- (d2.2 - d2.1)/10e-6
+
+  d3.1 <- HTTEM.fun(x[,1], x[,2], x[,3], parm[,1], parm[,2], parm[,3],
+                   parm[,4], parm[,5], parm[,6], parm[,7])
+  d3.2 <- HTTEM.fun(x[,1], x[,2], x[,3], parm[,1], parm[,2], (parm[,3] + 10e-6),
+                   parm[,4], parm[,5], parm[,6], parm[,7])
+  d3 <- (d3.2 - d3.1)/10e-6
+
+  d4.1 <- HTTEM.fun(x[,1], x[,2], x[,3], parm[,1], parm[,2], parm[,3],
+                   parm[,4], parm[,5], parm[,6], parm[,7])
+  d4.2 <- HTTEM.fun(x[,1], x[,2], x[,3], parm[,1], parm[,2], parm[,3],
+                   (parm[,4] + 10e-6), parm[,5], parm[,6], parm[,7])
+  d4 <- (d4.2 - d4.1)/10e-6
+
+  d5.1 <- HTTEM.fun(x[,1], x[,2], x[,3], parm[,1], parm[,2], parm[,3],
+                   parm[,4], parm[,5], parm[,6], parm[,7])
+  d5.2 <- HTTEM.fun(x[,1], x[,2], x[,3], parm[,1], parm[,2], parm[,3],
+                   parm[,4], (parm[,5] + 10e-6), parm[,6], parm[,7])
+  d5 <- (d5.2 - d5.1)/10e-6
+
+  d6.1 <- HTTEM.fun(x[,1], x[,2], x[,3], parm[,1], parm[,2], parm[,3],
+                    parm[,4], parm[,5], parm[,6], parm[,7])
+  d6.2 <- HTTEM.fun(x[,1], x[,2], x[,3], parm[,1], parm[,2], parm[,3],
+                    parm[,4], parm[,5], (parm[,6] + 10e-6), parm[,7])
+  d6 <- (d6.2 - d6.1)/10e-6
+
+  d7.1 <- HTTEM.fun(x[,1], x[,2], x[,3], parm[,1], parm[,2], parm[,3],
+                    parm[,4], parm[,5], parm[,6], parm[,7])
+  d7.2 <- HTTEM.fun(x[,1], x[,2], x[,3], parm[,1], parm[,2], parm[,3],
+                    parm[,4], parm[,5], parm[,6], (parm[,7] + 10e-6))
+  d7 <- (d7.2 - d7.1)/10e-6
+
+  cbind(d1, d2, d3, d4, d5, d6, d7)
+}
+text <- "Hydro-thermal-time-model (Mesgaran et al., 2017)"
+returnList <- list(fct=fct, ssfct=ss, names=names, edfct=GR, text=text, deriv1=deriv1)
 class(returnList) <- "drcMean"
 invisible(returnList)
 }
