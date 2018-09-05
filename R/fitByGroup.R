@@ -2,7 +2,7 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds) {
 
   DataC <- data.frame(Group, timeBef, timeAf, nSeeds)
   head(DataC)
-  #i <- 1
+  i <- 90
   result <- data.frame()
     for(i in 1:max(Group)){
       dataTemp <- subset(DataC, Group==i)
@@ -10,20 +10,26 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds) {
       nTot <- sum(dataTemp$nSeeds)
       nGerm <- nTot - dataTemp[dataTemp$timeAf==Inf,]$nSeeds
       pMaxO <- nGerm/nTot
-
+      nFirst <- dataTemp[dataTemp$timeBef==0,]$nSeeds
+      pFirst <- nFirst/nTot
+      tFirst <- dataTemp[dataTemp$timeBef==0,]$timeAf
+      
+      
       if(pMaxO < 0.1){
           result <- rbind(result, c(i, pMaxO, NA, NA, pMaxO, Inf, rep(Inf, 18), rep(0, 18)))
-          next;}else{
+          next;}else{if(pFirst > 0.95){
+            result <- rbind(result, c(i, pMaxO, NA, NA, pMaxO, tFirst, rep(tFirst, 18), rep(1/tFirst, 18)))
+            next; } else{
             cureMod <- try( drm(nSeeds ~ timeBef + timeAf, data = dataTemp,
                           fct = LL.3(), type = "event",
                           upperl = c(NA, 1, NA)), silent=T )
             cureMod2 <- try( drm(nSeeds ~ timeBef + timeAf, data = dataTemp,
                           fct = LL.2(), type = "event"), silent=T )
-            }
+            } }
       class(cureMod); class(cureMod2)
       if(class(cureMod) == "try-error" & class(cureMod2) == "try-error"){
         #print("caso1")
-        result <- rbind(result, c(i, pMaxO, NA, NA, pMaxO, Inf, rep(Inf, 18), rep(0, 18)))
+        result <- rbind(result, c(i, pMaxO, NA, NA, pMaxO, NA, rep(NA, 18), rep(NA, 18)))
         } else {if(class(cureMod) == "try-error" & class(cureMod2) == "drc"){
           coefs <- coef(cureMod2)
           RSS <- sum(residuals(cureMod2)^2)
