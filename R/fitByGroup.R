@@ -2,10 +2,12 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds) {
 
   DataC <- data.frame(Group, timeBef, timeAf, nSeeds)
   head(DataC)
-  i <- 90
   result <- data.frame()
-    for(i in 1:max(Group)){
-      dataTemp <- subset(DataC, Group==i)
+  Group <- as.factor(Group)
+  nLev <- length(levels(Group))
+    for(i in 1:nLev){
+      print(i)
+      dataTemp <- subset(DataC, Group==levels(Group)[i])
       #if(dataTemp[dataTemp$timeAf==Inf,]$nSeeds == 0)
       nTot <- sum(dataTemp$nSeeds)
       nGerm <- nTot - dataTemp[dataTemp$timeAf==Inf,]$nSeeds
@@ -57,14 +59,12 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds) {
           res <- c(i, pMaxO, 3, coefs, tg1[,1], tg2[,1], GR1[,1], GR2[,1])
           result <- rbind(result, res); #print("caso3")
           } }
-
-    print(i)
     }
 
-  names(result) <- c("Dish", "PmaxObs", "Model", "b", "d", "e", paste("GTA", seq(10,90, by=10), sep=""),
+  names(result) <- c("Group", "PmaxObs", "Model", "b", "d", "e", paste("GTA", seq(10,90, by=10), sep=""),
                          paste("GTR", seq(10,90, by=10), sep=""),
                          paste("GRA", seq(10,90, by=10), sep=""),
                          paste("GRR", seq(10,90, by=10), sep=""))
-
+  result <- data.frame(Group=levels(Group), result[,2:42])
   result
 }
