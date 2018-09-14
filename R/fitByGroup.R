@@ -1,9 +1,9 @@
 fitByGroup <- function(Group, timeBef, timeAf, nSeeds) {
-
+  #Group <- Dish
+  Group <- as.factor(Group)
   DataC <- data.frame(Group, timeBef, timeAf, nSeeds)
   head(DataC)
   result <- data.frame()
-  Group <- as.factor(Group)
   nLev <- length(levels(Group))
     for(i in 1:nLev){
       print(i)
@@ -15,8 +15,7 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds) {
       nFirst <- dataTemp[dataTemp$timeBef==0,]$nSeeds
       pFirst <- nFirst/nTot
       tFirst <- dataTemp[dataTemp$timeBef==0,]$timeAf
-      
-      
+
       if(pMaxO < 0.1){
           result <- rbind(result, c(i, pMaxO, NA, NA, pMaxO, Inf, rep(Inf, 18), rep(0, 18)))
           next;}else{if(pFirst > 0.95){
