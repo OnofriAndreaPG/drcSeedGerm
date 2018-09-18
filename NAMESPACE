@@ -3,7 +3,7 @@ importFrom(utils, tail)
 import(stats)
 export(makeDrm, makeDrm2, makeSurv, NLSLL.3, GR, jackGroupSE, fitByGroup,
   GRPsiLin, GRPsiLin.fun, GRPsiPol, GRPsiPol.fun, GRPsiPol2, GRPsiPol2.fun,
-  GRT.Exb, GRT.Exb.fun, GRT.M, GRT.M.fun, GRT.RFb, GRT.RFb.fun,
+  GRT.Exb, GRT.Exb.fun, GRT.GH, GRT.GH.fun, GRT.M, GRT.M.fun, GRT.RFb, GRT.RFb.fun,
   PmaxPsi1, PmaxPsi1.fun, HTE1, HTE1.fun, HTnorm, HTnorm.fun, HTLL, HTLL.fun,
   HTL, HTL.fun, HTG, HTG.fun, HTEx, HTEx.fun, HTW1, HTW1.fun, HTW2, HTW2.fun,
   HTTnorm, HTTnorm.fun, HTTLL, HTTLL.fun,

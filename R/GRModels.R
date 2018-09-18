@@ -1,4 +1,7 @@
+#Models of GR vs water potential ####################
+
 GRPsiLin.fun <- function(Psi, Psib, thetaH) {
+  #Linear hydrotime model (Bradford, 2002)
   GR50 <- ( Psi - Psib ) / thetaH
   return(ifelse(GR50 < 0, 0, GR50)) }
 
@@ -23,6 +26,7 @@ GRPsiLin.fun <- function(Psi, Psib, thetaH) {
 
 # second order polynomial
 GRPsiPol.fun <- function(Psi, Psib, thetaH) {
+  #"Polynomial hydrotime model - Convex up"
   GR50 <- - ( Psi^2 - Psib^2) / (thetaH)
   return(ifelse(GR50 < 0, 0, GR50)) }
 
@@ -50,6 +54,7 @@ GRPsiPol.fun <- function(Psi, Psib, thetaH) {
 
 # second order polynomial - 2
 GRPsiPol2.fun <- function(Psi, Psib, thetaH) {
+  #Polynomial hydrotime model - Convex down
   GR50 <- (( Psi - Psib)^2)/ (thetaH)
   return(ifelse(GR50 < 0, 0, GR50)) }
 "GRPsiPol2" <- function(){
@@ -70,6 +75,31 @@ GRPsiPol2.fun <- function(Psi, Psib, thetaH) {
     return(c(Psib,thetaH))}
   text <- "Polynomial hydrotime model - Convex down"
   returnList <- list(fct=fct, ssfct=ss, names=names, text=text)
+  class(returnList) <- "drcMean"
+  invisible(returnList)
+}
+
+#Models for GR vs Temperature #########################
+GRT.GH.fun <- function(Temp, Tb, ThetaT){
+  #Garcia-Huidobro, 1982 - Linear model for suboptimal temperatures
+  t2 <- ifelse(Temp < Tb, Tb, Temp)
+  GR <- (t2 - Tb)/ThetaT
+  GR }
+"GRT.GH" <- function() {
+  fct <- function(x, parm) {
+    Tb <- parm[,1]; ThetaT <- parm[,2]
+    GR <- GRT.GH.fun(x, Tb, ThetaT)
+    return(GR) }
+  names <- c("Tb", "ThetaT")
+  ssfct <- function(data){
+    x <- data[, 1]
+    y <- data[, 2]
+    ss1 <- coef( lm(y ~ x) )
+    ThetaT <- 1/ss1[2]
+    Tb <- - ss1[1] * ThetaT
+    return(c(Tb, ThetaT))}
+  text <- "Linear model for suboptimal temperatures (Garcia-Huidobro, 1982)"
+  returnList <- list(fct = fct, ssfct = ssfct, names = names, text = text)
   class(returnList) <- "drcMean"
   invisible(returnList)
 }

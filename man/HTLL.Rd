@@ -16,7 +16,8 @@ HTMes()
 This function has no arguments}
 
 \details{
-g =  frac{1}/{ {1 + exp [ - frac{ \log ( psi - \frac{\theta_H}{t} + \delta ) - \log \left( \mu + \delta) }{\sigma}] } }
+The equation is:
+\deqn{ g =  \frac{1}/{ {1 + exp [ - \frac{ \log ( psi - \frac{\theta_H}{t} + \delta ) - \log \left( \mu + \delta) }{\sigma}] } } }
 }
 \value{
 %%  ~Describe the value returned
