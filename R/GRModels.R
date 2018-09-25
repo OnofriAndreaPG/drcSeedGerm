@@ -130,6 +130,42 @@ class(returnList) <- "drcMean"
 invisible(returnList)
 }
 
+#Rowse and Finch-Savage, 2003 - Original formulation
+GRT.RF.fun <- function(Temp, k, Tb, Td, ThetaT) {
+  t2 <- ifelse(Temp < Tb, Tb, Temp)
+  t1 <- ifelse(Temp < Td, Td, Temp)
+  psival <- ifelse(1 - k*(t1 - Td) > 0, 1 - k*(t1 - Td), 0)
+  GR <- psival * (t2 - Tb)/ThetaT
+  return(ifelse(GR < 0 , 0 , GR)) }
+"GRT.RF" <- function(){
+fct <- function(x, parm) {
+  GR <- GRT.RF.fun(x, parm[,1], parm[,2], parm[,3], parm[,4])
+  return(ifelse(GR < 0 , 0 , GR))}
+names <- c("k", "Tb", "Td", "ThetaT")
+ss <- function(data){
+
+  pos <- which( data[,2]==max(data[,2]) )
+  len <- length( data[,2] )
+
+  reg1 <- data[1:pos, ]
+  reg2 <- data[pos:len, ]
+  x1 <- reg1[,1]; y1 <- reg1[, 2]
+  x2 <- reg2[,1]; y2 <- reg2[, 2]
+
+  ss1 <- coef( lm(y1 ~ x1) )
+  ThetaT <- 1/ss1[2]
+  Tb <- - ss1[1] * ThetaT
+  ss2 <- coef( lm((1-y2) ~ x2) )
+  k <- ss2[2]
+  Td <- - ss2[1] / k
+
+  return(c(k, Tb, Td, ThetaT))}
+text <- "Rowse - Finch-Savage model (Rowse & Finch-Savage, 2003)"
+returnList <- list(fct = fct, ssfct = ss, names = names, text = text)
+class(returnList) <- "drcMean"
+invisible(returnList)
+}
+
 #Rowse and Finch-Savage (with Tc and Td explicit, instead of k)
 GRT.RFb.fun <- function(Temp, Tb, Td, Tc, ThetaT) {
   T2 <- ifelse(Temp < Tb, Tb, Temp)
@@ -165,6 +201,40 @@ class(returnList) <- "drcMean"
 invisible(returnList)
 }
 
+# Exponential with switch-off Catara et al., 2017)
+#Original. ThetaT is not comparable to the other models
+GRT.Ex.fun <- function(Temp, Tb, ThetaT, k, Tc) {
+  GR50 <- ((Temp - Tb)/ThetaT) * (1 - exp(k * (Temp - Tc)))
+  return(ifelse(GR50 < 0 , 0 , GR50)) }
+"GRT.Ex" <- function(){
+fct <- function(x, parm) {
+  GR50 <- GRT.Ex.fun(x, parm[,1], parm[,2], parm[,3], parm[,4])
+  return(GR50) }
+names <- c("Tb", "ThetaT", "k", "Tc")
+ss <- function(data){
+  pos <- which( data[,2]==max(data[,2]) )
+  len <- length( data[,2] )
+
+  reg1 <- data[1:pos, ]
+  reg2 <- data[pos:len, ]
+  x1 <- reg1[,1]; y1 <- reg1[, 2]
+  x2 <- reg2[,1]; y2 <- reg2[, 2]
+
+  ss1 <- coef( lm(y1 ~ x1) )
+  ThetaT <- 1/ss1[2]
+  Tb <- - ss1[1] * ThetaT
+  ss2 <- coef( lm((1-y2) ~ x2) )
+  k <- ss2[2]
+  To <- - ss2[1] / k
+  Tc <- (1 - ss2[1])/ss2[2]
+
+  return(c(Tb, ThetaT, k, Tc))}
+text <- "Exponential effect of temperature on GR50 (Masin et al., 2017)"
+returnList <- list(fct=fct, ssfct=ss, names=names, text=text)
+class(returnList) <- "drcMean"
+invisible(returnList)
+}
+
 # Exponential with switch-off (From Masin et al., 2017 - modified)
 GRT.Exb.fun <- function(Temp, Tb, ThetaT, k, Tc) {
   GR50 <- ((Temp - Tb)/ThetaT) * ((1 - exp(k * (Temp - Tc)))/(1 - exp(k * (Tb - Tc))))
@@ -193,6 +263,81 @@ ss <- function(data){
 
   return(c(Tb, ThetaT, k, Tc))}
 text <- "Exponential effect of temperature on GR50 (Type II - Masin et al., 2017)"
+returnList <- list(fct=fct, ssfct=ss, names=names, text=text)
+class(returnList) <- "drcMean"
+invisible(returnList)
+}
+
+
+#From Bradford 2002 - Broken-Stick Model
+GRT.BS.fun <- function(Temp, k, Tb, To, ThetaT){
+  t2 <- ifelse(Temp < Tb, Tb, ifelse(Temp > To, To, Temp))
+  t1 <- ifelse(Temp < To, To, Temp)
+  psival <- ifelse(1 - k*(t1 - To) > 0, 1 - k*(t1 - To), 0)
+  GR <- psival * (t2 - Tb)/ThetaT
+  GR }
+"GRT.BS" <- function(){
+fct <- function(x, parm) {
+  k <- parm[,1]; Tb <- parm[,2]; To <- parm[,3]; ThetaT <- parm[,4]
+  GR <- GRT.BS.fun(x, k, Tb, To, ThetaT)
+  return(ifelse(GR < 0 , 0 , GR)) }
+names <- c("k", "Tb", "To", "ThetaT")
+ss <- function(data){
+  pos <- which( data[,2]==max(data[,2]) )
+  len <- length( data[,2] )
+
+  reg1 <- data[1:pos, ]
+  reg2 <- data[pos:len, ]
+  x1 <- reg1[,1]; y1 <- reg1[, 2]
+  x2 <- reg2[,1]; y2 <- reg2[, 2]
+
+  ss1 <- coef( lm(y1 ~ x1) )
+  ThetaT <- 1/ss1[2]
+  Tb <- - ss1[1] * ThetaT
+  ss2 <- coef( lm((1-y2) ~ x2) )
+  k <- ss2[2]
+  To <- - ss2[1] / k
+
+  #k <- 0.1; Tb <- 2; To <- 20; ThetaT <- 35
+  return(c(k, Tb, To, ThetaT))}
+text <- "Broken-stick model (Bradford, 2002)"
+returnList <- list(fct=fct, ssfct=ss, names=names, text=text)
+class(returnList) <- "drcMean"
+invisible(returnList)
+}
+
+#Yield loss function - derived from Kroppf, competition
+GRT.YL.fun <- function(Temp, q, tmin, tmax, theta) {
+  t <- Temp
+  dt <- ifelse(t > tmin & t < tmax, t - tmin, 0)
+  GR <- (dt/theta) * (1 - q*( dt/(tmax - tmin))/(1 + (q - 1)*(dt/(tmax - tmin))))
+  return(ifelse(GR < 0 , 0 , GR)) }
+"GRT.YL" <- function(){
+fct <- function(x, parm) {
+  t <- x
+  q <- parm[,1]; tmin <- parm[,2]; tmax <- parm[,3]; theta <- parm[,4]
+  GR <- GRT.YL.fun(t, q, tmin, tmax, theta)
+  return(GR)}
+
+names <- c("k", "Tb", "Tc", "ThetaT")
+ss <- function(data){
+  pos <- which( data[,2]==max(data[,2]) )
+  len <- length( data[,2] )
+
+  reg1 <- data[1:pos, ]
+  reg2 <- data[pos:len, ]
+  x1 <- reg1[,1]; y1 <- reg1[, 2]
+  x2 <- reg2[,1]; y2 <- reg2[, 2]
+
+  ss1 <- coef( lm(y1 ~ x1) )
+  ThetaT <- 1/ss1[2]
+  Tb <- - ss1[1] * ThetaT
+  ss2 <- coef( lm((1-y2) ~ x2) )
+  k <- ss2[2]
+  td <- - ss2[1] / k
+  Tc <- td + 1/k
+  return(c(k, Tb, Tc, ThetaT))}
+text <- "Yield-loss function (Kropff and van Laar, 1993)"
 returnList <- list(fct=fct, ssfct=ss, names=names, text=text)
 class(returnList) <- "drcMean"
 invisible(returnList)
