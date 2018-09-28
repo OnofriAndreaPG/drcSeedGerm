@@ -87,7 +87,9 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
           GR1L <- GR1 - 2*GR1es; GR1U <- GR1 + 2*GR1es
           GR2L <- GR2 - 2*GR2es; GR2U <- GR2 + 2*GR2es
           tg1[is.na(tg1)] <- Inf
-          GR1[is.na(GR1)] <- 0
+          GR1[is.na(GR1)] <- 10E-6
+          tg1es[is.na(tg1es)] <- NA; tg1L[is.na(tg1L)] <- tLast; tg1U[is.na(tg1U)] <- Inf
+          GR1es[is.na(GR1es)] <- 10E-6; GR1L[is.na(GR1L)] <- 1/tLast; GR1U[is.na(GR1U)] <- 0
 
           #Fit with LL.2()
           res   <- c(i, nGerm, nTot, pMaxO, 3, coefs[1],  1,  coefs[2], tg1, tg2, GR1, GR2)
@@ -120,9 +122,9 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
           GR1L <- GR1 - 2*GR1es; GR1U <- GR1 + 2*GR1es
           GR2L <- GR2 - 2*GR2es; GR2U <- GR2 + 2*GR2es
           tg1[is.na(tg1)] <- NA
-          GR1[is.na(GR1)] <- 0
+          GR1[is.na(GR1)] <- 10E-6
           tg1es[is.na(tg1es)] <- NA; tg1L[is.na(tg1L)] <- tLast; tg1U[is.na(tg1U)] <- Inf
-          GR1es[is.na(GR1es)] <- NA; GR1L[is.na(GR1L)] <- 1/tLast; GR1U[is.na(GR1U)] <- 0
+          GR1es[is.na(GR1es)] <- 10E-6; GR1L[is.na(GR1L)] <- 1/tLast; GR1U[is.na(GR1U)] <- 0
 
           #Fit with LL.3()
           res    <- c(i, nGerm, nTot, pMaxO, 4, coefs, tg1, tg2, GR1, GR2)
