@@ -17,7 +17,7 @@ makeDrm <- function(counts, treat, nViable, moniTimes) {
   #nViable is a vector with the number of viable seeds per each Petri dish
 
   #Creating objects to store the results
-  dati <- counts
+  dati <- as.data.frame(counts)
   tratt <- treat
   tempi <- c(moniTimes, Inf)
 

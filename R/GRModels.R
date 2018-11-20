@@ -104,67 +104,6 @@ GRT.GH.fun <- function(Temp, Tb, ThetaT){
   invisible(returnList)
 }
 
-#From Mesgaran et al., 2017
-GRT.M.fun <- function(predictor, Tc, Tb, ThetaT) {
-  Temp <- predictor
-  t2 <- ifelse(Temp < Tb, Tb, Temp)
-  psival <- ifelse(1 - (Temp - Tb)/(Tc - Tb) > 0, 1 - (Temp - Tb)/(Tc - Tb), 0)
-  GR <- psival * (t2 - Tb)/ThetaT
-  return(ifelse(GR < 0 , 0 , GR)) }
-"GRT.M" <- function(){
-fct <- function(x, parm) {
-  GR <- GRT.M.fun(x, parm[,1], parm[,2], parm[,3])
-  return(GR)  }
-names <- c("Tc", "Tb", "ThetaT")
-ss <- function(data){
-  x <- data[, 1]; y <- data[, 2]
-  coefs <- coef( lm(y ~ x + I(x^2)))
-  a <- coefs[3]; b <- coefs[2]; c <- coefs[1]
-  Tb <- (-b + sqrt(b^2 - 4*a*c))/(2 * a)
-  Tc <- (-b - sqrt(b^2 - 4*a*c))/(2 * a)
-  ThetaT <- 1/b
-  return(c(Tc, Tb, ThetaT))}
-text <- "Polynomial temperature effect (Mohsen et al., 2017)"
-returnList <- list(fct = fct, ssfct = ss, names = names, text = text)
-class(returnList) <- "drcMean"
-invisible(returnList)
-}
-
-#Rowse and Finch-Savage, 2003 - Original formulation
-GRT.RF.fun <- function(Temp, k, Tb, Td, ThetaT) {
-  t2 <- ifelse(Temp < Tb, Tb, Temp)
-  t1 <- ifelse(Temp < Td, Td, Temp)
-  psival <- ifelse(1 - k*(t1 - Td) > 0, 1 - k*(t1 - Td), 0)
-  GR <- psival * (t2 - Tb)/ThetaT
-  return(ifelse(GR < 0 , 0 , GR)) }
-"GRT.RF" <- function(){
-fct <- function(x, parm) {
-  GR <- GRT.RF.fun(x, parm[,1], parm[,2], parm[,3], parm[,4])
-  return(ifelse(GR < 0 , 0 , GR))}
-names <- c("k", "Tb", "Td", "ThetaT")
-ss <- function(data){
-
-  pos <- which( data[,2]==max(data[,2]) )
-  len <- length( data[,2] )
-
-  reg1 <- data[1:pos, ]
-  reg2 <- data[pos:len, ]
-  x1 <- reg1[,1]; y1 <- reg1[, 2]
-  x2 <- reg2[,1]; y2 <- reg2[, 2]
-
-  ss1 <- coef( lm(y1 ~ x1) )
-  ThetaT <- 1/ss1[2]
-  Tb <- - ss1[1] * ThetaT
-  ss2 <- coef( lm((1-y2) ~ x2) )
-  k <- ss2[2]
-  Td <- - ss2[1] / k
-
-  return(c(k, Tb, Td, ThetaT))}
-text <- "Rowse - Finch-Savage model (Rowse & Finch-Savage, 2003)"
-returnList <- list(fct = fct, ssfct = ss, names = names, text = text)
-class(returnList) <- "drcMean"
-invisible(returnList)
-}
 
 #Rowse and Finch-Savage (with Tc and Td explicit, instead of k)
 GRT.RFb.fun <- function(Temp, Tb, Td, Tc, ThetaT) {
