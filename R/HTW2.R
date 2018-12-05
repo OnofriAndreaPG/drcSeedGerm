@@ -27,7 +27,90 @@ ss <- function(data){
   return(c(thetaH, delta, Psib50, sigmaPsib))
 }
 text <- "Hydrotime model with Weibull type II distribution of psib"
-returnList <- list(fct=fct, ssfct=ss, names=names, text=text)
+GR <- function(parms, respl, reference="control", type="relative", Psi){
+  HTW2.gra <- function(thetaH, delta, mu, sigma, Psi, g) {
+    .temp1 <- sigma*(log(-log(1 - g)) ) + log(mu + delta)
+    .temp2 <- Psi + delta - exp(.temp1)
+    GR <- .temp2 / thetaH
+    GR <- ifelse(GR > 0, GR, 0)
+  }
+  thetaH <- as.numeric(parms[1])
+  delta <- as.numeric(parms[2])
+  mu <- as.numeric(parms[3])
+  sigma <- as.numeric(parms[4])
+  g <- respl/100
+  if(type=="absolute"){
+
+    EDp <- HTW2.gra(thetaH, delta, mu, sigma, Psi, g)
+
+    #Approximation of derivatives(finite differences)
+    d1.1 <- HTW2.gra(thetaH, delta, mu, sigma, Psi, g)
+    d1.2 <- HTW2.gra(thetaH + 10e-6, delta, mu, sigma, Psi, g)
+    d1 <- (d1.2 - d1.1)/10e-6
+
+    d2.1 <- HTW2.gra(thetaH, delta, mu, sigma, Psi, g)
+    d2.2 <- HTW2.gra(thetaH, delta  + 10e-6, mu, sigma, Psi, g)
+    d2 <- (d2.2 - d2.1)/10e-6
+
+    d3.1 <- HTW2.gra(thetaH, delta, mu, sigma, Psi, g)
+    d3.2 <- HTW2.gra(thetaH, delta, mu  + 10e-6, sigma, Psi, g)
+    d3<- (d3.2 - d3.1)/10e-6
+
+    d4.1 <- HTW2.gra(thetaH, delta, mu, sigma, Psi, g)
+    d4.2 <- HTW2.gra(thetaH, delta, mu, sigma + 10e-6, Psi, g)
+    d4 <- (d4.2 - d4.1)/10e-6
+
+    EDder <- c(d1, d2, d3, d4)
+  } else{ if(type=="relative") {
+    .Pmax <- HTW2.fun(Inf, Psi, thetaH, delta, mu, sigma)
+    grel <- .Pmax*g
+    EDp <- HTW2.gra(thetaH, delta, mu, sigma, Psi, grel)
+
+    #Approximation of derivatives(finite differences)
+    d1.1 <- HTW2.gra(thetaH, delta, mu, sigma, Psi, grel)
+    d1.2 <- HTW2.gra(thetaH + 10e-6, delta, mu, sigma, Psi, grel)
+    d1 <- (d1.2 - d1.1)/10e-6
+
+    d2.1 <- HTW2.gra(thetaH, delta, mu, sigma, Psi, grel)
+    d2.2 <- HTW2.gra(thetaH, delta  + 10e-6, mu, sigma, Psi, grel)
+    d2 <- (d2.2 - d2.1)/10e-6
+
+    d3.1 <- HTW2.gra(thetaH, delta, mu, sigma, Psi, grel)
+    d3.2 <- HTW2.gra(thetaH, delta, mu  + 10e-6, sigma, Psi, grel)
+    d3<- (d3.2 - d3.1)/10e-6
+
+    d4.1 <- HTW2.gra(thetaH, delta, mu, sigma, Psi, grel)
+    d4.2 <- HTW2.gra(thetaH, delta, mu, sigma + 10e-6, Psi, grel)
+    d4 <- (d4.2 - d4.1)/10e-6
+
+    EDder <- c(d1, d2, d3, d4)
+  } }
+  return(list(EDp, EDder))
+}
+
+deriv1 <- function(x, parm){
+  #Approximation by using finite differences
+
+  d1.1 <- HTW2.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3], parm[4])
+  d1.2 <- HTW2.fun(x[,1], x[,2], (parm[,1] + 10e-6), parm[,2], parm[,3], parm[4])
+  d1 <- (d1.2 - d1.1)/10e-6
+
+  d2.1 <- HTW2.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3], parm[4])
+  d2.2 <- HTW2.fun(x[,1], x[,2], parm[,1], (parm[,2] + 10e-6), parm[,3], parm[4])
+  d2 <- (d2.2 - d2.1)/10e-6
+
+  d3.1 <- HTW2.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3], parm[4])
+  d3.2 <- HTW2.fun(x[,1], x[,2], parm[,1], parm[,2], (parm[,3] + 10e-6), parm[4])
+  d3 <- (d3.2 - d3.1)/10e-6
+
+  d4.1 <- HTW2.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3], parm[4])
+  d4.2 <- HTW2.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3], parm[4] + 10e-6)
+  d4 <- (d4.2 - d4.1)/10e-6
+
+  cbind(d1, d2, d3, d4)
+}
+
+returnList <- list(fct=fct, ssfct=ss, names=names, text=text, edfct=GR, deriv1=deriv1)
 class(returnList) <- "drcMean"
 invisible(returnList)
 }

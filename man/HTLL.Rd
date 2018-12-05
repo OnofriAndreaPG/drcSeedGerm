@@ -6,7 +6,7 @@
 Hydrotime model, with log-logistic distribution of base water potential (Mesgaran et al., 2013)
 }
 \description{
-This equation corresponds to the hydrotime model for seed germination, which describes the time-course for the proportion of germinated seeds, based on a log-logistic distribution of base water potential within the seed lot.
+This equation corresponds to the hydrotime model for seed germination, which describes the time-course for the proportion of germinated seeds as a function of the humidity content in the environment, based on a log-logistic distribution of base water potential within the seed lot.
 }
 \usage{
 HTMes()

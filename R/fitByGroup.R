@@ -1,4 +1,5 @@
 fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
+  #
   #Group <- Dish
   Group <- as.factor(Group)
   DataC <- data.frame(Group, timeBef, timeAf, nSeeds)
@@ -50,17 +51,21 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
 
         #Fit germination model: LL.2 and LL.3
         #A germination medel can be fit. Try LL2 and LL3
+        #options(echo=F)
         cureMod <- try( drm(nSeeds ~ timeBef + timeAf, data = dataTemp,
                       fct = LL.3(), type = "event",
-                      upperl = c(NA, 1, NA)), silent=T )
+                      upperl = c(NA, 1, NA)), silent=T)
         cureMod2 <- try( drm(nSeeds ~ timeBef + timeAf, data = dataTemp,
-                      fct = LL.2(), type = "event"), silent=T )
+                      fct = LL.2(), type = "event"),
+          silent=T )
+        #options(echo=T)
           } }
       #Look at what model is OK
       #class(cureMod); class(cureMod2)
       if(class(cureMod) == "try-error" & class(cureMod2) == "try-error"){
 
         #No parameteric fit was possible (mod = 3). To be meditated
+        print("No parametric fit was possible")
         res <- c(i, nGerm, nTot, pMaxO, NA, NA, NA, NA, rep(NA, 18), rep(NA, 18))
         res <- c(i, NA, NA, NA, NA, NA, NA, NA, rep(NA, 18), rep(NA, 18))
         res <- c(i, NA, NA, NA, NA, NA, NA, NA, rep(NA, 18), rep(NA, 18))
@@ -73,6 +78,7 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
 
         #LL.3 could not be fit, but LL.2 was ok
         #mod = 3
+        print("LL.3 could not be fit. LL.2 is fit instead")
         coefs <- coef(cureMod2)
         coefES <- summary(cureMod2)$coef[,2]
         coefL <- coefs - 2*coefES
@@ -151,6 +157,6 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
   resultES <- data.frame(Group=levels(Group), resultES[,2:length(resultES[1,])])
   resultLow <- data.frame(Group=levels(Group), resultLow[,2:length(resultLow[1,])])
   resultUp <- data.frame(Group=levels(Group), resultUp[,2:length(resultUp[1,])])
-  print("Process successful")
+  print("Process successfully finished")
   list("Estimates"=result, "SE"=resultES, "Low"=resultLow, "Up"=resultUp)
 }
