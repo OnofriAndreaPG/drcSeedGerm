@@ -1,7 +1,7 @@
 #####################################################################
 #This module contains several service functions for time-to-event
 #analysis with drm
-#Date of last revision: 18/01/2018
+#Date of last revision: 06/12/2018
 #Version 1.0
 #####################################################################
 
@@ -98,6 +98,13 @@ makeDrm2 <- function(counts, treat, nViable, moniTimes, Dish,  cumulative=T){
   result
 }
 
+makeNlin <- function(counts, treat, nViable, moniTimes){
+  dataset <- makeDrm(counts, treat, nViable, moniTimes)
+  dataset <- dataset[is.finite(dataset$timeAf)==T, ]
+  output <- data.frame(dataset[,1:length(treat[1,])], Time = dataset$timeAf,
+    propCum = dataset$propCum, row.names = 1:length(dataset[,1]))
+  output
+}
 
 makeSurv <- function(dataset, treat, seeds, moniTimes) {
 #This function organises a dataset to be submitted to survival analysis
