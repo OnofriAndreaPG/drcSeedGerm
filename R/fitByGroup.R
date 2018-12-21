@@ -1,41 +1,52 @@
-fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
-  #
-  #Group <- Dish
-  Group <- as.factor(Group)
+fitByGroup <- function(formula, data, curveid, fct="LL", min=0.1) {
+
+  fr <- model.frame(formula, data)
+  timeBef <- model.matrix(fr, data)[,2]
+  timeAf <- model.matrix(fr, data)[,3]
+  nSeeds <- model.response(fr, "numeric")
+
+  anName <- deparse(substitute(curveid))  # storing name for later use
+  Group <- as.factor( subset(data, select = anName) [,1])
+
   DataC <- data.frame(Group, timeBef, timeAf, nSeeds)
-  #head(DataC)
+
   result <- data.frame()
   resultES <- data.frame()
   resultLow <- data.frame()
   resultUp <- data.frame()
 
+  if(fct == "LL"){fct1 <- LL.3(); fct2<- LL.2()
+  }else{ if(fct == "W1") { fct1 <- W1.3(); fct2<- W1.2()} }
+
   nLev <- length(levels(Group))
     for(i in 1:nLev){
-      print(i)
+      #print(i)
       dataTemp <- subset(DataC, Group==levels(Group)[i])
-      #if(dataTemp[dataTemp$timeAf==Inf,]$nSeeds == 0)
+      #dataTemp[dataTemp$timeAf==Inf,]$nSeeds == 0)
       nTot <- sum(dataTemp$nSeeds)
-      nGerm <- nTot - dataTemp[dataTemp$timeAf==Inf,]$nSeeds
+      nGerm <- nTot - sum( dataTemp[dataTemp$timeAf==Inf,]$nSeeds )
       pMaxO <- nGerm/nTot
-      nFirst <- dataTemp[dataTemp$timeBef==min(dataTemp$timeBef),]$nSeeds
+      nFirst <- sum( dataTemp[dataTemp$timeBef==min(dataTemp$timeBef),]$nSeeds )
       pFirst <- nFirst/nTot
       tFirst <- dataTemp[dataTemp$timeBef==min(dataTemp$timeBef),]$timeAf
       tLast <- dataTemp[is.finite(dataTemp$timeAf)==F,]$timeBef
 
       if(pMaxO < min){
-        #If minimum threshold of germination is not reached
-        #I assume there is negligible germination (mod = 1)
-        #min may be user-defined
-        res <-   c(i, nGerm, nTot, pMaxO, 1, 0,  10E-6, NA, rep(NA, 18), rep(10E-6, 18))
-        resES <- c(i,     NA, NA, NA,     1, NA, 10E-6, NA, rep(NA, 18), rep(10E-6, 18))
-        resLow<- c(i,     NA, NA, NA,     1, NA, NA, tLast, rep(tLast, 18), rep(1/tLast, 18))
-        resUp <- c(i,     NA, NA, NA,     1, NA, NA, NA, rep(Inf, 18), rep(0, 18))
+          #If minimum threshold of germination is not reached
+          #I assume there is negligible germination (mod = 1)
+          #min may be user-defined
+          res <-   c(i, nGerm, nTot, pMaxO, 1, 0,  10E-6, NA, rep(NA, 18), rep(10E-6, 18))
+          resES <- c(i,     NA, NA, NA,     1, NA, 10E-6, NA, rep(NA, 18), rep(10E-6, 18))
+          resLow<- c(i,     NA, NA, NA,     1, NA, NA, tLast, rep(tLast, 18), rep(1/tLast, 18))
+          resUp <- c(i,     NA, NA, NA,     1, NA, NA, NA, rep(Inf, 18), rep(0, 18))
 
-        result <- rbind(result, res)
-        resultES <- rbind(resultES, resES)
-        resultLow <- rbind(resultLow, resLow)
-        resultUp <- rbind(resultUp, resUp)
-        next;} else{if(pFirst > 0.95){
+          result <- rbind(result, res)
+          resultES <- rbind(resultES, resES)
+          resultLow <- rbind(resultLow, resLow)
+          resultUp <- rbind(resultUp, resUp)
+          cat(paste("Group ", i, ": pMax lower than minimum threshold", "\n", sep=""))
+          next;} else{
+      if(pFirst > 0.95){
 
         #Pmax at first inspection > 0.95. Cannot fit germination model
         #Use midPoint imputation (mod = 2)
@@ -47,16 +58,20 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
         resultES <- rbind(resultES, resES)
         resultLow <- rbind(resultLow, resLow)
         resultUp <- rbind(resultUp, resUp)
+        cat(paste("Group ", i, ": Germination at first inspection almost complete", "\n", sep=""))
         next; } else{
 
         #Fit germination model: LL.2 and LL.3
         #A germination medel can be fit. Try LL2 and LL3
         #options(echo=F)
+        #fct1 <- paste(fct, ".3()"); fct2 <- paste(fct, ".2()")
+        if(fct == "LL") fct1 <- LL.3(); fct2<- LL.2()
+
         cureMod <- try( drm(nSeeds ~ timeBef + timeAf, data = dataTemp,
-                      fct = LL.3(), type = "event",
+                      fct = fct1, type = "event",
                       upperl = c(NA, 1, NA)), silent=T)
         cureMod2 <- try( drm(nSeeds ~ timeBef + timeAf, data = dataTemp,
-                      fct = LL.2(), type = "event"),
+                      fct = fct2, type = "event"),
           silent=T )
         #options(echo=T)
           } }
@@ -65,7 +80,8 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
       if(class(cureMod) == "try-error" & class(cureMod2) == "try-error"){
 
         #No parameteric fit was possible (mod = 3). To be meditated
-        print("No parametric fit was possible")
+        cat(paste("Group ", i, ": No parametric fit was possible", "\n", sep=""))
+
         res <- c(i, nGerm, nTot, pMaxO, NA, NA, NA, NA, rep(NA, 18), rep(NA, 18))
         res <- c(i, NA, NA, NA, NA, NA, NA, NA, rep(NA, 18), rep(NA, 18))
         res <- c(i, NA, NA, NA, NA, NA, NA, NA, rep(NA, 18), rep(NA, 18))
@@ -78,7 +94,7 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
 
         #LL.3 could not be fit, but LL.2 was ok
         #mod = 3
-        print("LL.3 could not be fit. LL.2 is fit instead")
+        cat(paste("Group ", i, ": ", fct, ".3() could not be fit. ", fct, ".2() is fit instead", "\n", sep=""))
         coefs <- coef(cureMod2)
         coefES <- summary(cureMod2)$coef[,2]
         coefL <- coefs - 2*coefES
@@ -96,9 +112,9 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
         GR1L <- GR1 - 2*GR1es; GR1U <- GR1 + 2*GR1es
         GR2L <- GR2 - 2*GR2es; GR2U <- GR2 + 2*GR2es
         tg1[is.na(tg1)] <- Inf
-        GR1[is.na(GR1)] <- 10E-6
+        GR1[is.na(GR1)] <- 1E-6
         tg1es[is.na(tg1es)] <- NA; tg1L[is.na(tg1L)] <- tLast; tg1U[is.na(tg1U)] <- Inf
-        GR1es[is.na(GR1es)] <- 10E-6; GR1L[is.na(GR1L)] <- 1/tLast; GR1U[is.na(GR1U)] <- 0
+        GR1es[is.na(GR1es)] <- 1E-6; GR1L[is.na(GR1L)] <- 1/tLast; GR1U[is.na(GR1U)] <- 0
 
         #Fit with LL.2()
         res   <- c(i, nGerm, nTot, pMaxO, 3, coefs[1],  1,  coefs[2], tg1, tg2, GR1, GR2)
@@ -111,7 +127,8 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
         resultLow <- rbind(resultLow, resLow)
         resultUp <- rbind(resultUp, resUp)
 
-        } else{ coefs <- coef(cureMod)
+        } else{
+          coefs <- coef(cureMod)
         #LL.3 was ok
         #mod = 4
         coefES <- summary(cureMod)$coef[,2]
@@ -130,9 +147,9 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
         GR1L <- GR1 - 2*GR1es; GR1U <- GR1 + 2*GR1es
         GR2L <- GR2 - 2*GR2es; GR2U <- GR2 + 2*GR2es
         tg1[is.na(tg1)] <- NA
-        GR1[is.na(GR1)] <- 10E-6
-        tg1es[is.na(tg1es)] <- NA; tg1L[is.na(tg1L)] <- tLast; tg1U[is.na(tg1U)] <- Inf
-        GR1es[is.na(GR1es)] <- 10E-6; GR1L[is.na(GR1L)] <- 1/tLast; GR1U[is.na(GR1U)] <- 0
+        GR1[is.na(GR1)] <- 1E-6
+        tg1es[is.na(tg1es)] <- NA; tg1L[is.na(tg1L)] <- mean(tLast); tg1U[is.na(tg1U)] <- Inf
+        GR1es[is.na(GR1es)] <- 1E-6; GR1L[is.na(GR1L)] <- 1/mean(tLast); GR1U[is.na(GR1U)] <- 0
 
         #Fit with LL.3()
         res    <- c(i, nGerm, nTot, pMaxO, 4, coefs, tg1, tg2, GR1, GR2)
@@ -144,6 +161,8 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
         resultES <- rbind(resultES, resES)
         resultLow <- rbind(resultLow, resLow)
         resultUp <- rbind(resultUp, resUp)
+        cat(paste("Group ", i, ": ", fct, ".3() was fitted", "\n", sep=""))
+
 
           } }
     }
@@ -158,5 +177,7 @@ fitByGroup <- function(Group, timeBef, timeAf, nSeeds, min=0.1) {
   resultLow <- data.frame(Group=levels(Group), resultLow[,2:length(resultLow[1,])])
   resultUp <- data.frame(Group=levels(Group), resultUp[,2:length(resultUp[1,])])
   print("Process successfully finished")
-  list("Estimates"=result, "SE"=resultES, "Low"=resultLow, "Up"=resultUp)
-}
+  coefs <- cbind(result[,c(1, 5, 6:8)], resultES[,6:8])
+  results <- list("Estimates"=result, "SE"=resultES, "Low"=resultLow, "Up"=resultUp)
+  returnList <- list(coefficients = coefs, results = results)
+  }
