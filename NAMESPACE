@@ -2,7 +2,7 @@ importFrom(drc, drm, LL.3)
 importFrom(utils, tail)
 import(stats)
 export(makeDrm, makeDrm2, makeNlin, makeSurv, NLSLL.3, GR, GTime,
-       jackGroupSE, fitByGroup, predictSG,
+       jackGroupSE, drmSG, predictSG, quantileSG,
   GRPsiLin, GRPsiLin.fun, GRPsiPol, GRPsiPol.fun, GRPsiPol2, GRPsiPol2.fun,
   GRT.Ex, GRT.Ex.fun, GRT.YL, GRT.YL.fun, GRT.BS, GRT.BS.fun,
   GRT.Exb, GRT.Exb.fun, GRT.GH, GRT.GH.fun, GRT.M, GRT.M.fun, GRT.RFb, GRT.RFb.fun,
@@ -13,4 +13,3 @@ export(makeDrm, makeDrm2, makeNlin, makeSurv, NLSLL.3, GR, GTime,
   TTERFc, TTERFc.fun, TTERFgr, TTERFga,
   HTTEM, HTTEM.fun, HTTEMgr, HTTEMga,
   PmaxT1, PmaxT1.fun, PmaxTP1.fun, GR50TPM.fun)
-
