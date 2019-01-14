@@ -5,6 +5,13 @@ drmSG <- function(formula, data, curveid, fct="LL", min=0.1, probs = c(10, 30, 5
   #min=0.1; probs = c(10, 30, 50)
   #Group <- as.factor(rape$Dish)
 
+GR <- function(mod, respLev, type="absolute"){
+  GT <- ED(mod, respLev=respLev, type=type, display=F)
+  GTval <- 1/GT[,1]
+  GTes <- (GT[,2] * 1/GT[,1]^2)
+  list(estimate=GTval, se=GTes)
+}
+
   fr <- model.frame(formula, data)
   timeBef <- model.matrix(fr, data)[,2]
   timeAf <- model.matrix(fr, data)[,3]
@@ -186,12 +193,5 @@ drmSG <- function(formula, data, curveid, fct="LL", min=0.1, probs = c(10, 30, 5
                      GRest.se = GRest.se,
                      Test = Test, report = report)
   returnList
-}
-
-GR <- function(mod, respLev, type="absolute"){
-  GT <- ED(mod, respLev=respLev, type=type, display=F)
-  GTval <- 1/GT[,1]
-  GTes <- (GT[,2] * 1/GT[,1]^2)
-  list(estimate=GTval, se=GTes)
 }
 

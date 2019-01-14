@@ -3,8 +3,6 @@ title: 'Analysing seed germination data with R: a tutorial'
 author:
   - name: Andrea Onofri
     affiliation: Department of Agriculture, Food and Environmental Sciences, University of Perugia, Borgo XX Giugno 74, 06121 Perugia, Italy, andrea.onofri@unipg.it
-  - name: Mohsen B. Mesgaran
-    affiliation: Department of Plant Sciences, University of California, Davis, USA
 output:
   html_document:
     toc: yes
@@ -36,9 +34,9 @@ This webpage aims to provide examples, commented R code and datasets, to show ho
 This tutorial is heavily based on the 'drc' package [@Ritz:2015aa], that is a very flexible software for general model fitting purposes. This package contains all the basic functions for time-to-event analyses. We felt that time-to-event analyses could be better spread by developing some service functions specifically thought to deal with germination assays. we have collected these function within the `drcSeedGerm` package, which can be downloaded and installed from gitHub. You also need to have previously installed the *devtools* package. The code is as follows:
 
 ```
-# install.packages("devtools")
-# library(devtools)
-# install_github("OnofriAndreaPG/drcSeedGerm")
+install.packages("devtools")
+library(devtools)
+install_github("OnofriAndreaPG/drcSeedGerm")
 ```
 
 #References
