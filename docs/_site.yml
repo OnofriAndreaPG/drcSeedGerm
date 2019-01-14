@@ -1,0 +1,25 @@
+name: "drcSeedGerm"
+output_dir: "../../Stats4Biology/static/seedGermination"
+title: "A unified framework to analyse seed germination data"
+description: |
+  Useful Equations
+exclude: ["*.txt", "*.R", "*.tex"]
+navbar:
+  title: "Home"
+  left:
+  - text: "Navigation"
+    icon: fa-gear
+    menu:
+      - text: "The problem of censoring"
+        href: Censoring.html
+      - text: "Time-to-event methods account for censoring"
+        href: TimeToEvent.html
+      - text: "Revisting germination indices"
+        href: GermIndices.html
+      - text: "Nonlinear regression analysis"
+        href: HTnonlin.html
+  - text: "Back to blog"
+    href: http://www.statforbiology.com
+output:
+  html_document:
+    theme: cosmo

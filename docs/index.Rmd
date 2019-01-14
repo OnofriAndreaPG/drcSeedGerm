@@ -1,0 +1,45 @@
+---
+title: 'Analysing seed germination data with R: a tutorial'
+author:
+  - name: Andrea Onofri
+    affiliation: Department of Agriculture, Food and Environmental Sciences, University of Perugia, Borgo XX Giugno 74, 06121 Perugia, Italy, andrea.onofri@unipg.it
+  - name: Mohsen B. Mesgaran
+    affiliation: Department of Plant Sciences, University of California, Davis, USA
+output:
+  html_document:
+    toc: yes
+    toc_float:
+     collapsed: false
+     smooth_scroll: false
+bibliography: drcSeedGerm.bib
+---
+
+---
+
+
+# Introduction
+
+Germination assays are relatively easy to perform, by following standardised procedures, as described, e.g., by the International Seed Testing Association ([see here](https://www.ingentaconnect.com/content/ista/rules/2019/00002019/00000001) ). In spite of such simplicity in terms of data collection, the process of data analysis still presents several grey areas. How should we quantify the germination process? A brief survey of literature shows that a plethora of methods is used, which is certainly encouraged by the wide availability of computer packages. It would seem that a clear and unified framework has not been established, yet.
+
+We think that, still today, many of the proposed methods of data analyses are either inefficient or unreliable. It would seem that there is often little concern about the basic assumptions that each method makes and how well they match with the way in which the data were collected. In particular, we would like to emphasize the fact that most of the traditional methods of data analysis are not respectful of the fundamental peculiarity of germination data, i.e. that this data comes as 'grouped data' or 'interval-censored' data.
+
+In contrast to other disciplines where grouped/censored data are commonly recognised as such and analysed by using the appropriate methods (see, e.g., survival analysis in medicine), censoring has been largely overlooked in agricultural research. However, the situation is changing, little by little: in a recent review we have tried to discuss the background of censored data in agricultural and biological contexts. Our aim was three-fold: i) show that this data is common in agricultural research; ii) help biologists to spot them and iii) adopt methods that are tailored to efficiently analyse this data [@onofri_analysing_2019].
+
+In this tutorial we would like to revisit previous work relating to the use of time-to-event methods in seed germination [@OnofriEtAl2010_Survival, @onofri_cure_2011, @Ritz2012_CureModel, @onofri_experimental_2014, @onofri_hydrothermal-time_2018] and propose a unified framework for the analysis of seed germination data, which might help the readers to select efficient and reliable methods and, lately, improve comparisons and communication within the scientific community.
+
+This webpage aims to provide examples, commented R code and datasets, to show how the proposed methods can be easily reproduced with other datasets.
+
+---
+
+# The R packages
+
+This tutorial is heavily based on the 'drc' package [@Ritz:2015aa], that is a very flexible software for general model fitting purposes. This package contains all the basic functions for time-to-event analyses. We felt that time-to-event analyses could be better spread by developing some service functions specifically thought to deal with germination assays. we have collected these function within the `drcSeedGerm` package, which can be downloaded and installed from gitHub. You also need to have previously installed the *devtools* package. The code is as follows:
+
+```
+# install.packages("devtools")
+# library(devtools)
+# install_github("OnofriAndreaPG/drcSeedGerm")
+```
+
+#References
+

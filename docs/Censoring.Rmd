@@ -1,0 +1,249 @@
+---
+title: What's the role of censoring in germination assays?
+csl: european-journal-of-agronomy.csl
+date: "17 December, 2018"
+output:
+  html_document:
+    keep_md: no 
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+bibliography: drcSeedGerm.bib
+---
+
+---
+
+# The background
+
+Seeds in a population do not germinate altogether in the same moment. This is an undisputed fact, resulting from the seed-to-seed variability in germination time (t). We could describe such a variability by using some density function $\phi$, usually parameterised by way of a location ($\mu$) and scale ($\sigma$) parameter:
+
+$$ t \sim \phi(\mu, \sigma)$$
+
+However, we should also consider that there will often be a fraction of seeds that will not germinate in the given conditions, because it is either dormant or nonviable. Let's call this fraction $\pi$; the density distribution of germination times becomes:
+
+$$ t \sim \pi \, \phi(\mu, \sigma) + (1 - \pi)$$
+
+From there, the proportion of germinated seeds (G) at $t = t_g$ is given by the corresponding cumulative distribution function:
+
+$$ G = P(t < t_g) = \pi \, \Phi(\mu, \sigma)$$
+
+Usually, $\Phi$ is right-skewed  and, therefore, log-normal, log-logistic or Weibull cumulative distribution functions have been succesfully used. The graph below represents the germination time-course for a seed population with lognormal distribution of germination times, $\mu = 4.5$ days, $\sigma = 0.6$  and a maximum germinated proportion $\pi = 0.85$.
+
+```{r echo=FALSE, fig.height=6, fig.width=6, message=FALSE, warning=FALSE, paged.print=FALSE}
+mu <- 4.5; sigma <- 0.6; pMax = 0.85
+curve(pMax * plnorm(x, log(mu), sigma), xlim = c(0, 20), ylim = c(0,1),
+      xlab = "Time (days)",
+      ylab = "Proportion of germinated seeds")
+```
+
+With a log-normal distribution, $\mu$ corresponds to the time to 50% germination (for the germinated fraction), while $\sigma$ is the standard deviation on a log-scale.
+
+---
+
+# Monte Carlo simulation of a germination assay
+
+Considering the above, we can simulate the results of a germination assay. Let's take a 100 seed sample from the population above. Obviously, this sample will not necessarily reflect the characteristics of the population. We can do this sampling in R, by using a three-steps approach. First, let's simulate the number of germinated seeds, assuming a binomial distribution with $\pi$ equal to 0.85:
+
+
+
+```{r}
+#Monte Carlo simulation - Step 1
+set.seed(1234)
+nGerm <- rbinom(1, 100, pMax)
+nGerm
+```
+
+We see that in this instance 89 seeds germinated out of 100, which is not the expected 85%. This is a typical random fluctuation. Second, let's simulate the germination times for these 89 seeds, by drawing from a log-normal distribution with the above parameters:
+
+```{r}
+#Monte Carlo simulation - Step 2
+Gtimes <- rlnorm(nGerm, log(mu), sigma)
+Gtimes <- c(Gtimes, rep(Inf, 100 - nGerm))
+Gtimes
+```
+
+Now, we pile up the vector hosting 100 germination times (Gtimes). Please, note that we added 11 infinite germination times, to represent non-germinated seeds.
+
+Unfortunately, the above dataset is not what we would actually observe during a germination assay. Indeed, we cannot observe the exact germination time for each single seed in the lot; we can only count the seeds which have germinated between two assessment times. As the third step, we simulate the observed counts, by assuming daily monitoring for 15 days.
+
+```{r}
+obsT <- seq(1, 15, by=1) #Observation schedule
+table( cut(Gtimes, breaks = c(0, obsT)) )
+```
+
+We can see that, e.g., 8 germinated seeds were counted at day 2; therefore they germinated between day 1 and day 2 and their real germination time is unknown, but included in the range between 1 and 2 (left-open and right-closed). We say that this data is **interval-censored**; likewise, we talk about **grouped-data**, as the data come as groups of seeds with similar germination times.
+
+We also see that 14 seeds were still ungerminated at the end of the assay. For this simulation excercise, we know that 11 seeds were non-germinable and three seeds were germinable, but were not allowed enough time to germinate (look at the table above: there are three seeds with germination times respectively equal to 16.2, 17.5 27.6 days). In real life, this is another source of uncertainty: we might be able to ascertain whether these 14 seeds are viable or not (e.g. by using a tetrazolium test), but, if they are viable, we would never be able to tell whether they are dormant or their germination time is simply longer than the duration of the assay. In real life, we can only reach an uncertain conclusion: the germination time of the 14 ungerminated seeds is comprised between 15 days to infinity; this sort of uncertainty is called **right-censoring**.
+
+Let's re-organise the data, so that they are amenable to further analyses.
+
+```{r}
+counts <- as.numeric( table( cut(Gtimes, breaks = c(0, obsT)) ) )
+df <- data.frame(timeBef = c(0, obsT), timeAf = c(obsT, Inf), counts = c(as.numeric(counts), 100 - sum(counts)), propCum = c(cumsum(counts), 100)/100)
+df
+```
+
+Now we can try to picture the situation in the graph below.
+
+```{r fig.height=6, fig.width=6, message=FALSE, warning=FALSE, paged.print=FALSE}
+plot(propCum ~ timeAf, data = df, subset=c(is.finite(df$timeAf)==T), pch = 20,
+     xlab= "Time (days)", ylab = "Proportion of germinated seeds", xlim=c(0,17),
+     ylim = c(0, 1))
+for(i in 2:15){
+polygon(c(df$timeBef[i], df$timeAf[i], df$timeAf[i], df$timeBef[i]), 
+        c( df$propCum[i-1], df$propCum[i-1], df$propCum[i], df$propCum[i] ),
+        density=100, col="grey", border=NA)
+}
+polygon(c(15, 17, 17, 15), 
+        c(0.86, 0.86, 1, 1 ),
+        density=100, col="grey")
+lines(c(propCum, 0.86) ~ c(timeAf, 17), type="s", data = df,
+      col="blue", subset=is.finite(timeAf)==T)
+lines(c(propCum, 1) ~ c(timeBef, 17), type="s", data = df,
+      col="red")
+```
+
+What is the real germination time-course? The red one? The blue one? Something in between? We cannot say this from our dataset. The first conclusion is that censoring creates a certain amount of uncertainty, that should never be neglected. Such an uncertainty is 
+due to the monitoring schedule, which prevents us from observing the actual germination moment for each seed in the sample. It is peculiar to most time-to-event studies and it is additional to the other sources of uncertainty, for example those relating to sampling variability and possible errors in the manipulation of seeds and Petri dishes.
+
+
+---
+
+#What happens if we disregard censoring?
+
+
+The consequences of ignoring censoring may be of different severity. We'll make two examples. 
+
+## Estimating the Mean Germination Time (MGT)
+
+The Mean Germination Time (MGT) has been often used to measure the speed of germination for the germinated fraction, by using the following equation:
+
+$$ MGT = \frac{\sum_{i=1}^{k} n_it_i}{\sum_{i=1}^{k} n_i} $$
+
+where $t_i$ is the time of the $i-th$ assessment, $n_i$ is the count of germinated seeds between $t_{i - 1}$ and $t_{i}$ and $k$ is the total number of assessments. The above formula does not consider censoring and it assigns to all seeds in each interval the same germination time, i.e. the exact time when they were scored as germinated.
+
+Please note that the use of MGT has beem also criticised formula in  @ranal_how_2006 , we end up with an overestimation. Indeed, the mean germination time for the log-normal distribution where we took our sample from is:
+
+$$ MGT = exp\left( \mu + \frac{\sigma^2}{2} \right) $$
+
+that is `r  exp( log(4.5) + (0.6^2) /2 )`. We can get an estimate from our sample by using the formula in @ranal_how_2006, as implemented in the 'germinationmetrics' package [@aravind_germinationmetrics_2018]:
+
+```{r}
+timings <- df$timeAf[is.finite(df$timeAf) == T]
+counts <- df$counts[is.finite(df$timeAf) == T]
+germinationmetrics::MeanGermTime(counts, timings)
+```
+
+We see that our estimate is higher than the real value. In itself, this means nothing. However, let's repeat the sampling 1000 times:
+
+```{r}
+GermSampling <- function(nSeeds, timeLast, stepOss, mu, shape, pMax){
+    
+    #Draw a sample as above
+    germ <- rbinom(1, nSeeds, pMax)
+    Gtimes <- rlnorm(nGerm, log(mu), sigma)
+    Gtimes <- c(Gtimes, rep(Inf, 100 - nGerm))
+    
+    #Generate the observed data
+    obsT <- seq(1, timeLast, by=stepOss) #Observation schedule (by 5 o 2)
+    counts <- as.numeric( table( cut(Gtimes, breaks = c(0, obsT)) ) )
+    
+    #Calculate the MGT
+    MGT <- germinationmetrics::MeanGermTime(germ.counts = counts,
+                                            intervals = obsT)
+    return(MGT)
+}
+
+set.seed(1234)
+result <- c()
+for (i in 1:1000) {
+  res <- GermSampling(100, 15, 1, 4.5, 0.6, 0.85)
+  result <- c(result, res)
+} 
+mean(result)
+```
+
+
+The bias is approximately 3%. Not much, but if we use a lower number of seeds and a looser monitoring schedule, the bias may increase remarkably (up to 19%):
+
+```{r}
+set.seed(1234)
+result <- c()
+for (i in 1:1000) {
+  res <- GermSampling(25, 15, 3, 4.5, 0.6, 0.85)
+  result <- c(result, res)
+} 
+mean(result)
+```
+
+
+Clearly, the MGT is not a good estimator of the mean germination time for the germinated fraction.
+
+## Estimating the Time to 50% germination (T50)
+
+In other instances, the consequences of ignoring censoring may be less dangerous (but still important). For example, the Time to 50% germination (T50) is used as another measure of germination velocity, which is favoured over MGT when we need to compare seed lots with different germination capability. For a log-normal distribution, the T50 can be obtained by using the quantile function:
+
+```{r}
+qlnorm(0.5 / pMax, log(mu), sigma)
+```
+
+This is the real time to 50% germination. In order to get an estimate from our sample, nonlinear regression is often recommended. In this case, the observed counts are transformed into cumulative proportions and used as the response variable, while the observation time is used as the independent variable.
+
+The following code fits a log-normal cumulative distribution function to the observed data, by using the 'drm' function, in the 'drc' package [@Ritz:2015aa]. The T50 is retreived by using the ED function and passing the model object as an argument.
+
+```{r}
+library(drc)
+mod <- drm(propCum ~ timeAf, data = df, 
+           subset = c(is.finite(timeAf) == T),
+           fct = LN.3() )
+ED(mod, 0.5, type = "absolute")
+```
+
+
+We see that our estimate is very close to the real value. However, let's how our estimator behave in the long run. The following code uses Monte Carlo simulation to extract 1000 samples, fit the log-normal cumulative distribution function model and retreive 1000 estimates, together with Standard Errors (SEs).
+
+```{r}
+GermSampling <- function(nSeeds, timeLast, stepOss, mu, shape, pMax){
+    
+    #Draw a sample as above
+    nGerm <- rbinom(1, nSeeds, pMax)
+    Gtimes <- rlnorm(nGerm, log(mu), sigma)
+    Gtimes <- c(Gtimes, rep(Inf, 100 - nGerm))
+    
+    #Generate the observed data
+    obsT <- seq(1, timeLast, by=stepOss) #Observation schedule (by 5 o 2)
+    counts <- as.numeric( table( cut(Gtimes, breaks = c(0, obsT)) ) )
+    propCum <- cumsum(counts)/nSeeds
+    
+    #Calculate the T50
+    mod <- drm(propCum ~ obsT, fct = LN.3() )
+    T50 <- ED(mod, 0.5, type = "absolute", display = F)
+    c(T50 = T50[1,1], ES = T50[1,2])
+}
+
+set.seed(1234)
+result <- data.frame()
+for (i in 1:1000) {
+  res <- GermSampling(100, 15, 1, 4.5, 0.6, 0.85)
+  result <- rbind(result, res)
+} 
+names(result) <- c("T50", "ES")
+head(result)
+apply(result, 2, mean)
+apply(result, 2, sd)
+```
+
+We see that the estimates, on average, are very close to the real value. However, standard errors are, on average, 0.125 days, However, the Monte Carlo standard deviation is approximately 0.420 days, which tells us that standard errors from nonlinear regression are strongly underestimated.
+
+
+---
+
+#Take-home message
+
+Censoring is peculiar to germination assays and other time-to-event studies. It may have a strong impact on the reliability of our estimates and standard errors and, therefore, it should never be neglected.
+
+---
+
+#References
+
