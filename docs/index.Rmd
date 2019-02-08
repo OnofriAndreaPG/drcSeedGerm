@@ -31,7 +31,16 @@ This webpage aims to provide examples, commented R code and datasets, to show ho
 
 # The R packages
 
-This tutorial is heavily based on the 'drc' package [@Ritz:2015aa], that is a very flexible software for general model fitting purposes. This package contains all the basic functions for time-to-event analyses. We felt that time-to-event analyses could be better spread by developing some service functions specifically thought to deal with germination assays. we have collected these function within the `drcSeedGerm` package, which can be downloaded and installed from gitHub. You also need to have previously installed the *devtools* package. The code is as follows:
+This tutorial is heavily based on the 'drc' package [@Ritz:2015aa], that is a very flexible software for general model fitting purposes. This package contains all the basic functions for time-to-event analyses. Some small bugs relating to time-to-event analysis have been corrected, but these corrections have not yet been uploaded to CRAN (5th of February, 2019); thus, the 'drc' package should be installed from gitHub, by using the following code, which requires the 'devtools' package. 
+
+```
+install.packages("devtools")
+library(devtools)
+install_github("doseResponse/drcData”)
+install_github("doseResponse/drc”)
+```
+
+We felt that time-to-event analyses could be better spread by developing some service functions specifically thought to deal with germination assays. we have collected these function within the `drcSeedGerm` package, which can be downloaded and installed from gitHub. The code is as follows:
 
 ```
 install.packages("devtools")

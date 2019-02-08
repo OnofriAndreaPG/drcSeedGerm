@@ -57,6 +57,8 @@ GR <- function(mod, respLev, type="absolute"){
       tFirst <- dataTemp[dataTemp$timeBef==min(dataTemp$timeBef),]$timeAf
       tLast <- dataTemp[is.finite(dataTemp$timeAf)==F,]$timeBef
 
+      #print(Gname[i])
+
       if(pMaxO < min){
         #If minimum threshold of germination is not reached
         #I assume there is negligible germination (mod = 1)
@@ -120,7 +122,7 @@ GR <- function(mod, respLev, type="absolute"){
       #class(cureMod); class(cureMod2)
       if(class(cureMod) == "try-error" & class(cureMod2) == "try-error"){
 
-        #No parameteric fit was possible (mod = 3). To be meditated
+        #No parameteric fit was possible (mod = 3)
         cat(paste("Group ", i, ": No parametric fit was possible", "\n", sep=""))
 
         coefModT <- c(3, NA, NA, NA, NA, NA, NA)
@@ -168,6 +170,8 @@ GR <- function(mod, respLev, type="absolute"){
 
       GRest.1 <- GR(cureMod, probs/100, type = "absolute")
       Test.1 <-  ED(cureMod, probs/100, type = "absolute", display=F)
+      GRest.1$estimate[is.nan(GRest.1$estimate) == T] <- 0
+      GRest.1$se[is.nan(GRest.1$se) == T] <- 0
       GRest <- rbind(GRest, c(5, GRest.1$estimate) )
       GRest.se <- rbind(GRest.se, c(5, GRest.1$se) )
       Test <- rbind(Test, c(5, as.numeric(Test.1[,1]) ) )
