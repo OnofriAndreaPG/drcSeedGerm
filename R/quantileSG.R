@@ -31,7 +31,7 @@ temp <- data.frame()
 for(i in 1:1000){
   bySeed <- c( rep(time, counts), rep(10000, nSeeds - sum(counts)) )
   resVec <- sample(bySeed, replace = T)
-  resCount <- as.numeric( table(cut(resVec, breaks=c(0,time)) ) )
+  resCount <- as.numeric( table(cut(resVec, breaks=c(0, sort(unique(time)))) ) )
   values <- quantileSG(time, resCount, probs, nSeeds, type)
   #pMax <- sum(resCount)/nSeeds
   report <- c(1/values)
@@ -49,7 +49,7 @@ bootSGpMax <- function(time, counts, nSeeds){
   for(i in 1:1000){
     bySeed <- c( rep(time, counts), rep(10000, nSeeds - sum(counts)) )
     resVec <- sample(bySeed, replace = T)
-    resCount <- as.numeric( table(cut(resVec, breaks=c(0,time)) ) )
+    resCount <- as.numeric( table(cut(resVec, breaks=c(0, sort(unique(time)) )) ) )
     pMax <- sum(resCount)/nSeeds
     temp <- c(temp, pMax)
   }
@@ -59,7 +59,7 @@ bootSGpMax <- function(time, counts, nSeeds){
 
 pMaxFin <- function(time, counts, nSeeds){
   pMax <- sum(counts)/nSeeds
-  se = bootSGpMax(time, counts, nSeeds)
+  se <- bootSGpMax(time, counts, nSeeds)
   return(list (pMaxFin = pMax, se = se))
   }
 

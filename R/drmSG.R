@@ -1,9 +1,9 @@
 drmSG <- function(formula, data, curveid, fct="LL", min=0.1, probs = c(10, 30, 50)) {
-  #formula <- nSeeds ~ timeBef + timeAf
-  #curveid <- Dish
-  #data <- rape; fct ="LL"
-  #min=0.1; probs = c(10, 30, 50)
-  #Group <- as.factor(rape$Dish)
+  # formula <- count ~ timeBef + timeAf
+  # curveid = curva
+  # data <- datasetB; fct ="LL"
+  # min=0.1; probs = c(10, 30, 50)
+  # Group <- as.factor(dataset$curva)
 
 GR <- function(mod, respLev, type="absolute"){
   GT <- ED(mod, respLev=respLev, type=type, display=F)
@@ -18,7 +18,7 @@ GR <- function(mod, respLev, type="absolute"){
   nSeeds <- model.response(fr, "numeric")
 
   anName <- deparse(substitute(curveid))  # storing name for later use
-  Group <- as.factor( subset(data, select = anName) [,1])
+  Group <- factor( subset(data, select = anName) [,1])
 
   DataC <- data.frame(Group, timeBef, timeAf, nSeeds)
 
@@ -41,9 +41,9 @@ GR <- function(mod, respLev, type="absolute"){
       nTot <- sum(dataTemp$nSeeds)
       nGerm <- nTot - sum( dataTemp[dataTemp$timeAf==Inf,]$nSeeds )
       #pMaxO <- nGerm/nTot
-      final <- pMaxFin(dataTemp[dataTemp$timeAf!=Inf,]$timeAf,
-                         dataTemp[dataTemp$timeAf!=Inf,]$nSeeds,
-                       nTot)
+      final <- pMaxFin(time=dataTemp[dataTemp$timeAf!=Inf,]$timeAf,
+                       counts=dataTemp[dataTemp$timeAf!=Inf,]$nSeeds,
+                       nSeeds=nTot)
       pMaxO <- final$pMaxFin
 
       #Return pMx0 #################################
