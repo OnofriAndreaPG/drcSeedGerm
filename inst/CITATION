@@ -1,0 +1,16 @@
+citHeader("To cite the package 'drcSeedGerm' in publications:")
+
+citEntry(entry   = "Article",
+         author = personList(as.person("A. Onofri"),
+         as.person("P. Benincasa"),
+         as.person("M. B. Mesgaran"), as.person("C. Ritz")),,
+         title = "Hydrothermal-time-to-event models for seed germination",
+         journal = "European Journal of Agronomy",
+         volume = 101,
+         pages = "129-139",
+         year = 2018,
+         textVersion =
+         paste("Onofri, A., Benincasa, P., Mesgaran, M. B., & Ritz, C. (2018).",
+               "Hydrothermal-time-to-event models for seed germination.",
+               "European Journal of Agronomy, 101, 129-139.")
+)

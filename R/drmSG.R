@@ -1,9 +1,9 @@
 drmSG <- function(formula, data, curveid, fct="LL", min=0.1, probs = c(10, 30, 50)) {
-  # formula <- count ~ timeBef + timeAf
-  # curveid = curva
-  # data <- datasetB; fct ="LL"
+  # formula <- nEmerg ~ timeBef + timeAf
+  # curveid <- dataset$Comb2
+  # data <- dataset; fct ="LL"
   # min=0.1; probs = c(10, 30, 50)
-  # Group <- as.factor(dataset$curva)
+  # Group <- as.factor(dataset$comb2)
 
 GR <- function(mod, respLev, type="absolute"){
   GT <- ED(mod, respLev=respLev, type=type, display=F)
@@ -18,7 +18,9 @@ GR <- function(mod, respLev, type="absolute"){
   nSeeds <- model.response(fr, "numeric")
 
   anName <- deparse(substitute(curveid))  # storing name for later use
+
   Group <- factor( subset(data, select = anName) [,1])
+  print(length(nSeeds)); stop()
 
   DataC <- data.frame(Group, timeBef, timeAf, nSeeds)
 
