@@ -1,18 +1,46 @@
-GR <- function(mod, Psi, respLev, type="absolute", vcov.){
+GRate <- function(mod, Psi, respLev, type="absolute", vcov. = sandwich){
   #mod <- obj; x <- Psi; respLev <- g
-  GR <- ED(mod, respLev=respLev, type=type, Psi=Psi, vcov. = vcovCL, display=F)
+  vcMat <- vcov.
+  if(is.null(mod$fct[["name"]]) == T) {
+    choice <- "noName"
+  }else{choice <- mod$fct[["name"]]}
+  temp <- ED2.drc(mod, respLev=respLev, type=type, Psi=Psi, vcov. = vcMat, display=F)
+  if( choice == "LL.4" |  choice == "LL.3" | choice == "LL.2" |
+      choice == "LN.4" |  choice == "LN.3" | choice== "LN.2" |
+      choice == "W1.4" |  choice == "W1.3" | choice == "W1.2" |
+      choice == "W2.4" |  choice == "W2.3" | choice == "W2.2" ) {
+     GRval <- 1/temp[,1]
+     GRes <- (temp[,2] * 1/temp[,1]^2)
+  }else{
+     GRval <- temp[,1]
+     GRes <- temp[,2]
+  }
+  GRval[is.nan(GRval)==T] <- 0
+  GRes[is.nan(GRes)==T] <- 0
+  GR <- data.frame(Estimate=GRval, SE=GRes)
   row.names(GR) <- gsub("e:", "GR:", row.names(GR), fixed=T)
   GR
-  #data.frame(Estimate=GR[,1], SE=GR[,2], row.names = paste("GR", respLev, sep=":"))
-  }
+}
 
-GTime <- function(mod, Psi, respLev, type="absolute", vcov.){
-  #mod <- obj; x <- Psi; respLev <- g
-  GT <- ED(mod, respLev=respLev, type=type, Psi=Psi, vcov. = vcovCL, display=F)
-  GTval <- 1/GT[,1]
-  GTes <- (GT[,2] * 1/GT[,1]^2)
-  returnDF <- data.frame(Estimate=GTval, SE=GTes)
-  row.names(returnDF) <- gsub("e:", "T:", row.names(returnDF), fixed=T)
-  returnDF
-  #row.names = paste("T", respLev, sep=":")
+GTime <- function(mod, Psi, respLev, type="absolute", vcov. = sandwich){
+  vcMat <- vcov.
+  if(is.null(mod$fct[["name"]]) == T) {
+    choice <- "noName"
+  }else{choice <- mod$fct[["name"]]}
+  temp <- ED2.drc(mod, respLev=respLev, type=type, Psi=Psi, vcov. = vcMat, display=F)
+  if( choice == "LL.4" |  choice == "LL.3" | choice == "LL.2" |
+      choice == "LN.4" |  choice == "LN.3" | choice== "LN.2" |
+      choice == "W1.4" |  choice == "W1.3" | choice == "W1.2" |
+      choice == "W2.4" |  choice == "W2.3" | choice == "W2.2" ) {
+     GRval <- temp[,1]
+     GRes <- temp[,2]
+  }else{
+     GRval <- 1/temp[,1]
+     GRes <- (temp[,2] * 1/temp[,1]^2)
+  }
+  GRval[is.nan(GRval)==T] <- Inf
+  GRes[is.nan(GRes)==T] <- NA
+  GR <- data.frame(Estimate=GRval, SE=GRes)
+  row.names(GR) <- gsub("e:", "T:", row.names(GR), fixed=T)
+  GR
   }

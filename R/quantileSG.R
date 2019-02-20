@@ -57,9 +57,12 @@ bootSGpMax <- function(time, counts, nSeeds){
   bootSE
 }
 
-pMaxFin <- function(time, counts, nSeeds){
+pMaxFin <- function(time, counts, nSeeds, se.fit = F){
   pMax <- sum(counts)/nSeeds
-  se <- bootSGpMax(time, counts, nSeeds)
-  return(list (pMaxFin = pMax, se = se))
+  if(se.fit == T) {
+    pMaxSE <- bootSGpMax(time, counts, nSeeds)
+    returnList <- list(pMaxFin = pMax, se = pMaxSE)
+    }else{ returnList <- list (pMaxFin = pMax) }
+  return(returnList)
   }
 

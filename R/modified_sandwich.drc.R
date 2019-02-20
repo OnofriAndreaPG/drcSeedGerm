@@ -76,27 +76,33 @@
         if(is.vector(x$dataList$dose)==F) doses <- 3:(length(x$dataList[["dose"]][1,])+1)
         #pr <- x[["fct"]]$"deriv1"(x$data[, c(1, doses)], t(x[["parmMat"]][, as.character(x$data[, 5])]))
         #pr2 <- x[["fct"]]$"deriv1"(x$data[, c(2, doses)], t(x[["parmMat"]][, as.character(x$data[, 5])]))
-        #Verificare posizioni colonne
-        ids <- ifelse(is.null(doses), 5, 5 + length(x$dataList[["dose"]][1,]) - 2)
+        #Verificare posizioni colonne. It depends whether we have additional predictors
+        #With respect to timeBef and timeAf
+
+        #Correction on 18/2/19################################
+        #ids <- ifelse(is.null(doses), 5, 5 + length(x$dataList[["dose"]][1,]) - 2)
+        ids <- ifelse(is.null(doses), 5, 5 + length(x$dataList[["dose"]][1,]) - 1)
+
         countCol <- ifelse(is.null(doses), 3, 3 + length(x$dataList[["dose"]][1,]) - 1)
         Ft1 <- predict(x, data.frame(x$data[, c(1, doses)], x$data[, ids]))
         Ft2 <- predict(x, data.frame(x$data[, c(2, doses)], x$data[, ids]))
         Ft2[!is.finite(x$data[, 2])] <- 1
         diffF <- Ft2 - Ft1 #likelihood for individual seed
         diffF[diffF==0] <- 10e-6
-        #Corrected on 12/2/19
-        #DFt1.0 <- x[["fct"]]$"deriv1"(x$data[, c(1, doses)], t(x[["parmMat"]][, as.character(x$data[, ids])]))
-        #DFt2.0 <- x[["fct"]]$"deriv1"(x$data[, c(2, doses)], t(x[["parmMat"]][, as.character(x$data[, ids])]))
 
-        DFt1.0 <- x[["fct"]]$"deriv1"(x$data[, c(1, doses)], t(x[["parmMat"]][, as.character(x$data[, ids + 1])]))
-        DFt2.0 <- x[["fct"]]$"deriv1"(x$data[, c(2, doses)], t(x[["parmMat"]][, as.character(x$data[, ids + 1])]))
+        #Correction on 18/2/19 (went back) ################################
+        DFt1.0 <- x[["fct"]]$"deriv1"(x$data[, c(1, doses)], t(x[["parmMat"]][, as.character(x$data[, ids])]))
+        DFt2.0 <- x[["fct"]]$"deriv1"(x$data[, c(2, doses)], t(x[["parmMat"]][, as.character(x$data[, ids])]))
+
+        # DFt1.0 <- x[["fct"]]$"deriv1"(x$data[, c(1, doses)], t(x[["parmMat"]][, as.character(x$data[, ids + 1])]))
+        # DFt2.0 <- x[["fct"]]$"deriv1"(x$data[, c(2, doses)], t(x[["parmMat"]][, as.character(x$data[, ids + 1])]))
 
         DFt2.0[!is.finite(x$data[, 2]), ] <- 0
         diffDF.0 <- DFt2.0 - DFt1.0 #Derivative of likelihood funct
 
-        #Modified on 12/2/19
+        #Modified on 12/2/19 - Went back on 18/2/19##########################################
+        diffDF <- xderiv2Fct(diffDF.0, indMat, x$data[, ids])
         #diffDF <- xderiv2Fct(diffDF.0, indMat, x$data[, ids + 1])
-        diffDF <- xderiv2Fct(diffDF.0, indMat, x$data[, ids + 1])
         #print(diffDF); stop()
         rval <- (x$data[, countCol] / diffF) * diffDF #Derivative composite function D(log(f(x)))
         #print(diffDF)
