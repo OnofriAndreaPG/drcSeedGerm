@@ -28,27 +28,27 @@ ss <- function(data){
   return(c(Tb, ThetaT, k, Tc))}
 deriv1 <- function(x, parm){
   #Approximation by using finite differences
-  d1.1 <- GRT.Exb.fun(x, parm[,1], parm[,2], parm[,3],
+  d1.1 <- GRT.Ex.fun(x, parm[,1], parm[,2], parm[,3],
                    parm[,4])
-  d1.2 <- GRT.Exb.fun(x, (parm[,1] + 10e-6), parm[,2], parm[,3],
+  d1.2 <- GRT.Ex.fun(x, (parm[,1] + 10e-6), parm[,2], parm[,3],
                    parm[,4])
   d1 <- (d1.2 - d1.1)/10e-6
 
-  d2.1 <- GRT.Exb.fun(x, parm[,1], parm[,2], parm[,3],
+  d2.1 <- GRT.Ex.fun(x, parm[,1], parm[,2], parm[,3],
                    parm[,4])
-  d2.2 <- GRT.Exb.fun(x, parm[,1], (parm[,2] + 10e-6), parm[,3],
+  d2.2 <- GRT.Ex.fun(x, parm[,1], (parm[,2] + 10e-6), parm[,3],
                    parm[,4])
   d2 <- (d2.2 - d2.1)/10e-6
 
-  d3.1 <- GRT.Exb.fun(x, parm[,1], parm[,2], parm[,3],
+  d3.1 <- GRT.Ex.fun(x, parm[,1], parm[,2], parm[,3],
                    parm[,4])
-  d3.2 <- GRT.Exb.fun(x, parm[,1], parm[,2], (parm[,3] + 10e-6),
+  d3.2 <- GRT.Ex.fun(x, parm[,1], parm[,2], (parm[,3] + 10e-6),
                    parm[,4])
   d3 <- (d3.2 - d3.1)/10e-6
 
-  d4.1 <- GRT.Exb.fun(x, parm[,1], parm[,2], parm[,3],
+  d4.1 <- GRT.Ex.fun(x, parm[,1], parm[,2], parm[,3],
                    parm[,4])
-  d4.2 <- GRT.Exb.fun(x, parm[,1], parm[,2], parm[,3],
+  d4.2 <- GRT.Ex.fun(x, parm[,1], parm[,2], parm[,3],
                    (parm[,4] + 10e-6))
   d4 <- (d4.2 - d4.1)/10e-6
 
@@ -56,7 +56,7 @@ deriv1 <- function(x, parm){
 }
 
 text <- "Exponential effect of temperature on GR50 (Masin et al., 2017)"
-returnList <- list(fct=fct, ssfct=ss, names=names, text=text)
+returnList <- list(fct=fct, ssfct=ss, names=names, text=text, deriv1 = deriv1)
 class(returnList) <- "drcMean"
 invisible(returnList)
 }
