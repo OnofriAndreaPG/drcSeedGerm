@@ -2,7 +2,7 @@ importFrom(drc, drm, LL.3)
 importFrom(utils, tail)
 import(stats)
 export(makeDrm, makeDrm2, makeNlin, makeSurv, NLSLL.3, GRate, GTime,
-       jackGroupSE, drmSG, predictSG, quantileSG,
+       jackGroupSE, drmSG, predictSG, quantileSG, ED2.drc,
   estfun.drc, bread.drc, predict.drc, drm,
   GRPsiLin, GRPsiLin.fun, GRPsiPol, GRPsiPol.fun, GRPsiPol2, GRPsiPol2.fun,
   GRT.Ex, GRT.Ex.fun, GRT.YL, GRT.YL.fun, GRT.BS, GRT.BS.fun,

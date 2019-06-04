@@ -1,9 +1,10 @@
-drmSG <- function(formula, data, curveid, fct="LL", min=0.04, probs = c(10, 30, 50)) {
+drmSG <- function(formula, data, curveid, fct="LL", min=0.04, g = c(10, 30, 50)) {
   # formula <- nEmerg ~ timeBef + timeAf
   # curveid <- dataset$Comb2
   # data <- dataset; fct ="LL"
   # min=0.1; probs = c(10, 30, 50)
   # Group <- as.factor(dataset$Comb2)
+  probs <- g
 
 GR <- function(mod, respLev, type="absolute"){
   GT <- ED(mod, respLev=respLev, type=type, display=F)
@@ -33,7 +34,8 @@ GR <- function(mod, respLev, type="absolute"){
   Gname <- c()
 
   if(fct == "LL"){fct1 <- LL.3(); fct2<- LL.2()
-  }else if(fct == "W1") { fct1 <- W1.3(); fct2<- W1.2()}
+  }else if(fct == "W1") { fct1 <- W1.3(); fct2<- W1.2()
+  }else if(fct == "W2") { fct1 <- W2.3(); fct2<- W2.2() }
 
   #Fitting group by group
   nLev <- length(levels(Group))
@@ -240,10 +242,11 @@ GR <- function(mod, respLev, type="absolute"){
   report <- data.frame(Group = Gname, Code = Test$Code)
   print("Process successfully finished")
 
+  #coefMod <- coefMod[,-2]
   returnList <- list(pFinal = pFinal,
-                     coefficients = coefMod, GRest = GRest,
-                     GRest.se = GRest.se,
-                     Test = Test, Test.se = Test.se, report = report)
+                     coefficients = coefMod[,-2], GRg = GRest[,-2],
+                     GRg.se = GRest.se[,-2],
+                     Tg = Test[,-2], Tg.se = Test.se[,-2], report = report)
   returnList
 }
 

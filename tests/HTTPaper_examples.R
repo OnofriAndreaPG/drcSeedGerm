@@ -54,6 +54,15 @@ ED(modHTE, Psi=-1, respLev=c(50, 30, 10),
 # e:1:30 0.000000         NA
 # e:1:10 0.051297   0.006222
 
+#Cluster robust ED level
+ED(modHTE, Psi=-1, respLev=c(50, 30, 10), vcov. = vcovCL)
+ED(modHTE, Psi=-1, respLev=c(50, 30, 10), vcov. = sandwich)
+
+ED(modHTE, Psi=-1, respLev=c(50, 30, 10), vcov. = vcovCL, cluster = rape$Dish)
+
+vcovMat <- vcovCL(modHTE, cluster = rape$Dish)
+
+ED2.drc(modHTE, Psi=-1, respLev=c(50, 30, 10), vcov. = vcovMat)
 
 #Code snippet 5 ##############################
 data(hordeum)
@@ -189,3 +198,4 @@ coeftest(modTTERF, vcov=vcovCL, cluster=barley$Dish)
 # Tb:(Intercept)      -2.9579836  0.2094144 -14.125 < 2.2e-16 ***
 # ThetaT:(Intercept)  58.5184898  2.1283379  27.495 < 2.2e-16 ***
 # b:(Intercept)        6.8949196  0.6802456  10.136 < 2.2e-16 ***
+
