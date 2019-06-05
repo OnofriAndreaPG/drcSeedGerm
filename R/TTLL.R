@@ -1,5 +1,6 @@
-#Hydrotime model with normal distribution of base water potential
-HTnorm.fun <- function(time, Psi, ThetaH, Psib50, sigmaPsib){
+#Thermal time model with log-logistic distribution of thermal-time
+#DA FARE!!!!!!!!!!!!!!!
+TTnorm.fun <- function(time, Temp, ThetaT50, Tb, b){
   pnorm((Psi - (ThetaH/time) - Psib50)/sigmaPsib) }
 
 "HTnorm" <- function(){
