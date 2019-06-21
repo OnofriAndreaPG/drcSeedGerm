@@ -1,4 +1,4 @@
-GRate <- function(mod, Psi, respLev, type="absolute", vcov. = sandwich){
+GRate <- function(mod, respLev, type="absolute", vcov. = sandwich){
   #mod <- obj; x <- Psi; respLev <- g
   vcMat <- vcov.
   if(is.null(mod$fct[["name"]]) == T) {
@@ -22,7 +22,7 @@ GRate <- function(mod, Psi, respLev, type="absolute", vcov. = sandwich){
   GR
 }
 
-GTime <- function(mod, Psi, respLev, type="absolute", vcov. = sandwich){
+GTime <- function(mod, respLev, type="absolute", vcov. = sandwich){
   vcMat <- vcov.
   if(is.null(mod$fct[["name"]]) == T) {
     choice <- "noName"

@@ -1,3 +1,5 @@
+library(devtools)
+install_github("doseResponse/drc")
 library(drcSeedGerm)
 library(lmtest)
 library(sandwich)

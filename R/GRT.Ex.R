@@ -1,4 +1,4 @@
-# Exponential with switch-off Catara et al., 2017)
+# Exponential with switch-off (Catara et al., 2017)
 #Original. ThetaT is not comparable to the other models
 GRT.Ex.fun <- function(Temp, Tb, ThetaT, k, Tc) {
   GR50 <- ((Temp - Tb)/ThetaT) * (1 - exp(k * (Temp - Tc)))

@@ -1,9 +1,9 @@
 drmSG <- function(formula, data, curveid, fct="LL", min=0.04, g = c(10, 30, 50)) {
-  # formula <- nEmerg ~ timeBef + timeAf
-  # curveid <- dataset$Comb2
-  # data <- dataset; fct ="LL"
-  # min=0.1; probs = c(10, 30, 50)
-  # Group <- as.factor(dataset$Comb2)
+  # formula <- nSeeds ~ timeBef + timeAf
+  # curveid <- rape$Dish
+  # data <- rape; fct ="LL"
+  # min=0.04; g = c(10, 30, 50)
+  # Group <- as.factor(temp$Dish)
   probs <- g
 
 GR <- function(mod, respLev, type="absolute"){
@@ -22,7 +22,7 @@ GR <- function(mod, respLev, type="absolute"){
   #anName <- "Comb2"
   Group <- factor( subset(data, select = anName) [,1])
   #print(length(nSeeds)); stop()
-
+  #print(Group)
   DataC <- data.frame(Group, timeBef, timeAf, nSeeds)
 
   pFinal <- data.frame()
@@ -90,7 +90,7 @@ GR <- function(mod, respLev, type="absolute"){
         GRest.se <- rbind(GRest.se, c(0, GRestSE) )
         Test <- rbind(Test, c(0, Teste ) )
         Test.se <- rbind(Test.se, c(0, TesteSE ) )
-        cat(paste("Group ", i, ": no germinations were observed", "\n", sep=""))
+        message(paste("Group ", i, ": no germinations were observed", sep=""))
         next;
       }else if(pMaxO < min){
         #If minimum threshold of germination is not reached
@@ -114,7 +114,7 @@ GR <- function(mod, respLev, type="absolute"){
         Test <- rbind(Test, c(1, Test.1) )
         Test.se <- rbind(Test.se, c(1, rep(NA, length(probs)) ) )
 
-        cat(paste("Group ", i, ": pMax lower than minimum threshold", "\n", sep=""))
+        message(paste("Group ", i, ": pMax lower than minimum threshold", sep=""))
         next;
         }else if(pFirst > 0.95){
           #Pmax at first inspection > 0.95. Cannot fit germination model
@@ -137,7 +137,7 @@ GR <- function(mod, respLev, type="absolute"){
           Test <- rbind(Test, c(2, Test.1) )
           Test.se <- rbind(Test.se, c(2, rep(NA, length(probs)) ) )
 
-          cat(paste("Group ", i, ": Germination at first inspection almost complete", "\n", sep=""))
+          message(paste("Group ", i, ": Germination at first inspection almost complete", sep=""))
           next;
           } else {
           #Fit germination model: LL.2 and LL.3
@@ -167,7 +167,7 @@ GR <- function(mod, respLev, type="absolute"){
       if(class(cureMod) == "try-error" & class(cureMod2) == "try-error"){
 
         #No parameteric fit was possible (mod = 3)
-        cat(paste("Group ", i, ": No parametric fit was possible", "\n", sep=""))
+        message(paste("Group ", i, ": No parametric fit was possible", sep=""))
 
         coefModT <- c(3, NA, NA, NA, NA, NA, NA)
         coefMod <- rbind(coefMod, coefModT)
@@ -185,12 +185,31 @@ GR <- function(mod, respLev, type="absolute"){
         Test <- rbind(Test, c(3, Test.1) )
         Test.se <- rbind(Test.se, c(3, rep(NA, length(probs)) ) )
 
-        }else if((class(cureMod) == "try-error" | cureMod$coefficients[2] > 1)
-                 & class(cureMod2) == "drc"){
+        }else if( class(cureMod) == "try-error"  & class(cureMod2) == "drc" )
+                {
 
         #LL.3 could not be fit, but LL.2 was ok
         #mod = 4
-        cat(paste("Group ", i, ": ", fct, ".3() could not be fitted. ", fct, ".2() was fitted instead", "\n", sep=""))
+        message(paste("Group ", i, ": ", fct, ".3() could not be fitted. ", fct, ".2() was fitted instead", sep=""))
+
+        #Fit LL.2()
+        coefs <- coef(cureMod2)
+        coefES <- summary(cureMod2)$coef[,2]
+        coefModT <- c(4, coefs[1], 1, coefs[2], coefES[1], 0, coefES[2])
+        coefMod <- rbind(coefMod, coefModT)
+
+        GRest.1 <- GRate(cureMod2, respLev=c(probs/100),  type = "absolute", vcov. = vcov)
+        Test.1 <-  GTime(cureMod2, respLev=c(probs/100),  type = "absolute", vcov. = vcov)
+        GRest <- rbind(GRest, c(4, GRest.1$Estimate) )
+        GRest.se <- rbind(GRest.se, c(4, GRest.1$SE) )
+        Test <- rbind(Test, c(4, Test.1$Estimate ) )
+        Test.se <- rbind(Test.se, c(4, Test.1$SE ) )
+
+        }else if(class(cureMod) == "drc" & cureMod$coefficients[2] > 1)
+                {
+        #LL.3 could not be fit, but LL.2 was ok (same as above, different reason)
+        #mod = 4
+        message(paste("Group ", i, ": ", fct, ".3() could not be fitted. ", fct, ".2() was fitted instead", sep=""))
 
         #Fit LL.2()
         coefs <- coef(cureMod2)
@@ -224,7 +243,7 @@ GR <- function(mod, respLev, type="absolute"){
       Test <- rbind(Test, c(5, Test.1$Estimate ) )
       Test.se <- rbind(Test.se, c(5, Test.1$SE ) )
 
-      cat(paste("Group ", i, ": ", fct, ".3() was fitted", "\n", sep=""))
+      message(paste("Group ", i, ": ", fct, ".3() was fitted", sep=""))
       }
     }
 
@@ -240,7 +259,7 @@ GR <- function(mod, respLev, type="absolute"){
   Test <- data.frame(Group=Gname, Test, check.names=F)
   Test.se <- data.frame(Group=Gname, Test.se, check.names=F)
   report <- data.frame(Group = Gname, Code = Test$Code)
-  print("Process successfully finished")
+  message("Process successfully finished")
 
   #coefMod <- coefMod[,-2]
   returnList <- list(pFinal = pFinal,
@@ -250,3 +269,11 @@ GR <- function(mod, respLev, type="absolute"){
   returnList
 }
 
+SGindices <- function(counts, dish, nViable, moniTimes, fct = "LL",
+                      g = c(10, 30, 50), min = 0.04) {
+    temp <- makeDrm(counts, treat = data.frame(tratt = dish), nViable, moniTimes)
+    mod <- drmSG(count ~ timeBef + timeAf, curveid = Dish,
+                       data = temp, fct = fct, g = g)
+
+    return(mod)
+}
