@@ -1,18 +1,32 @@
-drmSG <- function(formula, data, curveid, fct="LL", min=0.04, g = c(10, 30, 50)) {
+drmSG <- function(formula, data, curveid, fct="LL", min=0.04, g = c(10, 30, 50),
+  type = "absolute") {
   # formula <- nSeeds ~ timeBef + timeAf
   # curveid <- rape$Dish
   # data <- rape; fct ="LL"
   # min=0.04; g = c(10, 30, 50)
   # Group <- as.factor(temp$Dish)
+  # Return code. 0: no germinations; 1: negligible germinations
+  # 2: complete germination at first inspection; 3: fit is impossible
+  # 4: LL.2() and 5: LL.3()
+  #Updated: 16/7/19
   probs <- g
+  if(type != "absolute" & type != "relative") {
+    cat(paste("ERROR: argument type can only be 'absolute or 'relative'", "\n", sep=""))
+    stop() }
 
-GR <- function(mod, respLev, type="absolute"){
-  GT <- ED(mod, respLev=respLev, type=type, display=F)
-  GTval <- 1/GT[,1]
-  GTes <- (GT[,2] * 1/GT[,1]^2)
-  list(estimate=GTval, se=GTes)
-}
-
+# GR <- function(mod, respLev, type="absolute"){
+#   GT <- ED(mod, respLev=respLev, type=type, display=F)
+#   GTval <- 1/GT[,1]
+#   GTes <- (GT[,2] * 1/GT[,1]^2)
+#   list(estimate=GTval, se=GTes)
+# }
+# GRR <- function(mod, respLev, type="relative"){
+#   GT <- ED(mod, respLev=respLev, type=type, display=F)
+#   GTval <- 1/GT[,1]
+#   GTes <- (GT[,2] * 1/GT[,1]^2)
+#   list(estimate=GTval, se=GTes)
+# }
+#
   fr <- model.frame(formula, data)
   timeBef <- model.matrix(fr, data)[,2]
   timeAf <- model.matrix(fr, data)[,3]
@@ -45,7 +59,13 @@ GR <- function(mod, respLev, type="absolute"){
       dataTemp <- subset(DataC, Group==levels(Group)[i])
       nTot <- sum(dataTemp$nSeeds)
       nGerm <- nTot - sum( dataTemp[dataTemp$timeAf==Inf,]$nSeeds )
-      #print(nGerm)
+
+      if(type == "absolute"){
+        sumSeeds <- nTot
+        drmProbs <- probs/100
+      } else {sumSeeds <- nGerm
+        drmProbs <- probs}
+
       if(nGerm == 0){
       final <- pMaxFin(time=dataTemp[dataTemp$timeAf!=Inf,]$timeAf,
                        counts=dataTemp[dataTemp$timeAf!=Inf,]$nSeeds,
@@ -57,7 +77,7 @@ GR <- function(mod, respLev, type="absolute"){
       }
       pMaxO <- final$pMaxFin
 
-      #Return pMx0 #################################
+      #Return pMax0 #################################
       pFinal[i, 1] <- Gname[i]; pFinal[i, 2] <- nGerm
       pFinal[i, 3] <- nTot; pFinal[i, 4] <- final$pMaxFin
       if(nGerm == 0){
@@ -76,7 +96,7 @@ GR <- function(mod, respLev, type="absolute"){
       #print(Gname[i])
 
       if(nGerm == 0){
-        #There are no germinations at all
+        #There are no germinations at all. Code = 0
         coefModT <- c(0, NA, NA, NA, NA, NA, NA)
         coefMod <- rbind(coefMod, coefModT)
 
@@ -103,11 +123,11 @@ GR <- function(mod, respLev, type="absolute"){
 
         GRest.1 <- quantileSG(dataTemp[dataTemp$timeAf!=Inf,]$timeAf,
                               dataTemp[dataTemp$timeAf!=Inf,]$nSeeds,
-                              probs = probs, nSeeds=nTot, type=1,
+                              probs = probs, nSeeds=sumSeeds, type=1,
                               rate=T, se.fit = F)
         Test.1 <- quantileSG(dataTemp[dataTemp$timeAf!=Inf,]$timeAf,
                              dataTemp[dataTemp$timeAf!=Inf,]$nSeeds,
-                             probs = probs, nSeeds=nTot, type=1,
+                             probs = probs, nSeeds=sumSeeds, type=1,
                              rate=F)
         GRest <- rbind(GRest, c(1, GRest.1) )
         GRest.se <- rbind(GRest.se, c(1, rep(NA, length(probs))) )
@@ -125,11 +145,11 @@ GR <- function(mod, respLev, type="absolute"){
 
           GRest.1 <- quantileSG(dataTemp[dataTemp$timeAf!=Inf,]$timeAf,
                                 dataTemp[dataTemp$timeAf!=Inf,]$nSeeds,
-                                probs = probs, nSeeds=nTot, type=1,
+                                probs = probs, nSeeds=sumSeeds, type=1,
                                 rate=T, se.fit = T)
           Test.1 <- quantileSG(dataTemp[dataTemp$timeAf!=Inf,]$timeAf,
                                dataTemp[dataTemp$timeAf!=Inf,]$nSeeds,
-                               probs = probs, nSeeds=nTot, type=1,
+                               probs = probs, nSeeds=sumSeeds, type=1,
                                rate=F)
 
           GRest <- rbind(GRest, c(2, GRest.1$estimate))
@@ -140,12 +160,7 @@ GR <- function(mod, respLev, type="absolute"){
           message(paste("Group ", i, ": Germination at first inspection almost complete", sep=""))
           next;
           } else {
-          #Fit germination model: LL.2 and LL.3
-          #A germination medel can be fit. Try LL2 and LL3
-          #options(echo=F)
-          #fct1 <- paste(fct, ".3()"); fct2 <- paste(fct, ".2()")
-          #if(fct == "LL") fct1 <- LL.3(); fct2<- LL.2()
-
+          #Try to fit a germination model with two or three-parameters
           cureMod <- try( drm(nSeeds ~ timeBef + timeAf, data = dataTemp,
                               fct = fct1, type = "event"), silent=T)
           cureMod2 <- try( drm(nSeeds ~ timeBef + timeAf, data = dataTemp,
@@ -166,7 +181,7 @@ GR <- function(mod, respLev, type="absolute"){
       #class(cureMod); class(cureMod2)
       if(class(cureMod) == "try-error" & class(cureMod2) == "try-error"){
 
-        #No parameteric fit was possible (mod = 3)
+        #No parametric fit was possible (mod = 3)
         message(paste("Group ", i, ": No parametric fit was possible", sep=""))
 
         coefModT <- c(3, NA, NA, NA, NA, NA, NA)
@@ -174,11 +189,11 @@ GR <- function(mod, respLev, type="absolute"){
 
         GRest.1 <- quantileSG(dataTemp[dataTemp$timeAf!=Inf,]$timeAf,
                               dataTemp[dataTemp$timeAf!=Inf,]$nSeeds,
-                              probs = probs, nSeeds=nTot, type=1,
+                              probs = probs, nSeeds=sumSeeds, type=1,
                               rate=T, se.fit = T)
         Test.1 <- quantileSG(dataTemp[dataTemp$timeAf!=Inf,]$timeAf,
                              dataTemp[dataTemp$timeAf!=Inf,]$nSeeds,
-                             probs = probs, nSeeds=nTot, type=1,
+                             probs = probs, nSeeds=sumSeeds, type=1,
                              rate=F)
         GRest <- rbind(GRest, c(3, GRest.1$estimate) )
         GRest.se <- rbind(GRest.se, c(3, GRest.1$se) )
@@ -198,8 +213,8 @@ GR <- function(mod, respLev, type="absolute"){
         coefModT <- c(4, coefs[1], 1, coefs[2], coefES[1], 0, coefES[2])
         coefMod <- rbind(coefMod, coefModT)
 
-        GRest.1 <- GRate(cureMod2, respLev=c(probs/100),  type = "absolute", vcov. = vcov)
-        Test.1 <-  GTime(cureMod2, respLev=c(probs/100),  type = "absolute", vcov. = vcov)
+        GRest.1 <- GRate(cureMod2, respLev=c(drmProbs),  type = type, vcov. = vcov)
+        Test.1 <-  GTime(cureMod2, respLev=c(drmProbs),  type = type, vcov. = vcov)
         GRest <- rbind(GRest, c(4, GRest.1$Estimate) )
         GRest.se <- rbind(GRest.se, c(4, GRest.1$SE) )
         Test <- rbind(Test, c(4, Test.1$Estimate ) )
@@ -217,8 +232,8 @@ GR <- function(mod, respLev, type="absolute"){
         coefModT <- c(4, coefs[1], 1, coefs[2], coefES[1], 0, coefES[2])
         coefMod <- rbind(coefMod, coefModT)
 
-        GRest.1 <- GRate(cureMod2, respLev=c(probs/100),  type = "absolute", vcov. = vcov)
-        Test.1 <-  GTime(cureMod2, respLev=c(probs/100),  type = "absolute", vcov. = vcov)
+        GRest.1 <- GRate(cureMod2, respLev=c(drmProbs),  type = type, vcov. = vcov)
+        Test.1 <-  GTime(cureMod2, respLev=c(drmProbs),  type = type, vcov. = vcov)
         GRest <- rbind(GRest, c(4, GRest.1$Estimate) )
         GRest.se <- rbind(GRest.se, c(4, GRest.1$SE) )
         Test <- rbind(Test, c(4, Test.1$Estimate ) )
@@ -234,10 +249,8 @@ GR <- function(mod, respLev, type="absolute"){
       coefModT <- c(5, coefs, coefES)
       coefMod <- rbind(coefMod, coefModT)
 
-      GRest.1 <- GRate(cureMod, respLev=c(probs/100),  type = "absolute", vcov. = vcov)
-      Test.1 <-  GTime(cureMod, respLev=c(probs/100),  type = "absolute", vcov. = vcov)
-      #GRest.1$Estimate[is.nan(GRest.1$Estimate) == T] <- 0
-      #GRest.1$SE[is.nan(GRest.1$SE) == T] <- 0
+      GRest.1 <- GRate(cureMod, respLev=c(drmProbs),  type = type, vcov. = vcov)
+      Test.1 <-  GTime(cureMod, respLev=c(drmProbs),  type = type, vcov. = vcov)
       GRest <- rbind(GRest, c(5, GRest.1$Estimate) )
       GRest.se <- rbind(GRest.se, c(5, GRest.1$SE) )
       Test <- rbind(Test, c(5, Test.1$Estimate ) )

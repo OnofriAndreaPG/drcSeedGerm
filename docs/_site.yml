@@ -16,6 +16,8 @@ navbar:
         href: TimeToEvent.html
       - text: "Revisting germination indices"
         href: GermIndices.html
+      - text: "Comparing curves"
+        href: ComparingSeedLots.html
       - text: "Nonlinear regression analysis"
         href: HTnonlin.html
   - text: "Back to blog"

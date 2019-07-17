@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Fitting nonlinear regression models for seed germination</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-gear"></span>
+     
+    Navigation
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Censoring.html">The problem of censoring</a>
+    </li>
+    <li>
+      <a href="TimeToEvent.html">Time-to-event methods account for censoring</a>
+    </li>
+    <li>
+      <a href="GermIndices.html">Revisting germination indices</a>
+    </li>
+    <li>
+      <a href="ComparingSeedLots.html">Comparing curves</a>
+    </li>
+    <li>
+      <a href="HTnonlin.html">Nonlinear regression analysis</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="http://www.statforbiology.com">Back to blog</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Fitting nonlinear regression models for seed germination</h1>
+<h4 class="date">7 December, 2018</h4>
+
+</div>
+
+
+<p>#Introduction {-}</p>
+<p>One relevant task in seed biology is to model the progress to germination, depending on environmental conditions, mainly temperature and water availability. These models are usually known as hydro-time (HT), thermal-time (TT) and hydrothermal-time (HTT) models; they have usually been formulated as nonlinear regression models, where the proportion of germinated seeds is used as the response variable. In our previous papers, my collegues and I have often recommended that this is not an optimal solution <span class="citation">(Onofri et al., 2018, 2010; Onofri et al., 2010)</span>; instead, we have advocated the use of time-to-event methods, which fully respect the actual manner in which data are acquired from germination assays. In contrast to nonlinear regression, time-to-event methods produce reliable estimates of parameters and standard errors <span class="citation">(Ritz et al., 2013)</span>. In this vein, we have shown that HT, TT and HTT models can also be formulated into a time-to-event framework <span class="citation">(Onofri et al., 2018)</span>.</p>
+<p>However, we need to admit that there are several nonlinear regression models that have, so far, proven useful to describe the time course in the proportion of germinated seeds, as affected by temperature and humidity content in the environment. These models are based on realistic biological underpinnings and we do understand that biologists may be reluctant to abandon them, in favour of a relatively new modelling framework. As we are trying to build a unified approach to seed germination modelling, we feel that we should also include nonlinear regression models, together with the necessary facilities to perform reasonably correct analyses.</p>
+<div id="a-brief-overview-of-ht-modeling" class="section level1 unnumbered">
+<h1>A brief overview of HT modeling</h1>
+<p>Let’s focus on hydro-time models (we’ll leave TT and HTT models for another note). The fundamental idea is that the germination of a single seed is driven by its capacity to absorb water from the substrate as quickly as possible. It all depends on its base water potential <span class="math inline">\(\Psi_b\)</span>: if this is low (much lower than the water potential in the environment), water flows in quickly, and the seed germinates in a short time. Otherwise, the seed germinate slowly, or it does not germinate at all, when its base water potential is equal to or higher than the environmental water potential.</p>
+<p>We can model this by using the following equation <span class="citation">(Bradford, 2002)</span>:</p>
+<p><span class="math display">\[
+GR = \left\{ \begin{array}{cc}
+\frac{\Psi - \Psi_b}{\theta_H} &amp; if \quad \Psi_b &lt; \Psi \\
+0 &amp; if \quad \Psi_b \geq 0
+\end{array} \right.
+\]</span></p>
+<p>where GR is the germination rate for one seed (GR: the relative progress to germination accomplished in one day), <span class="math inline">\(\Psi_b\)</span> is the base water potential for that seed (MPa), <span class="math inline">\(\Psi\)</span> is the water potential in the substrate (MPa) and <span class="math inline">\(\theta_H\)</span> is the hydrotime to germination (in MPa h or MPa d unit).</p>
+<p>Considering that germination time is the inverse of GR, we can easily get to the following equation:</p>
+<p><span class="math display">\[\Psi_b = \Psi - \frac{\theta_H}{t}\]</span></p>
+<p>What does this equation tell us? Let’s assume that the hydrotime to germination is 10 <span class="math inline">\(MPa \, d\)</span> and the environmental water potential is -1 <span class="math inline">\(MPa\)</span>. A single seed germinates in exactly one day, if its base water potential is $ -1 - 10/1 = -11 $. If the base water potential is higher, germination will take more than one day, if it is lower, germination will take less than one day. But now, the following questions come: how many seeds in a population will be able to germinate in one day? And in two days? And in <span class="math inline">\(n\)</span> days?</p>
+<p>We know that the seeds within a population do not germinate altogether in the same moment. According to <span class="citation">Bradford (2002)</span>, the reason is that they have different values of base water potential. If the population is big enough, we can describe the variation of <span class="math inline">\(\Psi_b\)</span> within the population by using some density function, possibly parameterised by way of a location (<span class="math inline">\(\mu\)</span>) and a scale (<span class="math inline">\(\sigma\)</span>) parameter:</p>
+<p><span class="math display">\[ \Psi_b \sim \phi \left( \frac{\Psi_b - \mu}{\sigma} \right) \]</span></p>
+<p>This is easier to understand if we make a specific example. Let’s assume that the distribution of <span class="math inline">\(\Psi_b\)</span> values within the population is gaussian, with mean equal to <span class="math inline">\(\mu\)</span> and standard deviation equal to <span class="math inline">\(\sigma\)</span>. Let’s also assume that the hydrotime parameter (<span class="math inline">\(\theta_H\)</span>) is constant within the population. If we take, e.g., <span class="math inline">\(\mu = -9\)</span> and <span class="math inline">\(\sigma = 1\)</span>, we have the situation depicted in the figure below.</p>
+<p><img src="HTnonlin_files/figure-html/distribPsi-1.png" width="672" /></p>
+<p>The red left tail represents the proportion of seeds that germinate during the first day. This is easily determined by using the equations above, as the proportion of seeds with base water potentials equal to or lower than -11. It corresponds to 0.228 and it easily determined by using the gaussian Cumulative Density Function (CDF):</p>
+<pre class="r"><code>pnorm(-1 - 10/1, mean = -9, sd = 1)</code></pre>
+<pre><code>## [1] 0.02275013</code></pre>
+<p>More generally, we can write:</p>
+<p><span class="math display">\[ G(t, \Psi) = \Phi \left\{ \frac{\Psi - (\theta_T / tg) -\mu }{\sigma} \right\} \]</span></p>
+<p>where <span class="math inline">\(\Phi\)</span> is the selected cumulative distribution function. The above model returns the proportion of germinated seeds (G), as a function of time and water potential in the substrate <span class="citation">(Bradford, 2002)</span>. The response variable is the proportion of germinated seeds; therefore, this model is usually fit by nonlinear regression, after turning the observed counts of germinated seeds into proportions.</p>
+</div>
+<div id="implementation-of-ht-models" class="section level1">
+<h1>Implementation of HT models</h1>
+<p>We implemented this model in R as the function ‘HTnorm()’. This function is available within the ‘drcSeedGerm’ package (<strong>insert citation</strong>) and it is meant to be used with the ‘drm()’ function, in the ‘drc’ package <span class="citation">(Ritz et al., 2015)</span>.</p>
+<p>However, we did not stop here. More recent work has shown that the distribution of base water potential within the population may not be gaussian. Therefore, we implemented most of the models suggested by <span class="citation">Mesgaran et al. (2013)</span>; in all, we implemented HT models based on the following distributions for base water potential:</p>
+<ol style="list-style-type: decimal">
+<li>gaussian distribution (function ‘HTnorm()’)</li>
+<li>logistic distribution (function ‘HTL()’)</li>
+<li>Gumbel (function ‘HTG()’)</li>
+<li>log-logistic (function ‘HTLL()’)</li>
+<li>Weibull (Type I) (function ‘HTW1()’)</li>
+<li>Weibull (Type II) (function ‘HTW2()’)</li>
+</ol>
+<p>The equations are given at the end of this note. All distributions are parameterised by using location and scale parameters; for gaussian, logistic and log-logistic distributions, the location parameter corresponds to the median base water potential within the population (<span class="math inline">\(\Psi_{b(50)}\)</span>). For the gaussian distribution, the scale parameter corresponds to the standard deviation of <span class="math inline">\(\Psi_b\)</span>, that is <span class="math inline">\(\sigma_{\Psi b}\)</span>.</p>
+<p>Distributions based on logarithms (the log-logistic and all other distributions thereafter) are only defined for positive amounts. On the contrary, we know that base water potential is mostly negative. Therefore, shifted distributions need to be used, by introducing a shifting parameter <span class="math inline">\(\delta\)</span> which ‘moves’ the distribution to the left, along the x-axis, so that negative values are possible <span class="citation">(Mesgaran et al., 2013)</span>.</p>
+</div>
+<div id="an-example" class="section level1">
+<h1>An example</h1>
+<p>The germination of rapeseed (<em>Brassica napus</em> L. var. <em>oleifera</em>, cv. Excalibur) was tested at thirteen different water potentials (-0.03, -0.15, -0.3, -0.4, -0.5, -0.6, -0.7, -0.8, -0.9, -1, -1.1, -1.2, -1.5 MPa), which were created by using a polyethylene glycol solution (PEG 6000). For each water potential level, three replicated Petri dishes with 50 seeds were incubated at 20°C. Germinated seeds were counted and removed every 2-3 days for 14 days.</p>
+<p>In our lab, data from germination assays are usually collected in the following form:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">Dish</th>
+<th align="right">Psi</th>
+<th align="right">nInit</th>
+<th align="right">3</th>
+<th align="right">4</th>
+<th align="right">5</th>
+<th align="right">7</th>
+<th align="right">10</th>
+<th align="right">14</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">0.00</td>
+<td align="right">50</td>
+<td align="right">49</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">0.00</td>
+<td align="right">50</td>
+<td align="right">47</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">0.00</td>
+<td align="right">50</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="right">-0.03</td>
+<td align="right">50</td>
+<td align="right">43</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="right">-0.03</td>
+<td align="right">50</td>
+<td align="right">44</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="right">-0.03</td>
+<td align="right">50</td>
+<td align="right">46</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="right">-0.15</td>
+<td align="right">50</td>
+<td align="right">46</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="right">-0.15</td>
+<td align="right">50</td>
+<td align="right">47</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="right">-0.15</td>
+<td align="right">50</td>
+<td align="right">47</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="right">-0.30</td>
+<td align="right">50</td>
+<td align="right">47</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">11</td>
+<td align="right">-0.30</td>
+<td align="right">50</td>
+<td align="right">45</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">12</td>
+<td align="right">-0.30</td>
+<td align="right">50</td>
+<td align="right">47</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">13</td>
+<td align="right">-0.40</td>
+<td align="right">50</td>
+<td align="right">49</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">14</td>
+<td align="right">-0.40</td>
+<td align="right">50</td>
+<td align="right">49</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">15</td>
+<td align="right">-0.40</td>
+<td align="right">50</td>
+<td align="right">48</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">16</td>
+<td align="right">-0.50</td>
+<td align="right">50</td>
+<td align="right">48</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">17</td>
+<td align="right">-0.50</td>
+<td align="right">50</td>
+<td align="right">44</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">18</td>
+<td align="right">-0.50</td>
+<td align="right">50</td>
+<td align="right">45</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="right">19</td>
+<td align="right">-0.60</td>
+<td align="right">50</td>
+<td align="right">45</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">20</td>
+<td align="right">-0.60</td>
+<td align="right">50</td>
+<td align="right">43</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">21</td>
+<td align="right">-0.60</td>
+<td align="right">50</td>
+<td align="right">45</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="right">22</td>
+<td align="right">-0.70</td>
+<td align="right">50</td>
+<td align="right">25</td>
+<td align="right">12</td>
+<td align="right">2</td>
+<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">23</td>
+<td align="right">-0.70</td>
+<td align="right">50</td>
+<td align="right">27</td>
+<td align="right">13</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">24</td>
+<td align="right">-0.70</td>
+<td align="right">50</td>
+<td align="right">30</td>
+<td align="right">6</td>
+<td align="right">7</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">25</td>
+<td align="right">-0.80</td>
+<td align="right">50</td>
+<td align="right">9</td>
+<td align="right">15</td>
+<td align="right">7</td>
+<td align="right">5</td>
+<td align="right">8</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="right">26</td>
+<td align="right">-0.80</td>
+<td align="right">50</td>
+<td align="right">5</td>
+<td align="right">7</td>
+<td align="right">13</td>
+<td align="right">11</td>
+<td align="right">8</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">27</td>
+<td align="right">-0.80</td>
+<td align="right">50</td>
+<td align="right">10</td>
+<td align="right">7</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">7</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">28</td>
+<td align="right">-0.90</td>
+<td align="right">50</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">15</td>
+<td align="right">7</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">29</td>
+<td align="right">-0.90</td>
+<td align="right">50</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">5</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="right">-0.90</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">12</td>
+<td align="right">4</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">31</td>
+<td align="right">-1.00</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">32</td>
+<td align="right">-1.00</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">33</td>
+<td align="right">-1.00</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">34</td>
+<td align="right">-1.10</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">35</td>
+<td align="right">-1.10</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">36</td>
+<td align="right">-1.10</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">37</td>
+<td align="right">-1.20</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">38</td>
+<td align="right">-1.20</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">39</td>
+<td align="right">-1.20</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">40</td>
+<td align="right">-1.50</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">41</td>
+<td align="right">-1.50</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">42</td>
+<td align="right">-1.50</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p>Indeed, we have one row per Petri dish, with related water potential value and the counts observed at each assessment time. First of all, we need to transform the dataset in a form that is useful for nonlinear regression. I.e., we need to have one row per each combination of dish and observation time and several columns, to list all necessary information, including the cumulative proportion of germinated seeds.</p>
+<p>The original dataset is available within the ‘drcSeedGerm’ package; it can be transformed by using the ‘makeNlin()’ function contained in the same package.</p>
+<pre class="r"><code>library(drcSeedGerm)
+data(rapeOr)
+rape &lt;- makeNlin(rapeOr[,4:9], rapeOr[,1:2], rapeOr$nInit, c(3, 4, 5, 7, 10, 14))
+head(rape, 10)</code></pre>
+<pre><code>##    Dish Psi Time propCum
+## 1     1   0    3    0.98
+## 2     1   0    4    0.98
+## 3     1   0    5    0.98
+## 4     1   0    7    0.98
+## 5     1   0   10    0.98
+## 6     1   0   14    0.98
+## 7     2   0    3    0.94
+## 8     2   0    4    0.94
+## 9     2   0    5    0.94
+## 10    2   0    7    0.94</code></pre>
+<p>We can now fit all nonlinear HT models, considering all the possible distributions of base water potential. We would like to highlight that starting values are not necessary, as self-starting routines are alreay implemented for all models.</p>
+<pre class="r"><code>library(drc)
+mod1 &lt;- drm(propCum ~ Time + Psi, data = rape, fct = HTnorm())
+mod2 &lt;- drm(propCum ~ Time + Psi, data = rape, fct = HTL())
+mod3 &lt;- drm(propCum ~ Time + Psi, data = rape, fct = HTG())
+mod4 &lt;- drm(propCum ~ Time + Psi, data = rape, fct = HTLL())
+mod5 &lt;- drm(propCum ~ Time + Psi, data = rape, fct = HTW1())
+mod6 &lt;- drm(propCum ~ Time + Psi, data = rape, fct = HTW2())
+
+AIC(mod1, mod2, mod3, mod4, mod5, mod6)</code></pre>
+<pre><code>##      df       AIC
+## mod1  4 -733.3981
+## mod2  4 -736.1286
+## mod3  4 -775.4074
+## mod4  5 -809.3213
+## mod5  5 -800.8274
+## mod6  5 -774.6877</code></pre>
+<p>According to the Akaike’s Information Criterion (AIC; <span class="citation">Akaike (1974)</span>), we note that the gaussian distribution is the worse fitting among all candidate models, while the log-logistic is the best one. Let’s take a look at the value of estimated parameters.</p>
+<pre class="r"><code>summary(mod4)</code></pre>
+<pre><code>## 
+## Model fitted: Hydrotime model with log-logistic distribution of Psib (Mesgaran et al., 2013)
+## 
+## Parameter estimates:
+## 
+##                      Estimate Std. Error  t-value   p-value    
+## thetaH:(Intercept)  0.7626110  0.0226434   33.679 &lt; 2.2e-16 ***
+## delta:(Intercept)   1.1120616  0.0132172   84.137 &lt; 2.2e-16 ***
+## Psib50:(Intercept) -0.9762636  0.0046089 -211.820 &lt; 2.2e-16 ***
+## sigma:(Intercept)   0.4181350  0.0395473   10.573 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error:
+## 
+##  0.04799896 (248 degrees of freedom)</code></pre>
+<p>Previous papers have shown that standard errors obtained with a nonlinear regression fit may be strongly underestimated <span class="citation">(Ritz et al., 2013)</span>. More accurate standard errors can be obtained by using either a fully iterated delete-a-group jackknike estimator <span class="citation">(Onofri et al., 2014)</span> or a cluster-robust sandwich estimator. Both can be calculated by using either the function ‘jackGroupSE()’ in the ‘drcSeedGerm’ package, or the function ‘coeftest’, together with the facilities provided in the ‘drc’, ‘sandwich’ and ‘lmtest’ packages <span class="citation">(Berger et al., 2017; Ritz et al., 2015; Zeileis and Hothorn, 2002)</span>.</p>
+<pre class="r"><code>#library(devtools)
+#install_github(&quot;OnofriAndreaPG/drcSeedGerm&quot;)
+library(sandwich); library(lmtest)
+jack &lt;- jackGroupSE(mod4, data = rape, cluster = rape$Dish)</code></pre>
+<pre><code>## [1] &quot;Deleting group 1 and refitting&quot;
+## [1] 1
+## [1] &quot;Deleting group 2 and refitting&quot;
+## [1] 2
+## [1] &quot;Deleting group 3 and refitting&quot;
+## [1] 3
+## [1] &quot;Deleting group 4 and refitting&quot;
+## [1] 4
+## [1] &quot;Deleting group 5 and refitting&quot;
+## [1] 5
+## [1] &quot;Deleting group 6 and refitting&quot;
+## [1] 6
+## [1] &quot;Deleting group 7 and refitting&quot;
+## [1] 7
+## [1] &quot;Deleting group 8 and refitting&quot;
+## [1] 8
+## [1] &quot;Deleting group 9 and refitting&quot;
+## [1] 9
+## [1] &quot;Deleting group 10 and refitting&quot;
+## [1] 10
+## [1] &quot;Deleting group 11 and refitting&quot;
+## [1] 11
+## [1] &quot;Deleting group 12 and refitting&quot;
+## [1] 12
+## [1] &quot;Deleting group 13 and refitting&quot;
+## [1] 13
+## [1] &quot;Deleting group 14 and refitting&quot;
+## [1] 14
+## [1] &quot;Deleting group 15 and refitting&quot;
+## [1] 15
+## [1] &quot;Deleting group 16 and refitting&quot;
+## [1] 16
+## [1] &quot;Deleting group 17 and refitting&quot;
+## [1] 17
+## [1] &quot;Deleting group 18 and refitting&quot;
+## [1] 18
+## [1] &quot;Deleting group 19 and refitting&quot;
+## [1] 19
+## [1] &quot;Deleting group 20 and refitting&quot;
+## [1] 20
+## [1] &quot;Deleting group 21 and refitting&quot;
+## [1] 21
+## [1] &quot;Deleting group 22 and refitting&quot;
+## [1] 22
+## [1] &quot;Deleting group 23 and refitting&quot;
+## [1] 23
+## [1] &quot;Deleting group 24 and refitting&quot;
+## [1] 24
+## [1] &quot;Deleting group 25 and refitting&quot;
+## [1] 25
+## [1] &quot;Deleting group 26 and refitting&quot;
+## [1] 26
+## [1] &quot;Deleting group 27 and refitting&quot;
+## [1] 27
+## [1] &quot;Deleting group 28 and refitting&quot;
+## [1] 28
+## [1] &quot;Deleting group 29 and refitting&quot;
+## [1] 29
+## [1] &quot;Deleting group 30 and refitting&quot;
+## [1] 30
+## [1] &quot;Deleting group 31 and refitting&quot;
+## [1] 31
+## [1] &quot;Deleting group 32 and refitting&quot;
+## [1] 32
+## [1] &quot;Deleting group 33 and refitting&quot;
+## [1] 33
+## [1] &quot;Deleting group 34 and refitting&quot;
+## [1] 34
+## [1] &quot;Deleting group 35 and refitting&quot;
+## [1] 35
+## [1] &quot;Deleting group 36 and refitting&quot;
+## [1] 36
+## [1] &quot;Deleting group 37 and refitting&quot;
+## [1] 37
+## [1] &quot;Deleting group 38 and refitting&quot;
+## [1] 38
+## [1] &quot;Deleting group 39 and refitting&quot;
+## [1] 39
+## [1] &quot;Deleting group 40 and refitting&quot;
+## [1] 40
+## [1] &quot;Deleting group 41 and refitting&quot;
+## [1] 41
+## [1] &quot;Deleting group 42 and refitting&quot;
+## [1] 42</code></pre>
+<pre class="r"><code>sand &lt;- coeftest(mod4, vcov = vcovCL, cluster = rape$Dish)</code></pre>
+<pre class="r"><code>jack</code></pre>
+<pre><code>##                      Estimate          SE  Robust SE
+## thetaH:(Intercept)  0.7626110 0.022643351 0.04831402
+## delta:(Intercept)   1.1120616 0.013217240 0.02788956
+## Psib50:(Intercept) -0.9762636 0.004608929 0.01112274
+## sigma:(Intercept)   0.4181350 0.039547327 0.10004483</code></pre>
+<pre class="r"><code>sand</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##                      Estimate Std. Error   t value  Pr(&gt;|t|)    
+## thetaH:(Intercept)  0.7626110  0.0292557   26.0671 &lt; 2.2e-16 ***
+## delta:(Intercept)   1.1120616  0.0278818   39.8848 &lt; 2.2e-16 ***
+## Psib50:(Intercept) -0.9762636  0.0068442 -142.6404 &lt; 2.2e-16 ***
+## sigma:(Intercept)   0.4181350  0.0821988    5.0869 7.187e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Standard errors from nonlinear regression confirm to be smaller than sandwich and jackknife SEs. These latter two are very similar, although jackknife SEs are slightly higher.</p>
+<p>We might be interested in getting the GR values for a certain percentile (e.g. GR50, GR30), which is easily accomplished by using the ‘GR()’ function in ‘drcSeedGerm’. Likewise, if we are interested in the germination times for a certain percentile (e.g. T50, T30), we can use the ‘GTime()’ function in the same package. In the code below, we request the GR30, GR50 and GR70, as well as T30, T50 amd T70, for a water potential level of 0 MPa.</p>
+<pre class="r"><code>#GRate(mod4, respLev=c(30, 50, 70), Psi=0, vcov. = vcovCL)
+#GTime(mod4, respLev=c(30, 50, 70), Psi=0, vcov. = vcovCL)</code></pre>
+<p>Both functions are wrappers for the ‘ED()’ function in ‘drc’. These wrappers reverse the behaviour of the ‘ED()’ function, in the sense that they consider the percentiles for the whole population, including the ungerminated fraction. That is, the, e.g., T50 would be the time to 50% germination; if this germination level is not reached at all, the function returns infinity. We believe that, with germination assays, considering the percentiles for the whole population is more meaningful for comparing different populations. Again, the use of cluster-robust standard errors is highly recommended.</p>
+<p>We can also make predictions about the germinated proportion for a certain time and water potential level. The code below returns the maximum germinated proportion at -1.5, -0.75, and 0 MPa.</p>
+<pre class="r"><code>predictSG(mod4, se.fit=T, vcov. = vcovCL,
+        newdata = data.frame(Time=c(10, 10, 10), 
+                             Psi=c(-1.5, -0.75, 0))
+        )</code></pre>
+<pre><code>##        Prediction           SE
+## [1,] 5.300470e-13 2.552884e-12
+## [2,] 8.556511e-01 6.633364e-03
+## [3,] 9.923023e-01 2.854223e-03</code></pre>
+<p>Predictions may also be used to plot graphs.</p>
+<p><img src="HTnonlin_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>#Detail on the equations</p>
+<p>The equation for the model based on gaussian distribution has already been presented before. Here, we show all other equations, as implemented in our package.</p>
+<div id="logistic-distribution" class="section level2">
+<h2>Logistic distribution</h2>
+<p><span class="math display">\[ G(t, \Psi) = \frac{1}{1 + exp \left[ - \frac{  \Psi  - \left( \theta _H/t \right) - \Psi_{b(50)} } {\sigma}  \right] }\]</span></p>
+</div>
+<div id="gumbel-distribution" class="section level2">
+<h2>Gumbel distribution</h2>
+<p><span class="math display">\[ G(t, \Psi) = \exp \left\{ { - \exp \left[ { - \left( {\frac{{\Psi - (\theta _H / t ) - \mu }}{\sigma }} \right)} \right]} \right\} \]</span></p>
+</div>
+<div id="log-logistic-distribution" class="section level2">
+<h2>Log-logistic distribution</h2>
+<p><span class="math display">\[ G(t, \Psi) = \frac{1}{1 + \exp \left\{ \frac{ \log \left[ \Psi  - \left( \frac{\theta _H}{t} \right) + \delta \right] - \log(\Psi_{b50} + \delta)  }{\sigma}\right\} }\]</span></p>
+</div>
+<div id="weibull-distribution-type-i" class="section level2">
+<h2>Weibull distribution (Type I)</h2>
+<p><span class="math display">\[ G(t, \Psi) = exp \left\{ - \exp \left[ - \frac{ \log \left[ \Psi  - \left( \frac{\theta _H}{t} \right) + \delta \right] - \log(\Psi_{b50} + \delta)  }{\sigma}\right] \right\}\]</span></p>
+</div>
+<div id="weibull-distribution-type-ii" class="section level2">
+<h2>Weibull distribution (Type II)</h2>
+<p><span class="math display">\[ G(t, \Psi) = 1 - exp \left\{ - \exp \left[ \frac{ \log \left[ \Psi  - \left( \frac{\theta _H}{t} \right) + \delta \right] - \log(\Psi_{b50} + \delta)  }{\sigma}\right] \right\}\]</span></p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-akaike_new_1974">
+<p>Akaike, H., 1974. A new look at the statistical model identification. IEEE Transactions on Automatic Control 19, 716–723.</p>
+</div>
+<div id="ref-berger_various_2017">
+<p>Berger, S., Graham, N., Zeileis, A., 2017. Various versatile variances: An object-oriented implementation of clustered covariances in R. Working Paper 2017-12, Working Papers in Economics and Statistics, Research Platform Empirical and Experimental Economics, Universität Innsbruck.</p>
+</div>
+<div id="ref-Bradford2002_HydroTime">
+<p>Bradford, K., 2002. Applications of hydrothermal time to quantifying and modeling seed germination and dormancy. Weed Science 50, 248–260.</p>
+</div>
+<div id="ref-Mesgaran2013_SeedGermDistributions">
+<p>Mesgaran, M.B., Mashhadi, H.R., Alizadeh, H., Hunt, J., Young, K.R., Cousens, R.D., 2013. Importance of distribution function selection for hydrothermal time models of seed germination. Weed Research 53, 89–101.</p>
+</div>
+<div id="ref-onofri_hydrothermal-time_2018">
+<p>Onofri, A., Benincasa, P., Mesgaran, M.B., Ritz, C., 2018. Hydrothermal-time-to-event models for seed germination. European Journal of Agronomy 101, 129–139.</p>
+</div>
+<div id="ref-onofri_current_2010">
+<p>Onofri, A., Carbonell, E., Piepho, H., Mortimer, A.M., Cousens, R.D., 2010. Current statistical issues in weed research. Weed Research 50, 5–24.</p>
+</div>
+<div id="ref-OnofriEtAl2010_Survival">
+<p>Onofri, A., Gresta, F., Tei, F., 2010. A new method for the analysis of germination and emergence data of weed species. Weed Research 50, 187–198.</p>
+</div>
+<div id="ref-onofri_experimental_2014">
+<p>Onofri, A., Mesgaran, M., Neve, P., Cousens, R., 2014. Experimental design and parameter estimation for threshold models in seed germination. Weed Research 54, 425–435.</p>
+</div>
+<div id="ref-Ritz:2015aa">
+<p>Ritz, C., Baty, F., Streibig, J.C., Gerhard, D., 2015. Dose-response analysis using r. PLOS ONE 10.</p>
+</div>
+<div id="ref-Ritz2012_CureModel">
+<p>Ritz, C., Pipper, C.B., Streibig, J.C., 2013. Analysis of germination data from agricultural experiments. European Journal of Agronomy 45, 1–6.</p>
+</div>
+<div id="ref-Zeileis2002">
+<p>Zeileis, A., Hothorn, T., 2002. Diagnostic checking in regression relationships. R News 2, 7–10.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

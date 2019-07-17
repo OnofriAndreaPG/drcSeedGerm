@@ -148,12 +148,11 @@ sand
 
 Standard errors from nonlinear regression confirm to be smaller than sandwich and jackknife SEs. These latter two are very similar, although jackknife SEs are slightly higher.
 
-We might be interested in getting the GR values for a certain percentile (e.g. GR50, GR30), which 
-is easily accomplished by using the 'GR()' function in 'drcSeedGerm'. Likewise, if we are interested in the germination times for a certain percentile (e.g. T50, T30), we can use the 'GTime()' function in the same package. In the code below, we request the GR30, GR50 and GR70, as well as T30, T50 amd T70, for a water potential level of 0 MPa.
+We might be interested in getting the GR values for a certain percentile (e.g. GR50, GR30), which is easily accomplished by using the 'GR()' function in 'drcSeedGerm'. Likewise, if we are interested in the germination times for a certain percentile (e.g. T50, T30), we can use the 'GTime()' function in the same package. In the code below, we request the GR30, GR50 and GR70, as well as T30, T50 amd T70, for a water potential level of 0 MPa.
 
 ```{r}
-GR(mod4, respLev=c(30, 50, 70), Psi=0, vcov. = vcovCL)
-GTime(mod4, respLev=c(30, 50, 70), Psi=0, vcov. = vcovCL)
+#GRate(mod4, respLev=c(30, 50, 70), Psi=0, vcov. = vcovCL)
+#GTime(mod4, respLev=c(30, 50, 70), Psi=0, vcov. = vcovCL)
 ```
 
 Both functions are wrappers for the 'ED()' function in 'drc'. These wrappers reverse the behaviour of the 'ED()' function, in the sense that they consider the percentiles for the whole population, including the ungerminated fraction. That is, the, e.g., T50 would be the time to 50% germination; if this germination level is not reached at all, the function returns infinity. We believe that, with germination assays, considering the percentiles for the whole population is more meaningful for comparing different populations. Again, the use of cluster-robust standard errors is highly recommended.

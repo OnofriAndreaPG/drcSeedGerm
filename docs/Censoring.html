@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>What’s the role of censoring in germination assays?</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-gear"></span>
+     
+    Navigation
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Censoring.html">The problem of censoring</a>
+    </li>
+    <li>
+      <a href="TimeToEvent.html">Time-to-event methods account for censoring</a>
+    </li>
+    <li>
+      <a href="GermIndices.html">Revisting germination indices</a>
+    </li>
+    <li>
+      <a href="ComparingSeedLots.html">Comparing curves</a>
+    </li>
+    <li>
+      <a href="HTnonlin.html">Nonlinear regression analysis</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="http://www.statforbiology.com">Back to blog</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">What’s the role of censoring in germination assays?</h1>
+<h4 class="date">17 December, 2018</h4>
+
+</div>
+
+
+<hr />
+<div id="the-background" class="section level1">
+<h1>The background</h1>
+<p>Seeds in a population do not germinate altogether in the same moment. This is an undisputed fact, resulting from the seed-to-seed variability in germination time (t). We could describe such a variability by using some density function <span class="math inline">\(\phi\)</span>, usually parameterised by way of a location (<span class="math inline">\(\mu\)</span>) and scale (<span class="math inline">\(\sigma\)</span>) parameter:</p>
+<p><span class="math display">\[ t \sim \phi(\mu, \sigma)\]</span></p>
+<p>However, we should also consider that there will often be a fraction of seeds that will not germinate in the given conditions, because it is either dormant or nonviable. Let’s call this fraction <span class="math inline">\(\pi\)</span>; the density distribution of germination times becomes:</p>
+<p><span class="math display">\[ t \sim \pi \, \phi(\mu, \sigma) + (1 - \pi)\]</span></p>
+<p>From there, the proportion of germinated seeds (G) at <span class="math inline">\(t = t_g\)</span> is given by the corresponding cumulative distribution function:</p>
+<p><span class="math display">\[ G = P(t &lt; t_g) = \pi \, \Phi(\mu, \sigma)\]</span></p>
+<p>Usually, <span class="math inline">\(\Phi\)</span> is right-skewed and, therefore, log-normal, log-logistic or Weibull cumulative distribution functions have been succesfully used. The graph below represents the germination time-course for a seed population with lognormal distribution of germination times, <span class="math inline">\(\mu = 4.5\)</span> days, <span class="math inline">\(\sigma = 0.6\)</span> and a maximum germinated proportion <span class="math inline">\(\pi = 0.85\)</span>.</p>
+<p><img src="Censoring_files/figure-html/unnamed-chunk-1-1.png" width="576" /></p>
+<p>With a log-normal distribution, <span class="math inline">\(\mu\)</span> corresponds to the time to 50% germination (for the germinated fraction), while <span class="math inline">\(\sigma\)</span> is the standard deviation on a log-scale.</p>
+<hr />
+</div>
+<div id="monte-carlo-simulation-of-a-germination-assay" class="section level1">
+<h1>Monte Carlo simulation of a germination assay</h1>
+<p>Considering the above, we can simulate the results of a germination assay. Let’s take a 100 seed sample from the population above. Obviously, this sample will not necessarily reflect the characteristics of the population. We can do this sampling in R, by using a three-steps approach. First, let’s simulate the number of germinated seeds, assuming a binomial distribution with <span class="math inline">\(\pi\)</span> equal to 0.85:</p>
+<pre class="r"><code>#Monte Carlo simulation - Step 1
+set.seed(1234)
+nGerm &lt;- rbinom(1, 100, pMax)
+nGerm</code></pre>
+<pre><code>## [1] 89</code></pre>
+<p>We see that in this instance 89 seeds germinated out of 100, which is not the expected 85%. This is a typical random fluctuation. Second, let’s simulate the germination times for these 89 seeds, by drawing from a log-normal distribution with the above parameters:</p>
+<pre class="r"><code>#Monte Carlo simulation - Step 2
+Gtimes &lt;- rlnorm(nGerm, log(mu), sigma)
+Gtimes &lt;- c(Gtimes, rep(Inf, 100 - nGerm))
+Gtimes</code></pre>
+<pre><code>##   [1]  5.424863  5.434125  5.582579  2.903142  4.597512  4.815609 10.603760
+##   [8]  8.118291  3.097525  2.901291  3.300505  1.574027  7.630397 10.237768
+##  [15]  1.635063  3.088284  4.549728  6.870408  3.052210  7.576004  5.637602
+##  [22]  5.420753  4.513539  4.399537  6.948064  3.340211  4.530872  4.526701
+##  [29]  6.760117  8.346274  1.594181  1.198977  6.233769  4.558227  4.961047
+##  [36]  9.479485  7.197573  4.631820  1.856768  5.844697  4.313697  4.810473
+##  [43]  9.661802  3.346942  9.584485  9.722689  2.299752  4.579095  1.412326
+##  [50]  6.645991  4.964877  2.740231  3.431359  2.289046  1.559058  2.091263
+##  [57]  2.235598 10.176567  3.167262  7.411185 10.289998 11.576995  3.191594
+##  [64]  4.522085  3.390061  5.527390  4.005285  4.286991  5.220449  8.824484
+##  [71] 16.204791  4.375652  5.469491  4.971624  5.054734  2.880597  8.386469
+##  [78] 17.489334 27.570654  4.890293  5.047498  2.859137  5.555705  1.878668
+##  [85]  3.429052  5.112954  4.029451  6.863120  4.933304       Inf       Inf
+##  [92]       Inf       Inf       Inf       Inf       Inf       Inf       Inf
+##  [99]       Inf       Inf</code></pre>
+<p>Now, we pile up the vector hosting 100 germination times (Gtimes). Please, note that we added 11 infinite germination times, to represent non-germinated seeds.</p>
+<p>Unfortunately, the above dataset is not what we would actually observe during a germination assay. Indeed, we cannot observe the exact germination time for each single seed in the lot; we can only count the seeds which have germinated between two assessment times. As the third step, we simulate the observed counts, by assuming daily monitoring for 15 days.</p>
+<pre class="r"><code>obsT &lt;- seq(1, 15, by=1) #Observation schedule
+table( cut(Gtimes, breaks = c(0, obsT)) )</code></pre>
+<pre><code>## 
+##   (0,1]   (1,2]   (2,3]   (3,4]   (4,5]   (5,6]   (6,7]   (7,8]   (8,9] 
+##       0       8       9      11      22      13       6       4       4 
+##  (9,10] (10,11] (11,12] (12,13] (13,14] (14,15] 
+##       4       4       1       0       0       0</code></pre>
+<p>We can see that, e.g., 8 germinated seeds were counted at day 2; therefore they germinated between day 1 and day 2 and their real germination time is unknown, but included in the range between 1 and 2 (left-open and right-closed). We say that this data is <strong>interval-censored</strong>; likewise, we talk about <strong>grouped-data</strong>, as the data come as groups of seeds with similar germination times.</p>
+<p>We also see that 14 seeds were still ungerminated at the end of the assay. For this simulation excercise, we know that 11 seeds were non-germinable and three seeds were germinable, but were not allowed enough time to germinate (look at the table above: there are three seeds with germination times respectively equal to 16.2, 17.5 27.6 days). In real life, this is another source of uncertainty: we might be able to ascertain whether these 14 seeds are viable or not (e.g. by using a tetrazolium test), but, if they are viable, we would never be able to tell whether they are dormant or their germination time is simply longer than the duration of the assay. In real life, we can only reach an uncertain conclusion: the germination time of the 14 ungerminated seeds is comprised between 15 days to infinity; this sort of uncertainty is called <strong>right-censoring</strong>.</p>
+<p>Let’s re-organise the data, so that they are amenable to further analyses.</p>
+<pre class="r"><code>counts &lt;- as.numeric( table( cut(Gtimes, breaks = c(0, obsT)) ) )
+df &lt;- data.frame(timeBef = c(0, obsT), timeAf = c(obsT, Inf), counts = c(as.numeric(counts), 100 - sum(counts)), propCum = c(cumsum(counts), 100)/100)
+df</code></pre>
+<pre><code>##    timeBef timeAf counts propCum
+## 1        0      1      0    0.00
+## 2        1      2      8    0.08
+## 3        2      3      9    0.17
+## 4        3      4     11    0.28
+## 5        4      5     22    0.50
+## 6        5      6     13    0.63
+## 7        6      7      6    0.69
+## 8        7      8      4    0.73
+## 9        8      9      4    0.77
+## 10       9     10      4    0.81
+## 11      10     11      4    0.85
+## 12      11     12      1    0.86
+## 13      12     13      0    0.86
+## 14      13     14      0    0.86
+## 15      14     15      0    0.86
+## 16      15    Inf     14    1.00</code></pre>
+<p>Now we can try to picture the situation in the graph below.</p>
+<pre class="r"><code>plot(propCum ~ timeAf, data = df, subset=c(is.finite(df$timeAf)==T), pch = 20,
+     xlab= &quot;Time (days)&quot;, ylab = &quot;Proportion of germinated seeds&quot;, xlim=c(0,17),
+     ylim = c(0, 1))
+for(i in 2:15){
+polygon(c(df$timeBef[i], df$timeAf[i], df$timeAf[i], df$timeBef[i]), 
+        c( df$propCum[i-1], df$propCum[i-1], df$propCum[i], df$propCum[i] ),
+        density=100, col=&quot;grey&quot;, border=NA)
+}
+polygon(c(15, 17, 17, 15), 
+        c(0.86, 0.86, 1, 1 ),
+        density=100, col=&quot;grey&quot;)
+lines(c(propCum, 0.86) ~ c(timeAf, 17), type=&quot;s&quot;, data = df,
+      col=&quot;blue&quot;, subset=is.finite(timeAf)==T)
+lines(c(propCum, 1) ~ c(timeBef, 17), type=&quot;s&quot;, data = df,
+      col=&quot;red&quot;)</code></pre>
+<p><img src="Censoring_files/figure-html/unnamed-chunk-6-1.png" width="576" /></p>
+<p>What is the real germination time-course? The red one? The blue one? Something in between? We cannot say this from our dataset. The first conclusion is that censoring creates a certain amount of uncertainty, that should never be neglected. Such an uncertainty is due to the monitoring schedule, which prevents us from observing the actual germination moment for each seed in the sample. It is peculiar to most time-to-event studies and it is additional to the other sources of uncertainty, for example those relating to sampling variability and possible errors in the manipulation of seeds and Petri dishes.</p>
+<hr />
+<p>#What happens if we disregard censoring?</p>
+<p>The consequences of ignoring censoring may be of different severity. We’ll make two examples.</p>
+<div id="estimating-the-mean-germination-time-mgt" class="section level2">
+<h2>Estimating the Mean Germination Time (MGT)</h2>
+<p>The Mean Germination Time (MGT) has been often used to measure the speed of germination for the germinated fraction, by using the following equation:</p>
+<p><span class="math display">\[ MGT = \frac{\sum_{i=1}^{k} n_it_i}{\sum_{i=1}^{k} n_i} \]</span></p>
+<p>where <span class="math inline">\(t_i\)</span> is the time of the <span class="math inline">\(i-th\)</span> assessment, <span class="math inline">\(n_i\)</span> is the count of germinated seeds between <span class="math inline">\(t_{i - 1}\)</span> and <span class="math inline">\(t_{i}\)</span> and <span class="math inline">\(k\)</span> is the total number of assessments. The above formula does not consider censoring and it assigns to all seeds in each interval the same germination time, i.e. the exact time when they were scored as germinated.</p>
+<p>Please note that the use of MGT has beem also criticised formula in <span class="citation">Ranal and Santana (2006)</span> , we end up with an overestimation. Indeed, the mean germination time for the log-normal distribution where we took our sample from is:</p>
+<p><span class="math display">\[ MGT = exp\left( \mu + \frac{\sigma^2}{2} \right) \]</span></p>
+<p>that is 5.3874781. We can get an estimate from our sample by using the formula in <span class="citation">Ranal and Santana (2006)</span>, as implemented in the ‘germinationmetrics’ package <span class="citation">(Aravind et al., 2018)</span>:</p>
+<pre class="r"><code>timings &lt;- df$timeAf[is.finite(df$timeAf) == T]
+counts &lt;- df$counts[is.finite(df$timeAf) == T]
+germinationmetrics::MeanGermTime(counts, timings)</code></pre>
+<pre><code>## [1] 5.593023</code></pre>
+<p>We see that our estimate is higher than the real value. In itself, this means nothing. However, let’s repeat the sampling 1000 times:</p>
+<pre class="r"><code>GermSampling &lt;- function(nSeeds, timeLast, stepOss, mu, shape, pMax){
+    
+    #Draw a sample as above
+    germ &lt;- rbinom(1, nSeeds, pMax)
+    Gtimes &lt;- rlnorm(nGerm, log(mu), sigma)
+    Gtimes &lt;- c(Gtimes, rep(Inf, 100 - nGerm))
+    
+    #Generate the observed data
+    obsT &lt;- seq(1, timeLast, by=stepOss) #Observation schedule (by 5 o 2)
+    counts &lt;- as.numeric( table( cut(Gtimes, breaks = c(0, obsT)) ) )
+    
+    #Calculate the MGT
+    MGT &lt;- germinationmetrics::MeanGermTime(germ.counts = counts,
+                                            intervals = obsT)
+    return(MGT)
+}
+
+set.seed(1234)
+result &lt;- c()
+for (i in 1:1000) {
+  res &lt;- GermSampling(100, 15, 1, 4.5, 0.6, 0.85)
+  result &lt;- c(result, res)
+} 
+mean(result)</code></pre>
+<pre><code>## [1] 5.565812</code></pre>
+<p>The bias is approximately 3%. Not much, but if we use a lower number of seeds and a looser monitoring schedule, the bias may increase remarkably (up to 19%):</p>
+<pre class="r"><code>set.seed(1234)
+result &lt;- c()
+for (i in 1:1000) {
+  res &lt;- GermSampling(25, 15, 3, 4.5, 0.6, 0.85)
+  result &lt;- c(result, res)
+} 
+mean(result)</code></pre>
+<pre><code>## [1] 6.420816</code></pre>
+<p>Clearly, the MGT is not a good estimator of the mean germination time for the germinated fraction.</p>
+</div>
+<div id="estimating-the-time-to-50-germination-t50" class="section level2">
+<h2>Estimating the Time to 50% germination (T50)</h2>
+<p>In other instances, the consequences of ignoring censoring may be less dangerous (but still important). For example, the Time to 50% germination (T50) is used as another measure of germination velocity, which is favoured over MGT when we need to compare seed lots with different germination capability. For a log-normal distribution, the T50 can be obtained by using the quantile function:</p>
+<pre class="r"><code>qlnorm(0.5 / pMax, log(mu), sigma)</code></pre>
+<pre><code>## [1] 5.144263</code></pre>
+<p>This is the real time to 50% germination. In order to get an estimate from our sample, nonlinear regression is often recommended. In this case, the observed counts are transformed into cumulative proportions and used as the response variable, while the observation time is used as the independent variable.</p>
+<p>The following code fits a log-normal cumulative distribution function to the observed data, by using the ‘drm’ function, in the ‘drc’ package <span class="citation">(Ritz et al., 2015)</span>. The T50 is retreived by using the ED function and passing the model object as an argument.</p>
+<pre class="r"><code>library(drc)
+mod &lt;- drm(propCum ~ timeAf, data = df, 
+           subset = c(is.finite(timeAf) == T),
+           fct = LN.3() )
+ED(mod, 0.5, type = &quot;absolute&quot;)</code></pre>
+<pre><code>## 
+## Estimated effective doses
+## 
+##         Estimate Std. Error
+## e:1:0.5  5.14564    0.12519</code></pre>
+<p>We see that our estimate is very close to the real value. However, let’s how our estimator behave in the long run. The following code uses Monte Carlo simulation to extract 1000 samples, fit the log-normal cumulative distribution function model and retreive 1000 estimates, together with Standard Errors (SEs).</p>
+<pre class="r"><code>GermSampling &lt;- function(nSeeds, timeLast, stepOss, mu, shape, pMax){
+    
+    #Draw a sample as above
+    nGerm &lt;- rbinom(1, nSeeds, pMax)
+    Gtimes &lt;- rlnorm(nGerm, log(mu), sigma)
+    Gtimes &lt;- c(Gtimes, rep(Inf, 100 - nGerm))
+    
+    #Generate the observed data
+    obsT &lt;- seq(1, timeLast, by=stepOss) #Observation schedule (by 5 o 2)
+    counts &lt;- as.numeric( table( cut(Gtimes, breaks = c(0, obsT)) ) )
+    propCum &lt;- cumsum(counts)/nSeeds
+    
+    #Calculate the T50
+    mod &lt;- drm(propCum ~ obsT, fct = LN.3() )
+    T50 &lt;- ED(mod, 0.5, type = &quot;absolute&quot;, display = F)
+    c(T50 = T50[1,1], ES = T50[1,2])
+}
+
+set.seed(1234)
+result &lt;- data.frame()
+for (i in 1:1000) {
+  res &lt;- GermSampling(100, 15, 1, 4.5, 0.6, 0.85)
+  result &lt;- rbind(result, res)
+} 
+names(result) &lt;- c(&quot;T50&quot;, &quot;ES&quot;)
+head(result)</code></pre>
+<pre><code>##        T50         ES
+## 1 5.145639 0.12518627
+## 2 5.113493 0.12240291
+## 3 6.083023 0.18811890
+## 4 5.439515 0.13551344
+## 5 5.138722 0.06643969
+## 6 5.623690 0.18784672</code></pre>
+<pre class="r"><code>apply(result, 2, mean)</code></pre>
+<pre><code>##      T50       ES 
+## 5.160235 0.125364</code></pre>
+<pre class="r"><code>apply(result, 2, sd)</code></pre>
+<pre><code>##        T50         ES 
+## 0.41979820 0.05778375</code></pre>
+<p>We see that the estimates, on average, are very close to the real value. However, standard errors are, on average, 0.125 days, However, the Monte Carlo standard deviation is approximately 0.420 days, which tells us that standard errors from nonlinear regression are strongly underestimated.</p>
+<hr />
+<p>#Take-home message</p>
+<p>Censoring is peculiar to germination assays and other time-to-event studies. It may have a strong impact on the reliability of our estimates and standard errors and, therefore, it should never be neglected.</p>
+<hr />
+<p>#References</p>
+<div id="refs" class="references">
+<div id="ref-aravind_germinationmetrics_2018">
+<p>Aravind, J., Devi, S.V., Radhamani, J., Jacob, S.R., Srinivasan, K., 2018. The germinationmetrics package: A brief introduction 35.</p>
+</div>
+<div id="ref-ranal_how_2006">
+<p>Ranal, M.A., Santana, D.G.D., 2006. How and why to measure the germination process? Revista Brasileira de Botanica 29, 1–11.</p>
+</div>
+<div id="ref-Ritz:2015aa">
+<p>Ritz, C., Baty, F., Streibig, J.C., Gerhard, D., 2015. Dose-response analysis using r. PLOS ONE 10.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

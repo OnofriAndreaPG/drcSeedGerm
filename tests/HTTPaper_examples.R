@@ -1,10 +1,12 @@
 library(devtools)
+install_github("onofriandreapg/drcSeedGerm")
 install_github("doseResponse/drc")
+install.packages("drc")
 library(drcSeedGerm)
 library(lmtest)
 library(sandwich)
 
-
+library(drc)
 #HTE model fitting - Code Snippets 1-4
 data(rape)
 modHTE <- drm( nSeeds ~ timeBef + timeAf + Psi,

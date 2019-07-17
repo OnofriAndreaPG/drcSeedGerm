@@ -1,11 +1,11 @@
-#Function to get nonparametric quantiles for germination rate and pMax
-#with bootstrap SEs
-#Last edited: 12/01/19
-#####################################################################
+# Function to get nonparametric quantiles for germination rate and pMax
+# with bootstrap SEs
+# Last edited: 12/01/19
+##########################################################################
 quantileSG <- function(time, counts, probs, nSeeds,
                        se.fit = F, rate = F, type=1){
   #time <- c(2, 4, 6, 8, 10, 12); counts <- c(25, 12, 2, 6, 0, 0)
-  #probs <- 10; nSeeds <- 250; type = 1; i <- length(g)
+  #probs <- 10; nSeeds <- sum(counts); type = 1; i <- length(probs)
   ret <- c(); g <- probs
   for(i in 1:length(g)){
     dec <- (nSeeds + type - 1) * g[i] /100

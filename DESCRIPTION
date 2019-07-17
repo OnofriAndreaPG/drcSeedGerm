@@ -1,8 +1,8 @@
 Package: drcSeedGerm
-Date: 2018-11-20
+Date: 2019-06-21
 Type: Package
 Title: Statistical approaches for data analyses in seed germination assays
-Version: 0.95
+Version: 0.98
 Depends: R (>= 2.10.0), drc
 Author: Andrea Onofri <andrea.onofri@unipg.it>
 Maintainer: Andrea Onofri <andrea.onofri@unipg.it>

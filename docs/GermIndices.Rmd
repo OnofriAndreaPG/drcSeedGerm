@@ -64,7 +64,7 @@ I have automated this process within the 'drmSG()' function in the 'drcSeedGerm'
 
 ```{r message=F, warning=FALSE}
 mod <- drmSG(nSeeds ~ timeBef + timeAf, curveid = Dish,
-                       data=rape, fct = "LL", probs = c(10, 30, 50)) 
+                       data=rape, fct = "LL", g = c(10, 30, 50)) 
 ```
 
 What has happened? We can see a brief report.
