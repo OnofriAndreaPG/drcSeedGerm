@@ -10,13 +10,15 @@ navbar:
   - text: "Navigation"
     icon: fa-gear
     menu:
+      - text: "Describing germination curves"
+        href: Censoring.html
       - text: "The problem of censoring"
         href: Censoring.html
       - text: "Time-to-event methods account for censoring"
         href: TimeToEvent.html
       - text: "Revisting germination indices"
         href: GermIndices.html
-      - text: "Comparing curves"
+      - text: "Comparing germination curves"
         href: ComparingSeedLots.html
       - text: "Nonlinear regression analysis"
         href: HTnonlin.html

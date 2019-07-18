@@ -1,6 +1,7 @@
 ---
 title: Revisiting germination indices
 csl: european-journal-of-agronomy.csl
+author: Andrea Onofri
 date: "10 December, 2018"
 output:
   html_document:
@@ -11,6 +12,14 @@ output:
       smooth_scroll: no
 bibliography: drcSeedGerm.bib
 ---
+
+```{r setup, cache = F, echo = F}
+#Put at the beginning
+knitr::knit_hooks$set(document = function(x){ 
+  gsub("```\n*```r*\n*", "", x) 
+})
+```
+
 
 # Introduction
 
@@ -43,7 +52,7 @@ mod <- drm(nSeeds ~ timeBef + timeAf, fct = LL.3(),
   data = rape, subset = c(Dish == 23),
   type = "event") 
 summary(mod)
-
+plot(mod, log="", ylim=c(0,1))
 ED(mod, c(0.1, 0.3, 0.5), type = "absolute")
 ```
 
@@ -51,7 +60,7 @@ Please, note that I used the 'type = "absolute"' argument to the 'ED()' function
 
 The problem now is how to automate the process and calculate these germination indices for all Petri dishes. If we go through the dataset, we see that only a few Petri dishes show a clear germination time-course that would allow a three-parameter log-logistic model to be succesfully fit. Indeed, there might be five different situations:
 
-1. dishes with negligible germination (e.g. less than 10%)
+1. dishes with no or negligible germination (e.g. less than 10%)
 2. dishes where the maximum germinated proportion is reached already at the first germination time
 3. dishes not included in 1 or 2, but where, nonetheless, germination models cannot be succesfully fit.
 4. dishes with complete germination, where a three-parameter logistic is overparameterised and gives convergence problems. However, a two-parameter logistic ('LL.2()') can be succesfully fit
@@ -73,12 +82,12 @@ What has happened? We can see a brief report.
 table(mod$report$Code)
 ```
 
-Wee see that 18 dishes ended with 'Code = 1' (no or negligible germinations), 6 dishes ended with 'Code = 3' (no germination model could be fit), 6 dishes ended with 'Code = 4' ('LL.2()' was fit instead of 'LL.3()') and 12 dishes ended with 'Code = 5' (succesful LL.3() fit).
+Wee see that 10 dishes ended with 'Code = 0' or 'Code = 1' (no or negligible germinations), 6 dishes ended with 'Code = 2' (germination at first inspection almost complete), 5 dishes ended with 'Code = 3' (no germination model could be fit), 4 dishes ended with 'Code = 4' ('LL.2()' was fit instead of 'LL.3()') and 17 dishes ended with 'Code = 5' (succesful LL.3() fit).
 
 We can now retreive the model parameters (where a model could be fit)
 
 ```{r}
-head(mod$coefficients, 10)
+mod$coefficients[10:20,]
 ```
 
 We can also retreive the final observed germinated proportion for all dishes:
@@ -90,9 +99,10 @@ head(mod$pFinal, 10)
 and the GR for the 10th, 30th and 50th percentiles, together with standard errors.
 
 ```{r}
-head(mod$GRest, 10)
-head(mod$GRest.se, 10)
-
+head(mod$GRg, 10)
+head(mod$GRg.se, 10)
 ```
+
+We can see that the value for the 7th dish is very high and rather unreliable, which might require some further action on our side. However, I will stop here, as I just wanted to give an example of how using the 'drmSG()' function.
 
 #References

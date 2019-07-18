@@ -21,13 +21,13 @@ knitr::knit_hooks$set(document = function(x){
 ```
 
 
-#Introduction
+# Introduction
 
-Seed scientists are often concerned with several seed lots, which show different germination behaviours. For instance, they can have different plant species, or one single plant species  submitted to different treatments, e.g. different temperatures, different light conditions, different types of priming. One typical question is: how do I compare the germination behaviour of these different seed lots?
+Seed scientists are often faced with seed lots showing different germination behaviours. For instance, they can have different plant species, or one single plant species  submitted to different treatments, e.g. different temperatures, different light conditions, different types of priming. One typical question is: how do I compare the germination behaviour of these different seed lots?
 
-Let's take a practical approach and start from an appropriate example: we studied the germination behaviour for seeds of a plant species (*Verbascum arcturus*, BTW...), in different conditions. In detail, we considered the factorial combinations of two storage periods (LONG and SHORT storage) and two temperature regimes (FIX: constant daily temperature of 20°C; ALT: alternating daily temperature regime, with 25°C during daytime and 15°C during night time, with a 12:12h photoperiod). If you are not a seed scientist you may wonder why we made such an assay; well, there is evidence that, for some plant species, the germination ability improves over time after maturation. Furthermore, some seeds do not germinate well at a constant daily temperature regime, favouring daily temperature fluctuations.  These are all mechanisms by which seeds can recognise that they are in favourable conditions (e.g. they are close to the soil surface), so that the chances for plant establishment are maximised. Clever, isn't it?
+Let's take a practical approach and start from an appropriate example: a few years ago, some collegues studied the germination behaviour for seeds of a plant species (*Verbascum arcturus*, BTW...), in different conditions. In detail, they considered the factorial combinations of two storage periods (LONG and SHORT storage) and two temperature regimes (FIX: constant daily temperature of 20°C; ALT: alternating daily temperature regime, with 25°C during daytime and 15°C during night time, with a 12:12h photoperiod). If you are not a seed scientist you may wonder why my colleagues made such an assay; well, there is evidence that, for some plant species, the germination ability improves over time after maturation. There is also evidence that some seeds may not germinate if they do not experience a daily temperature fluctuation.  These are all mechanisms by which seeds can recognise that they are in favourable conditions (e.g. they are close to the soil surface), so that the chances for plant establishment are maximised. Clever, isn't it? My colleagues wanted to discover whether this was the case for Verbascum.
 
-But let's go back to our assay: we had four combinations (LONG-FIX, LONG-ALT, SHORT-FIX and SHORT-ALT) and four replicates for each combination. One replicate consisted of a Petri dish, that is a small plastic box containing humid blotting paper, where we put 25 seeds of Verbascum. In all, there were 16 Petri dishes: we put them in climatic chambers with the appropriate conditions and made daily inspections: germinated seeds were counted and removed from the dish. We did this for 15 days, until no more germinations could be observed.
+Let's go back to our assay: the experimental design consisted of four combinations (LONG-FIX, LONG-ALT, SHORT-FIX and SHORT-ALT) and four replicates for each combination. One replicate consisted of a Petri dish, that is a small plastic box containing humid blotting paper, with 25 seeds of Verbascum. In all, there were 16 Petri dishes, put in climatic chambers with the appropriate conditions. During the assay, my collegues made daily inspections: germinated seeds were counted and removed from the dishes. Inspections were made for 15 days, until no more germinations could be observed.
 
 The dataset is available from a gitHub repository: let's load it and have a look.
 
@@ -36,7 +36,7 @@ dataset <- read.csv("https://raw.githubusercontent.com/OnofriAndreaPG/agroBioDat
 head(dataset)
 ```
 
-We have one row per Petri dish; the first three columns show dish id, storage and temperature conditions. The next 15 columns represent the inspection times (from 1 to 15) and the counts of germinated seeds. The research question is:
+We have one row per Petri dish; the first three columns show dish id, storage and temperature conditions. The next 15 columns represent the inspection times (from 1 to 15) and contain the counts of germinated seeds. The research question is:
 
 *Is germination behaviour affected by storage and temperature conditions?*
 
@@ -44,9 +44,9 @@ We have one row per Petri dish; the first three columns show dish id, storage an
 
 One possible line of attack is to take a summary measure for each dish, e.g. the total number of germinated seeds. Taking a single value for each dish brings us back to more common methods of data analysis: for example, we can fit some sort of GLM to test the significance of effects (storage, temperature and their interaction), within a fully factorial design.
 
-Although the above method is not wrong, undoubtedly, it is sub-optimal. Indeed, dishes may contain the same total number of germinated seeds, but, nonetheless, they may differ for some other germination traits, such as velocity or uniformity. Clearly, we would like to express an overall judgment about the seed lots, not only about one charateristic of the seed lot. We are not specifically asking: "do the seed lots differ for their germination capability?". We are, more generally, asking "are the seed lots different?".
+Although the above method is not wrong, undoubtedly, it may be sub-optimal. Indeed, dishes may contain the same total number of germinated seeds, but, nonetheless, they may differ for some other germination traits, such as velocity or uniformity. Clearly, in this case we would like to express an overall judgment about the seed lots, not only about one specific charateristic. In other words, my colleagues were not specifically asking: "do the seed lots differ for their germination capability?". They were, more generally, asking "are the seed lots different?".
 
-Therefore, a different method of analysis should be sought, which considers the entire time series (from 1 to 15 days) and not only one single summary measure. This method exists and it is available within the time-to-event platform, which has shown very useful and appropriate for seed germination studies (Onofri et al., 2011; Ritz et al., 2013; Onofri et al., 2019).
+In order to get a general assessment, a different method of analysis should be sought, which considers the entire time series (from 1 to 15 days) and not only one single summary measure. This method exists and it is available within the time-to-event platform, which has shown very useful and appropriate for seed germination studies (Onofri et al., 2011; Ritz et al., 2013; Onofri et al., 2019).
 
 # The germination time-course
 
@@ -58,7 +58,7 @@ datasetR <- makeDrm(dataset[,4:18], dataset[,2:3], rep(25, 16), 1:15)
 head(datasetR, 16)
 ```
 
-The snippet above shows the first dish. The column 'timeAf' contains the time when the inspection was made and the column 'count' contains the number of germinated seeds (e.g. 9 seeds were counted at day 9). These seeds did not germinate exactly at day 9; they germinated within the interval between two inspections, that is between day 8 and day 9. The beginning of the interval is given in the variable 'timeBef'. The cumulative counts of germinated seeds are in the column 'nCum'; these cumulative counts have been converted into cumulative proportions by dividing by 25 (i.e., the total number of seeds in a dish; see the column 'propCum').
+The snippet above shows the first dish. The column 'timeAf' contains the time when the inspection was made and the column 'count' contains the number of germinated seeds (e.g. 9 seeds were counted at day 9). These seeds did not germinate exactly at day 9; they germinated within the interval between two inspections, that is between day 8 and day 9. The beginning of the interval is given in the variable 'timeBef'. Apart from these columns, we have additional columns, which we are not going to use for our analyses. The cumulative counts of germinated seeds are in the column 'nCum'; these cumulative counts have been converted into cumulative proportions by dividing by 25 (i.e., the total number of seeds in a dish; see the column 'propCum').
 
 We can use a time-to-event model to parameterise the germination time-course for this dish. This is easily done by using the 'drm()' function in the 'drc' package (Ritz et al., 2013):
 
@@ -91,7 +91,7 @@ modNull <- drm(count ~ timeBef + timeAf, fct = LL.3(), data = datasetR,
 anova(mod1, modNull, test = "Chisq")
 ```
 
-Now we can compare the full model (four curves) with the reduced model (one common curve) by using a Likelihood Ratio Test, which is approximately distributed as a Chi-square. The test is highly significant. Of course, we can also test some other hypotheses. For example, we can code a model with different curves for storage times, assuming that the effect of temperature is irrelevant:
+Now, we can compare the full model (four curves) with the reduced model (one common curve) by using a Likelihood Ratio Test, which is approximately distributed as a Chi-square. The test is highly significant. Of course, we can also test some other hypotheses. For example, we can code a model with different curves for storage times, assuming that the effect of temperature is irrelevant:
 
 ```{r}
 mod2 <- drm(count ~ timeBef + timeAf, fct = LL.3(), data = datasetR,
@@ -107,7 +107,9 @@ mod3 <- drm(count ~ timeBef + timeAf, fct = LL.3(), data = datasetR,
 anova(mod1, mod3, test = "Chisq")
 ```
 
-Again, we get significant results. It is necessary to mention that the above LR tests are approximate, although we get very low p-levels, which leave us very confident about the significance of effects. If we are not particularly concerned with p-levels, we can also compare models by using the Akaike Information Criterion (AIC: the lowest is the best), which confirms that the complete model with four curves is indeed the best one.
+Again, we get significant results. So, we need to conclude that temperature and storage time changed the germination behavior of Verbascum.
+
+Before concluding, it is necessary to mention that, in general, the above LR tests shoul be taken with care: the results are only approximate and the observed data are not totally independent, as multiple observations are taken in each experimental unit. It is not easy to include random effects in a time-to-event framework (Onofri et al., 2019); furthermore, we got very low p-levels, which leaves us very confident about the significance of effects. It may be a good suggestion, in general, to avoid formal hypothesis testing and compare the models by using the Akaike Information Criterion (AIC: the lowest is the best), which confirms that the complete model with four curves is indeed the best one.
 
 ```{r}
 AIC(mod1, mod2, mod3, modNull)

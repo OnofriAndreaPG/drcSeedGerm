@@ -1,6 +1,7 @@
 ---
 title: What's the role of censoring in germination assays?
 csl: european-journal-of-agronomy.csl
+author: Andrea Onofri
 date: "17 December, 2018"
 output:
   html_document:
@@ -12,45 +13,33 @@ output:
 bibliography: drcSeedGerm.bib
 ---
 
+```{r setup, cache = F, echo = F}
+#Put at the beginning
+knitr::knit_hooks$set(document = function(x){ 
+  gsub("```\n*```r*\n*", "", x) 
+})
+```
+
+
 ---
 
 # The background
 
-Seeds in a population do not germinate altogether in the same moment. This is an undisputed fact, resulting from the seed-to-seed variability in germination time (t). We could describe such a variability by using some density function $\phi$, usually parameterised by way of a location ($\mu$) and scale ($\sigma$) parameter:
-
-$$ t \sim \phi(\mu, \sigma)$$
-
-However, we should also consider that there will often be a fraction of seeds that will not germinate in the given conditions, because it is either dormant or nonviable. Let's call this fraction $\pi$; the density distribution of germination times becomes:
-
-$$ t \sim \pi \, \phi(\mu, \sigma) + (1 - \pi)$$
-
-From there, the proportion of germinated seeds (G) at $t = t_g$ is given by the corresponding cumulative distribution function:
-
-$$ G = P(t < t_g) = \pi \, \Phi(\mu, \sigma)$$
-
-Usually, $\Phi$ is right-skewed  and, therefore, log-normal, log-logistic or Weibull cumulative distribution functions have been succesfully used. The graph below represents the germination time-course for a seed population with lognormal distribution of germination times, $\mu = 4.5$ days, $\sigma = 0.6$  and a maximum germinated proportion $\pi = 0.85$.
-
-```{r echo=FALSE, fig.height=6, fig.width=6, message=FALSE, warning=FALSE, paged.print=FALSE}
-mu <- 4.5; sigma <- 0.6; pMax = 0.85
-curve(pMax * plnorm(x, log(mu), sigma), xlim = c(0, 20), ylim = c(0,1),
-      xlab = "Time (days)",
-      ylab = "Proportion of germinated seeds")
-```
-
-With a log-normal distribution, $\mu$ corresponds to the time to 50% germination (for the germinated fraction), while $\sigma$ is the standard deviation on a log-scale.
+We have seen that our main task with germination assays is to determine the germination curve, describing the increase in the cumulative proportion of germinated seeds over time. We have seen ([see this post here](https://www.statforbiology.com/seedgermination/censoring)), that the germination curve arises from seed-to-seed variability in germination time, which can be described by using some density function $\phi$ with three parameters, the maximum proportion of germinated seeds ($d$), a location parameter ($e$) and a scale parameter ($b$). Taking this into account, we can easily simulate the results of a germination assay, by using Monte Carlo methods. 
 
 ---
 
 # Monte Carlo simulation of a germination assay
 
-Considering the above, we can simulate the results of a germination assay. Let's take a 100 seed sample from the population above. Obviously, this sample will not necessarily reflect the characteristics of the population. We can do this sampling in R, by using a three-steps approach. First, let's simulate the number of germinated seeds, assuming a binomial distribution with $\pi$ equal to 0.85:
+Let's consider a population with lognormal distribution of germination times, $e = 4.5$ days, $b = 0.6$  and a maximum germinated proportion $d = 0.85$. Let's take a 100 seed sample from the population above. Obviously, this sample will not necessarily reflect the characteristics of the population. We can do this sampling in R, by using a three-steps approach. First, let's simulate the number of germinated seeds, assuming a binomial distribution with $d$ equal to 0.85:
 
 
 
 ```{r}
 #Monte Carlo simulation - Step 1
+e <- 4.5; b <- 0.6; d = 0.85
 set.seed(1234)
-nGerm <- rbinom(1, 100, pMax)
+nGerm <- rbinom(1, 100, d)
 nGerm
 ```
 
@@ -58,7 +47,7 @@ We see that in this instance 89 seeds germinated out of 100, which is not the ex
 
 ```{r}
 #Monte Carlo simulation - Step 2
-Gtimes <- rlnorm(nGerm, log(mu), sigma)
+Gtimes <- rlnorm(nGerm, log(e), b)
 Gtimes <- c(Gtimes, rep(Inf, 100 - nGerm))
 Gtimes
 ```
@@ -141,8 +130,8 @@ We see that our estimate is higher than the real value. In itself, this means no
 GermSampling <- function(nSeeds, timeLast, stepOss, mu, shape, pMax){
     
     #Draw a sample as above
-    germ <- rbinom(1, nSeeds, pMax)
-    Gtimes <- rlnorm(nGerm, log(mu), sigma)
+    germ <- rbinom(1, nSeeds, d)
+    Gtimes <- rlnorm(nGerm, log(e), b)
     Gtimes <- c(Gtimes, rep(Inf, 100 - nGerm))
     
     #Generate the observed data
@@ -185,14 +174,14 @@ Clearly, the MGT is not a good estimator of the mean germination time for the ge
 In other instances, the consequences of ignoring censoring may be less dangerous (but still important). For example, the Time to 50% germination (T50) is used as another measure of germination velocity, which is favoured over MGT when we need to compare seed lots with different germination capability. For a log-normal distribution, the T50 can be obtained by using the quantile function:
 
 ```{r}
-qlnorm(0.5 / pMax, log(mu), sigma)
+qlnorm(0.5 / d, log(e), b)
 ```
 
 This is the real time to 50% germination. In order to get an estimate from our sample, nonlinear regression is often recommended. In this case, the observed counts are transformed into cumulative proportions and used as the response variable, while the observation time is used as the independent variable.
 
 The following code fits a log-normal cumulative distribution function to the observed data, by using the 'drm' function, in the 'drc' package [@Ritz:2015aa]. The T50 is retreived by using the ED function and passing the model object as an argument.
 
-```{r}
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 library(drc)
 mod <- drm(propCum ~ timeAf, data = df, 
            subset = c(is.finite(timeAf) == T),
@@ -207,8 +196,8 @@ We see that our estimate is very close to the real value. However, let's how our
 GermSampling <- function(nSeeds, timeLast, stepOss, mu, shape, pMax){
     
     #Draw a sample as above
-    nGerm <- rbinom(1, nSeeds, pMax)
-    Gtimes <- rlnorm(nGerm, log(mu), sigma)
+    nGerm <- rbinom(1, nSeeds, d)
+    Gtimes <- rlnorm(nGerm, log(e), b)
     Gtimes <- c(Gtimes, rep(Inf, 100 - nGerm))
     
     #Generate the observed data

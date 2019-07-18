@@ -1,4 +1,4 @@
-drmSG <- function(formula, data, curveid, fct="LL", min=0.04, g = c(10, 30, 50),
+drmSG <- function(formula, data, curveid, fct="LL", min=0.04, maxIni = 0.95, g = c(10, 30, 50),
   type = "absolute") {
   # formula <- nSeeds ~ timeBef + timeAf
   # curveid <- rape$Dish
@@ -136,7 +136,7 @@ drmSG <- function(formula, data, curveid, fct="LL", min=0.04, g = c(10, 30, 50),
 
         message(paste("Group ", i, ": pMax lower than minimum threshold", sep=""))
         next;
-        }else if(pFirst > 0.95){
+        }else if(pFirst > maxIni){
           #Pmax at first inspection > 0.95. Cannot fit germination model
           #(mod = 2)
 

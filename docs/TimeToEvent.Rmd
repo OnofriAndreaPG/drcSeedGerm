@@ -12,6 +12,13 @@ output:
 bibliography: drcSeedGerm.bib
 ---
 
+```{r setup, cache = F, echo = F}
+#Put at the beginning
+knitr::knit_hooks$set(document = function(x){ 
+  gsub("```\n*```r*\n*", "", x) 
+})
+```
+
 ---
 
 # Introduction
@@ -22,24 +29,24 @@ There is indeed a class of models that are specifically devised to account for a
 
 # A Monte Carlo simulation
 
-In our previous page about censoring we ideally took a seed population, with log-normal distribution of germination time, location parameter $\mu = 4.5$ days, scale parameter $\sigma = 0.6$  and a maximum germinated proportion $\pi = 0.85$. For this population, we time to 50% germination (T50) was 5.14 days and the Mean Germination Time (MGT) was 5.39 days. We took a sample of 100 seeds from that population, by using Monte Carlo simulation. For the ease of reading, we replicate the simulation here.
+In our previous page about censoring we ideally took a seed population, with log-normal distribution of germination time, location parameter $e = 4.5$ days, scale parameter $b = 0.6$  and a maximum germinated proportion $d = 0.85$. For this population, the time to 50% germination (T50) was 5.14 days and the Mean Germination Time (MGT) was 5.39 days. We took a sample of 100 seeds from that population, by using Monte Carlo simulation. For the ease of reading, we replicate the simulation here.
 
 
 
 ```{r}
 #Real parameter values
-mu <- 4.5; sigma <- 0.6; pMax = 0.85
+e <- 4.5; b <- 0.6; d = 0.85
 
 #Monte Carlo simulation - Step 1
 #Simulating the number of germinated seeds
 #out of the 100 tesetd
 set.seed(1234)
-nGerm <- rbinom(1, 100, pMax)
+nGerm <- rbinom(1, 100, d)
 nGerm
 
 #Monte Carlo simulation - Step 2
 #Simulating the germination time for each seed in the sample
-Gtimes <- rlnorm(nGerm, log(mu), sigma)
+Gtimes <- rlnorm(nGerm, log(e), b)
 Gtimes <- c(Gtimes, rep(Inf, 100 - nGerm))
 Gtimes
 
@@ -91,14 +98,16 @@ modNL <- drm(propCum ~ timeAf, data = df,
 summary(modNL)
 ```
 
+Please consider that the function 'LN.3()' is parameterised by using a scale parameter $b$, that is the inverse of the value which we used for the simulatyion. Indeed, model fit returns an estimate of 1.9, which is approximately equal to $1/0.6$, at the net of sampling error.
+
 With respect to a nonlinear regression fit, the estimate of 'e' is very close, but the standard error is higher. Let's compare the two methods with 1000 samples (be patient... it may take a while)
 
 ```{r}
 GermSampling <- function(nSeeds, timeLast, stepOss, mu, shape, pMax){
     
     #Draw a sample as above
-    germ <- rbinom(1, nSeeds, pMax)
-    Gtimes <- rlnorm(nGerm, log(mu), sigma)
+    germ <- rbinom(1, nSeeds, d)
+    Gtimes <- rlnorm(nGerm, log(e), b)
     Gtimes <- c(Gtimes, rep(Inf, 100 - nGerm))
     
     #Generate the observed data
@@ -130,6 +139,12 @@ apply(result, 2, mean)
 apply(result, 2, sd)
 ```
 
-We see that both methods lead to unbiased estimates. However, the sampling distribution of T50 shows a standard deviation of approximately 0.35 days. This is estimated correctely by the time-to-event method, which, on average, leads to an estimate of 0.33 days. On the contrary, nonlinear regression leads to an average estimate of 0.09, that is almost one fourth of the real value.
+We see that both methods lead to unbiased estimates. However, the sampling distribution of T50 shows a standard deviation of approximately 0.34 days. This is estimated correctely by the time-to-event method, which, on average, leads to an estimate of 0.33 days. On the contrary, nonlinear regression leads to an average estimate of 0.09, that is almost one fourth of the real value.
+
+#Take-home message
+
+Censoring is peculiar to germination assays and other time-to-event studies. It may have a strong impact on the reliability of our estimates and standard errors and, therefore, it should never be neglected. The best way not to neglect it is to use time-to-event methods to estimate the germination curve, while avoiding traditional non-linear regression. 
+
+
 
 # References

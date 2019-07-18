@@ -1,10 +1,10 @@
-GRate <- function(mod, respLev, type="absolute", vcov. = sandwich){
+GRate <- function(mod, respLev, type="absolute", vcov. = sandwich, x2 = NULL, x3 = NULL){
   #mod <- obj; x <- Psi; respLev <- g
   vcMat <- vcov.
   if(is.null(mod$fct[["name"]]) == T) {
     choice <- "noName"
   }else{choice <- mod$fct[["name"]]}
-  temp <- ED2.drc(mod, respLev=respLev, type=type, Psi=Psi, vcov. = vcMat, display=F)
+  temp <- ED2.drc(mod, respLev=respLev, type=type, Psi = x2, vcov. = vcMat, display=F)
   if( choice == "LL.4" |  choice == "LL.3" | choice == "LL.2" |
       choice == "LN.4" |  choice == "LN.3" | choice== "LN.2" |
       choice == "W1.4" |  choice == "W1.3" | choice == "W1.2" |
@@ -22,12 +22,12 @@ GRate <- function(mod, respLev, type="absolute", vcov. = sandwich){
   GR
 }
 
-GTime <- function(mod, respLev, type="absolute", vcov. = sandwich){
+GTime <- function(mod, respLev, type="absolute", vcov. = sandwich, x2 = NULL, x3 = NULL){
   vcMat <- vcov.
   if(is.null(mod$fct[["name"]]) == T) {
     choice <- "noName"
   }else{choice <- mod$fct[["name"]]}
-  temp <- ED2.drc(mod, respLev=respLev, type=type, Psi=Psi, vcov. = vcMat, display=F)
+  temp <- ED2.drc(mod, respLev=respLev, type=type, Psi=x2, vcov. = vcMat, display=F)
   if( choice == "LL.4" |  choice == "LL.3" | choice == "LL.2" |
       choice == "LN.4" |  choice == "LN.3" | choice== "LN.2" |
       choice == "W1.4" |  choice == "W1.3" | choice == "W1.2" |
