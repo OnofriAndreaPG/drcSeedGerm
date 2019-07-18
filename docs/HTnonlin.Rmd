@@ -14,6 +14,14 @@ output:
 bibliography: drcSeedGerm.bib
 ---
 
+```{r setup, cache = F, echo = F}
+#Put at the beginning
+knitr::knit_hooks$set(document = function(x){ 
+  gsub("```\n*```r*\n*", "", x) 
+})
+```
+
+
 #Introduction {-}
 
 One relevant task in seed biology is to model the progress to germination, depending on environmental conditions, mainly temperature and water availability. These models are usually known as hydro-time (HT), thermal-time (TT) and hydrothermal-time (HTT) models; they have usually been formulated as nonlinear regression models, where the proportion of germinated seeds is used as the response variable. In our previous papers, my collegues and I have often recommended that this is not an optimal solution [@onofri_current_2010; @onofri_hydrothermal-time_2018; @OnofriEtAl2010_Survival]; instead, we have advocated the use of time-to-event methods, which fully respect the actual manner in which data are acquired from germination assays. In contrast to nonlinear regression, time-to-event methods produce reliable estimates of parameters and standard errors [@Ritz2012_CureModel]. In this vein, we have shown that HT, TT and HTT models can also be formulated into a time-to-event framework [@onofri_hydrothermal-time_2018].

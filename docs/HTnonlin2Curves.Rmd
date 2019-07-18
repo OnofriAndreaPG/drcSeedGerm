@@ -14,6 +14,8 @@ output:
 bibliography: drcSeedGerm.bib
 ---
 
+# DA VERIFICARE!!!!!!!!!!#################################################
+
 # An example
 
 The germination of rapeseed (*Brassica napus* L. var. *oleifera*, cv. Excalibur and Toccata) was tested at thirteen different water potentials (-0.03, -0.15, -0.3, -0.4, -0.5, -0.6, -0.7, -0.8, -0.9, -1, -1.1, -1.2, -1.5 MPa), which were created by using a polyethylene glycol solution (PEG 6000). For each water potential level, three replicated Petri dishes with 50 seeds were incubated at 20°C. Germinated seeds were counted and removed every 2-3 days for 14 days.
@@ -60,7 +62,7 @@ Previous papers have shown that standard errors obtained with a nonlinear regres
 #install_github("OnofriAndreaPG/drcSeedGerm")
 library(sandwich); library(lmtest)
 jack <- jackGroupSE(mod4, data = rape2G, cluster = rape2G$Dish)
-sand <- coeftest(mod4, vcov = vcovCL, cluster = rape2G$Dish)
+#sand <- coeftest(mod4, vcov = vcovCL, cluster = rape2G$Dish)
 ```
 
 ```{r}
@@ -70,13 +72,12 @@ sand
 
 Standard errors from nonlinear regression confirm to be smaller than sandwich and jackknife SEs. These latter two are very similar, although jackknife SEs are slightly higher.
 
-We might be interested in getting the GR values for a certain percentile (e.g. GR50, GR30), which 
-is easily accomplished by using the 'GR()' function in 'drcSeedGerm'. Likewise, if we are interested in the germination times for a certain percentile (e.g. T50, T30), we can use the 'GTime()' function in the same package. In the code below, we request the GR30, GR50 and GR70, as well as T30, T50 amd T70, for a water potential level of 0 MPa.
+We might be interested in getting the GR values for a certain percentile (e.g. GR50, GR30), which is easily accomplished by using the 'GR()' function in 'drcSeedGerm'. Likewise, if we are interested in the germination times for a certain percentile (e.g. T50, T30), we can use the 'GTime()' function in the same package. In the code below, we request the GR30, GR50 and GR70, as well as T30, T50 amd T70, for a water potential level of 0 MPa.
 
 ```{r}
 ED(mod4, respLev=c(30, 50, 70), type = "absolute", Psi=0)
-GR(mod4, respLev=c(30, 50, 70), Psi=0, vcov. = vcovCL)
-GTime(mod4, respLev=c(30, 50, 70), Psi=0, vcov. = vcovCL)
+GRate(mod4, respLev=c(30, 50, 70), x2 = 0, vcov. = vcovCL)
+GTime(mod4, respLev=c(30, 50, 70), x2 = 0, vcov. = vcovCL)
 ```
 
 Both functions are wrappers for the 'ED()' function in 'drc'. These wrappers reverse the behaviour of the 'ED()' function, in the sense that they consider the percentiles for the whole population, including the ungerminated fraction. That is, the, e.g., T50 would be the time to 50% germination; if this germination level is not reached at all, the function returns infinity. We believe that, with germination assays, considering the percentiles for the whole population is more meaningful for comparing different populations. Again, the use of cluster-robust standard errors is highly recommended.
@@ -84,7 +85,7 @@ Both functions are wrappers for the 'ED()' function in 'drc'. These wrappers rev
 We can also make predictions about the germinated proportion for a certain time and water potential level. The code below returns the maximum germinated proportion at -1.5, -0.75, and 0 MPa.
 
 ```{r}
-predict(mod4, se.fit=T, vcov. = vcovCL,
+predictSG(mod4, se.fit=T, vcov. = vcovCL,
         newdata = data.frame(Time=c(1, 2, 3), 
                              Psi=c(0, 0, 0),
           CV = c("Excalibur", "Excalibur", "Toccata"))
