@@ -5,7 +5,7 @@ date: "17 December, 2018"
 output:
   html_document:
     keep_md: no
-    toc: yes
+    toc: no
     toc_float:
       collapsed: no
       smooth_scroll: no

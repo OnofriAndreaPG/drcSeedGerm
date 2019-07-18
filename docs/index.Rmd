@@ -5,7 +5,7 @@ author:
     affiliation: Department of Agriculture, Food and Environmental Sciences, University of Perugia, Borgo XX Giugno 74, 06121 Perugia, Italy, andrea.onofri@unipg.it
 output:
   html_document:
-    toc: yes
+    toc: no
     toc_float:
      collapsed: false
      smooth_scroll: false

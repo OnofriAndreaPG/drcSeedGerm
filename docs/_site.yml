@@ -7,7 +7,7 @@ exclude: ["*.txt", "*.R", "*.tex"]
 navbar:
   title: "Home"
   left:
-  - text: "Navigation"
+  - text: "Articles"
     icon: fa-gear
     menu:
       - text: "Describing germination curves"
