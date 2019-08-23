@@ -17,9 +17,24 @@ GRPsiLin.fun <- function(Psi, Psib, thetaH) {
   Psib <- - coef(mod)[2]*thetaH
   return(c(Psib, thetaH))
   }
+  deriv1 <- function(x, parms){
+
+    #Approximation by using finite differences
+    Psib <-  as.numeric(parms[,1]); thetaH <- as.numeric(parms[,2]);
+
+    d1.1 <- GRPsiLin.fun(x, Psib, thetaH)
+    d1.2 <- GRPsiLin.fun(x, (Psib + 10e-6), thetaH)
+    d1 <- (d1.2 - d1.1)/10e-6
+
+    d2.1 <- GRPsiLin.fun(x, Psib, thetaH)
+    d2.2 <- GRPsiLin.fun(x, Psib, (thetaH + 10e-6))
+    d2 <- (d2.2 - d2.1)/10e-6
+
+    cbind(d1, d2)
+    }
   names <- c("Psib", "thetaH")
   text <- "Linear hydrotime model (Bradford, 2002)"
-  returnList <- list(fct = fct, ssfct = ssfct, names = names, text = text)
+  returnList <- list(fct = fct, ssfct = ssfct, names = names, text = text, deriv1 = deriv1)
   class(returnList) <- "drcMean"
   invisible(returnList)
 }
@@ -31,12 +46,12 @@ GRPsiPol.fun <- function(Psi, Psib, thetaH) {
   return(ifelse(GR50 < 0, 0, GR50)) }
 
 "GRPsiPol" <- function(){
-   GR502.fct <- function(x, parm) {
+   fct <- function(x, parm) {
     Psi <- x; Psib <- parm[,1]; thetaH <- parm[,2]
     GR50 <- GRPsiPol.fun(Psi, Psib, thetaH)
     return(ifelse(GR50 < 0, 0, GR50)) }
-  GR502.names <- c("Psib", "thetaH")
-  GR502.ss <- function(data){
+  names <- c("Psib", "thetaH")
+  ss <- function(data){
     x <- data[, 1]
     y <- data[, 2]
     isPositive <- y > 0
@@ -46,10 +61,27 @@ GRPsiPol.fun <- function(Psi, Psib, thetaH) {
     thetaH <- - 1/coef(mod)[2]
     Psib <- - sqrt(thetaH * coef(mod)[1])
     return(c(Psib,thetaH))}
-  GR502.text <- "Polynomial hydrotime model - Convex up"
-  GR502 <- list(fct = GR502.fct, ssfct=GR502.ss, names=GR502.names, text = GR502.text)
-  class(GR502) <- "drcMean"
-  invisible(GR502)
+
+  deriv1 <- function(x, parms){
+
+    #Approximation by using finite differences
+    Psib <-  as.numeric(parms[,1]); thetaH <- as.numeric(parms[,2]);
+
+    d1.1 <- GRPsiLin.fun(x, Psib, thetaH)
+    d1.2 <- GRPsiLin.fun(x, (Psib + 10e-6), thetaH)
+    d1 <- (d1.2 - d1.1)/10e-6
+
+    d2.1 <- GRPsiLin.fun(x, Psib, thetaH)
+    d2.2 <- GRPsiLin.fun(x, Psib, (thetaH + 10e-6))
+    d2 <- (d2.2 - d2.1)/10e-6
+
+    cbind(d1, d2)
+    }
+
+  text <- "Polynomial hydrotime model - Convex up"
+  returnList <- list(fct = fct, ssfct=ss, names=names, text = text, deriv1 = deriv1)
+  class(returnList) <- "drcMean"
+  invisible(returnList)
 }
 
 # second order polynomial - 2
@@ -73,8 +105,24 @@ GRPsiPol2.fun <- function(Psi, Psib, thetaH) {
     mod <- lm(y1 ~ I((x1 - Psib)^2) - 1)
     thetaH <- 1/coef(mod)[1]
     return(c(Psib,thetaH))}
+    deriv1 <- function(x, parms){
+
+    #Approximation by using finite differences
+    Psib <-  as.numeric(parms[,1]); thetaH <- as.numeric(parms[,2]);
+
+    d1.1 <- GRPsiLin.fun(x, Psib, thetaH)
+    d1.2 <- GRPsiLin.fun(x, (Psib + 10e-6), thetaH)
+    d1 <- (d1.2 - d1.1)/10e-6
+
+    d2.1 <- GRPsiLin.fun(x, Psib, thetaH)
+    d2.2 <- GRPsiLin.fun(x, Psib, (thetaH + 10e-6))
+    d2 <- (d2.2 - d2.1)/10e-6
+
+    cbind(d1, d2)
+    }
+
   text <- "Polynomial hydrotime model - Convex down"
-  returnList <- list(fct=fct, ssfct=ss, names=names, text=text)
+  returnList <- list(fct=fct, ssfct=ss, names=names, text=text, deriv1 = deriv1)
   class(returnList) <- "drcMean"
   invisible(returnList)
 }
