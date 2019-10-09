@@ -11,7 +11,7 @@ navbar:
     icon: fa-gear
     menu:
       - text: "Describing germination curves"
-        href: Censoring.html
+        href: GerminationTimeCourse.html
       - text: "The problem of censoring"
         href: Censoring.html
       - text: "Time-to-event methods account for censoring"
