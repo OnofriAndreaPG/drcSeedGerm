@@ -673,8 +673,8 @@ drm.group <- function(formula, curveid, pmodels, weights, data = NULL,
   return(invisible(resultList))
 }
 
-nlmod <- drm.group(GR ~ TempFix, curveid = Comb3, data = dataset,
-             fct = GRT.Exb())
+# nlmod <- drm.group(GR ~ TempFix, curveid = Comb3, data = dataset,
+#              fct = GRT.Exb())
 
 drm.sg <- function(formula, data, curveid = NULL, fct = "NP", min = 0.04, maxIni = 0.95,
                     g = c(10, 30, 50), type = "absolute", se.q = F,
