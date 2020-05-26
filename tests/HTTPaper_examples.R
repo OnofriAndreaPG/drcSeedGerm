@@ -74,6 +74,7 @@ head(hordeum)
 modHTTE <- drm(nSeeds ~ timeBef + timeAf + water + temp, data=hordeum,
   fct=HTTEM(), type="event",
   start=c(0.8,-2, 0.05, 3, 0.2, 2000, 0.5))
+summary(modHTTE)
 
 #Sandwich standard errors
 coeftest(modHTTE, vcov=vcovCL, cluster=hordeum$Dish)

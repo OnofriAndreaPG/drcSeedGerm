@@ -3,7 +3,7 @@ TTEM.fun <- function(time, Temp, G, Tc, sigmaTc, Tb, ThetaT, b) {
   Pmax <- PmaxT1.fun(Temp, G, Tc, sigmaTc)
   GR50 <- GRT.M.fun(Temp, Tc, Tb, ThetaT)
   GR50 <- ifelse(GR50<=0, 1e-06, GR50)
-  plogis(b * (log(time) - log(1/GR50)) )*Pmax
+  plogis(b * (log(time) - log(1/GR50)) )* Pmax
 }
 "TTEM" <- function(){
 fct <- function(x, parm) {

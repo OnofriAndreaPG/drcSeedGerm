@@ -5,7 +5,9 @@
 quantileSG <- function(time, counts, probs, nSeeds,
                        se.fit = F, rate = F, type=1){
   #time <- c(2, 4, 6, 8, 10, 12); counts <- c(25, 12, 2, 6, 0, 0)
-  #probs <- 10; nSeeds <- sum(counts); type = 1; i <- length(probs)
+  #time <- c(2, 4, 6, 8, 10, 12); counts <- c(0,0,0,0,25,0)
+  #probs <- c(10, 30, 50); nSeeds <- sum(counts); type = 1; i <- length(probs)
+  # germinations are uniformly distributed within the interval !
   ret <- c(); g <- probs
   for(i in 1:length(g)){
     dec <- (nSeeds + type - 1) * g[i] /100

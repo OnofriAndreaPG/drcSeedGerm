@@ -1,9 +1,12 @@
 importFrom(drc, LL.3, LL.2)
 importFrom(utils, tail)
+importFrom(plyr, ldply, ddply)
 import(stats)
-export(makeDrm, makeDrm2, makeNlin, makeSurv, NLSLL.3, GRate, GTime,
-       jackGroupSE, drmSG, predictSG, quantileSG, SGindices, drmHTT,
+export(makeDrm, makeDrm2, makeDrm.new, makeNlin, makeSurv, makeSurv2,
+       NLSLL.3, GRate, GTime,
+       jackGroupSE, drm.sg, drmSG, predictSG, quantileSG, SGindices, drmHTT,
        ED2.drc, estfun.drc, bread.drc, predict.drc, drm,
+       LL.dist.fun, LL.dist,
   GRPsiLin, GRPsiLin.fun, GRPsiPol, GRPsiPol.fun, GRPsiPol2, GRPsiPol2.fun,
   GRT.Ex, GRT.Ex.fun, GRT.YL, GRT.YL.fun, GRT.BS, GRT.BS.fun, GRT.BS2, GRT.BS2.fun,
   GRT.Exb, GRT.Exb.fun, GRT.GH, GRT.GH.fun, GRT.M, GRT.M.fun,

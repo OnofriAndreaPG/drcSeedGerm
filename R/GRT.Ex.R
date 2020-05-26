@@ -90,6 +90,7 @@ return(c(Tb, ThetaT, k, Tc))}
 
 deriv1 <- function(x, parm){
   #Approximation by using finite differences
+  # derivate parziali sui parametri
   d1.1 <- GRT.Exb.fun(x, parm[,1], parm[,2], parm[,3],
                    parm[,4])
   d1.2 <- GRT.Exb.fun(x, (parm[,1] + 10e-6), parm[,2], parm[,3],

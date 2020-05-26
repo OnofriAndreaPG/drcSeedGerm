@@ -1,4 +1,4 @@
-#Hydro-Thermal time models
+# Hydro-Thermal time models
 HTTLL.fun <- function(time, Psi, Temp, thetaHT, Tb, Psib50, Kt, delta, sigmaPsib){
   #Da Mohsen et al., 2017
   #Rivedere le condizioni

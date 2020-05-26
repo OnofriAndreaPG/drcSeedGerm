@@ -1,10 +1,3 @@
-#####################################################################
-#This module contains several service functions for time-to-event
-#analysis with drm
-#Date of last revision: 06/12/2018
-#Version 1.0
-#####################################################################
-
 makeDrm <- function(counts, treat, nViable, moniTimes) {
   # this function reshapes a common recording sheet for germination assays
   # into the kind of dataset required by the function drm() in the drc package
@@ -58,6 +51,53 @@ makeDrm <- function(counts, treat, nViable, moniTimes) {
   return(datiFin)
 }
 
+makeDrm.new <- function(counts, treat, nViable, moniTimes) {
+  # this function reshapes a common recording sheet for germination assays
+  # into the kind of dataset required by the function drm() in the drc package
+
+  # counts is a dataframe listing for each Petri dish (rows) the number of germinated seeds
+  # at each assessment time (culumns);
+  # treat is a dataframe listing for each Petri dish (rows) the levels of each treatment (culumns)
+  # number of rows in dataset and treat.
+  # moniTimes = vector of monitoring times. Seme length as number of columns in dataset
+  # nViable is a vector with the number of viable seeds per each Petri dish
+
+  moniTimesAf <- c(moniTimes, Inf)
+  moniTimesBef <- c(0, moniTimes)
+  last <- nViable - apply(counts, 1, sum, na.rm = "na.omit")
+  nDish <- length(counts[,1])
+  Dish_tmp <- 1:nDish
+  counts <- cbind(counts, last)
+  colnames(counts) <- moniTimesAf
+  dFrame <- cbind(Dish_tmp, treat, nViable, counts)
+  firstCol <- length(treat[1,]) + 3
+  lastCol <- length(dFrame[1,])
+  # head(dFrame)
+  #dFrame <- tibble::tibble(dFrame, .name_repair = c("unique"))
+  dFrame2 <- tidyr::pivot_longer(dFrame, names_to = "timeAf",
+                                  values_to = "nSeeds",
+             cols = c(all_of(firstCol):all_of(lastCol)))
+  # reshape::melt(dFrame, # id.vars = c("timeAf"),
+  #               measure.vars = c(firstCol:lastCol),
+  #               variable_name = "nSeeds")
+  dFrame2 <- as.data.frame(dFrame2)
+
+  dFrame2 <- na.omit(dFrame2)
+  timeBef <- c(0, dFrame2$timeAf[-length(dFrame2$timeAf)])
+  timeBef[timeBef == "Inf"] <- "0"
+  dFrame2$timeBef <- timeBef
+  dFrame2 <- plyr::ddply(dFrame2, .(Dish_tmp), .fun=transform,
+                         nCum = cumsum(nSeeds))
+  finData <- cbind(dFrame2[,2:(firstCol - 2)],
+                   nViable = dFrame2$nViable,
+                   timeBef = as.numeric(dFrame2$timeBef),
+                   timeAf = as.numeric(dFrame2$timeAf),
+                   nSeeds = as.numeric(dFrame2$nSeeds),
+                   nCum = as.numeric(dFrame2$nCum))
+  row.names(finData) <- 1:length(finData[,1])
+  return(finData)
+}
+
 makeDrm2 <- function(counts, treat, nViable, moniTimes, Dish,  cumulative=T){
   #This function transform a dataset as cumulative germinations in a dataset for
   #use with DRM type = "event. Dish is a factor that identidfies seeds
@@ -97,84 +137,3 @@ makeDrm2 <- function(counts, treat, nViable, moniTimes, Dish,  cumulative=T){
 
   result
 }
-
-makeNlin <- function(counts, treat, nViable, moniTimes){
-  dataset <- makeDrm(counts, treat, nViable, moniTimes)
-  dataset <- dataset[is.finite(dataset$timeAf)==T, ]
-  output <- data.frame(dataset[,1:length(treat[1,])], Time = dataset$timeAf,
-    propCum = dataset$propCum, row.names = 1:length(dataset[,1]))
-  output
-}
-
-makeSurv <- function(dataset, treat, seeds, moniTimes) {
-#This function organises a dataset to be submitted to survival analysis
-#i.e. one row per each seed.
-
-#dataset is a dataframe listing for each Petri dish (rows) the number of germinated seeds
-#at each assessment time (culumns);
-#treat is a dataframe listing for each Petri dish (rows) the levels of each treatment (culumns)
-#seeds = vector listing the number of viable seeds for each Petri dish (same length as
-#number of rows in dataset and treat.
-#moniTimes = vector of monitoring times. Seme length as number of columns in dataset
-
-dati <- dataset
-tratt <- treat
-numSemi <- seeds
-tempi <- moniTimes
-
-#Sostituisce i NAs con 0 e prepara il file
-dati[is.na(dati)] <- 0
-
-#Dimensionamento
-numPetri <- length(dati[,1]);numSeeds <- sum(numSemi);numTimes <- length(tempi);numTesi<-length(tratt[1,])
-timeBef <- numeric(numSeeds);timeAf <- numeric(numSeeds);cens <- numeric(numSeeds)
-tempi2 <- c(0, tempi[1:length(tempi)-1])
-group <- data.frame()
-final.date <- max(tempi)
-seed_ind <- 1
-j <- 1
-for (j in 1:numPetri){ #Per ogni riga - Petri dish
-germ <- 0
-    for(i in 1:numTimes) { #Per ogni campionamento
-	    	if(dati[j,i]!=0)
-	    	for(z in 1:dati[j,i]){ #Per ogni seme germinato, scrive il tempo
-	        	timeAf[seed_ind] <- tempi[i]
-	        	timeBef[seed_ind] <- tempi2[i]
-	        	cens[seed_ind] <- 1
-	        	seed_ind <- seed_ind + 1
-	        	germ <- germ + 1
-	        }
-	 }
-	#Per i semi non germinati, scrive di conseguenza
-	nonGerm <- numSemi[j] - germ
-	if(nonGerm>0) {for(z in 1:nonGerm){timeAf[seed_ind] <- NA; timeBef[seed_ind] <- tempi[i]
-			seed_ind <-  seed_ind + 1}}
-  #print(paste(j,germ,nonGerm,numSemi[j], length(timeAf)))
-	}
-group <- tratt[rep(row.names(tratt), numSemi), 1:length(tratt[1,])]
-datiFin <- data.frame(group, timeBef=timeBef, timeAf=timeAf, status=cens)#, event=event, time=time, time2=time2)
-return(datiFin)
-}
-
-#ServiceFunctions
-#Log-Logistic Function for bioassay work nlsLL.3
-NLSLL.3mean <- function(predictor, b, d, ED50) {
-                      x <- predictor
-                      d/(1+exp(b*(log(x+0.000001)-log(ED50))))
-}
-
-NLSLL.3Init <- function(mCall, LHS, data) {
-          xy <- sortedXyData(mCall[["predictor"]], LHS, data)
-          x <-  xy[, "x"]; y <- xy[, "y"]
-          d <- max(y) * 1.05
-          ## Linear regression on pseudo y values
-          pseudoY <- log((d-y)/(y+0.00001))
-          coefs <- coef( lm(pseudoY ~ log(x+0.000001)))
-          k <- -coefs[1]; b <- coefs[2]
-          ED50 <- exp(k/b)
-          value <- c(b,d,ED50)
-          names(value) <- mCall[c("b", "d", "ED50")]
-          value
-}
-
-NLSLL.3 <- selfStart(NLSLL.3mean, NLSLL.3Init, parameters=c("b", "d", "ED50"))

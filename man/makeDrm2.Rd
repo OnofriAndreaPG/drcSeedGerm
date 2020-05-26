@@ -13,13 +13,13 @@ makeDrm2(counts, treat, nViable, moniTimes, Dish,  cumulative=T)
 
 \arguments{
 \item{counts}{
-Vector listing the counts of germinated seeds in each Petri dish (rows) at each assessment time (columns).
+Vector listing the counts of germinated seeds in each Petri dish at each assessment time.
 }
 \item{treat}{
-Dataframe listing for each rows the levels of each treatment
+Dataframe listing, for each row of data, the corresponding level of experimental factors (one factor per column)
 }
 \item{nViable}{
-A vector with the number of viable seeds per each row, at the beginning of the assay
+A vector listing the number of viable seeds, at the beginning of the assay. This number is the same for all observations belonging to the same dish.
 }
 \item{moniTimes}{
 Vector of monitoring times.

@@ -1,6 +1,35 @@
-drmHTT <- function(formula, SE, fct,  data, curveid, pmodels, varPower = F){
+drmHTT <- function(formula, SE, fct,  data, curveid, pmodels, varPower = F, delta = 0.01){
 # Function to fit HTT models to the observed GR values, weighting based on
 # standard errorsd observed in the first step (Modified on 9/10/2019)
+
+  # MLfun <- function(formula, SE, fct, data, parms, indMat, curveid=NA){
+  #
+  #   fr <- model.frame(formula, data)
+  #   X <- model.matrix(fr, data)[,2]
+  #   Y <- model.response(fr, "numeric")
+  #   # if (missing(curveid))  # in case not supplied
+  #   # {
+  #   #     curveid <- rep(1, length(Y))
+  #   # }
+  #   gamma2i <- SE^2
+  #   tau2 <- exp(parms[1])
+  #   totVar <- tau2 + gamma2i
+  #
+  #   nRow <- length(indMat[,1])
+  #   nCol <- length(indMat[1,])
+  #   parmVal <- parms[2:length(parms)]
+  #   parmMat <- matrix(parmVal[indMat], nRow, nCol)
+  #   colnames(parmMat) <- colnames(indMat)
+  #   groupLevels <- as.character(curveid)
+  #   pm <- t(parmMat[, groupLevels, drop = FALSE])
+  #   expt <- fct$fct(X, pm)
+  #   res <- Y - expt
+  #   n <- length(res)
+  #   #ll <-  mvtnorm::dmvnorm(res, mean = rep(0, n), sigma = diag(totVar), log = T)
+  #   #-ll
+  #   ll2 <- dnorm(Y, expt, sqrt(gamma2i+tau2*expt+0.00001), log = T)
+  #   sum(ll2)
+  # }
 
   MLfun <- function(formula, SE, fct, data, parms, indMat, curveid=NA){
 
@@ -14,7 +43,7 @@ drmHTT <- function(formula, SE, fct,  data, curveid, pmodels, varPower = F){
     gamma2i <- SE^2
     tau2 <- exp(parms[1])
     totVar <- tau2 + gamma2i
-
+    #print(totVar)
     nRow <- length(indMat[,1])
     nCol <- length(indMat[1,])
     parmVal <- parms[2:length(parms)]
@@ -26,7 +55,11 @@ drmHTT <- function(formula, SE, fct,  data, curveid, pmodels, varPower = F){
     res <- Y - expt
     n <- length(res)
     ll <-  mvtnorm::dmvnorm(res, mean = rep(0, n), sigma = diag(totVar), log = T)
+
     -ll
+
+    #ll2 <- dnorm(Y, expt, sqrt(gamma2i+tau2*expt+0.00001), log = T)
+    #sum(ll2)
 }
   MLWfun <- function(formula, SE, fct, data, parms, indMat, curveid=NA){
     #Da rifare!!!!!
@@ -52,7 +85,7 @@ drmHTT <- function(formula, SE, fct,  data, curveid, pmodels, varPower = F){
     # }
     gamma2i <- SE^2
     delta <- parms[1]
-
+    #print(delta)
     nRow <- length(indMat[,1])
     nCol <- length(indMat[1,])
     parmVal <- parms[2:length(parms)]
@@ -62,6 +95,7 @@ drmHTT <- function(formula, SE, fct,  data, curveid, pmodels, varPower = F){
 
     pm <- t(parmMat[, groupLevels, drop = FALSE])
     expt <- fct$fct(X, pm)
+    #print(indMat)
     ll <-  mvtnorm::dmvnorm(Y, mean = expt, sigma = diag(gamma2i + delta*expt + 0.00001), log = T)
     # ll2 <- dnorm(Y, expt, sqrt(gamma2i+tau2*expt+0.00001), log = T)
     # sum(ll2)
@@ -77,13 +111,16 @@ drmHTT <- function(formula, SE, fct,  data, curveid, pmodels, varPower = F){
         curveid <<- curveid
         naiveMod <- drm(formula, data=data, fct=fct)
   } else {
+        #curveid.tmp <- factor(curveid)
         curveid <<- curveid
-        naiveMod <- drcSeedGerm::drm(formula, curveid=curveid, fct = fct, data = data,
-               pmodels = pmodels )
+        #print(curveid.tmp)
+        naiveMod <- drcSeedGerm::drm(formula, curveid=curveid, fct = fct,
+          data = data, pmodels = pmodels )
+       #print( naiveMod$coef )
     }
   MSE <- sum(residuals(naiveMod)^2)/naiveMod$df
   tau2 <- MSE - mean(vi)
-  #print(coef(naiveMod))
+  print(tau2)
 
   if(tau2 <= 0 & varPower == F){
     # Running a simple weighted regression
@@ -105,7 +142,8 @@ drmHTT <- function(formula, SE, fct,  data, curveid, pmodels, varPower = F){
                       formula = formula, SE = SE, fct = fct,
                   data=data, curveid = curveid, indMat = indMat)
   } else { if(varPower == T) {
-    parms <- c(0.01, naiveMod$coef)
+    parms <- c(delta, naiveMod$coef)
+    #print(parms)
     indMat <- naiveMod$indexMat
     names(parms) <- c("delta", names(coef(naiveMod)))
     likfun <- optim(par = parms,
@@ -113,6 +151,7 @@ drmHTT <- function(formula, SE, fct,  data, curveid, pmodels, varPower = F){
                 method = "BFGS", hessian=T,
                 formula = formula, SE = SE, fct = fct,
                 data = data, curveid = curveid, indMat = indMat)
+    #print(likfun$value)
   }
   }}
 
