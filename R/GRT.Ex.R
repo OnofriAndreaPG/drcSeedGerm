@@ -54,12 +54,23 @@ deriv1 <- function(x, parm){
 
   cbind(d1, d2, d3, d4)
 }
+derivx <- function(x, parm){
+  d1.1 <- GRT.Ex.fun(x, parm[,1], parm[,2], parm[,3],
+                   parm[,4])
+  d1.2 <- GRT.Ex.fun(x + 10e-6, (parm[,1]), parm[,2],
+                      parm[,3], parm[,4])
+  d1 <- (d1.2 - d1.1)/10e-6
+  d1
+}
 
 text <- "Exponential effect of temperature on GR50 (Masin et al., 2017)"
-returnList <- list(fct=fct, ssfct=ss, names=names, text=text, deriv1 = deriv1)
+returnList <- list(fct=fct, ssfct=ss, names=names, text=text, deriv1 = deriv1,
+                   derivx = derivx)
 class(returnList) <- "drcMean"
 invisible(returnList)
 }
+
+
 
 # Exponential with switch-off (From Masin et al., 2017 - modified)
 GRT.Exb.fun <- function(Temp, Tb, ThetaT, k, Tc) {
@@ -118,8 +129,18 @@ deriv1 <- function(x, parm){
   cbind(d1, d2, d3, d4)
 }
 
+derivx <- function(x, parm){
+  d1.1 <- GRT.Exb.fun(x, parm[,1], parm[,2], parm[,3],
+                   parm[,4])
+  d1.2 <- GRT.Exb.fun(x + 10e-6, (parm[,1]), parm[,2],
+                      parm[,3], parm[,4])
+  d1 <- (d1.2 - d1.1)/10e-6
+  d1
+}
+
 text <- "Exponential effect of temperature on GR50 (Type II - Masin et al., 2017)"
-returnList <- list(fct=fct, ssfct=ss, names=names, text=text, deriv1 = deriv1)
+returnList <- list(fct=fct, ssfct=ss, names=names, text=text, deriv1 = deriv1,
+                   derivx = derivx)
 class(returnList) <- "drcMean"
 invisible(returnList)
 }
