@@ -1,12 +1,13 @@
 library(devtools)
 install_github("onofriandreapg/drcSeedGerm")
+install_github("doseResponse/drcData")
 install_github("doseResponse/drc")
 install.packages("drc")
 library(drcSeedGerm)
 library(lmtest)
 library(sandwich)
 
-library(drc)
+# library(drc)
 #HTE model fitting - Code Snippets 1-4
 data(rape)
 modHTE <- drm( nSeeds ~ timeBef + timeAf + Psi,
@@ -65,7 +66,6 @@ ED(modHTE, Psi=-1, respLev=c(50, 30, 10), vcov. = sandwich)
 ED(modHTE, Psi=-1, respLev=c(50, 30, 10), vcov. = vcovCL, cluster = rape$Dish)
 
 vcovMat <- vcovCL(modHTE, cluster = rape$Dish)
-
 ED2.drc(modHTE, Psi=-1, respLev=c(50, 30, 10), vcov. = vcovMat)
 
 #Code snippet 5 ##############################

@@ -1,4 +1,4 @@
-"predict2.drc" <- function(object, newdata, se.fit = FALSE, interval = c("none", "confidence", "prediction"),
+"predict.drc" <- function(object, newdata, se.fit = FALSE, interval = c("none", "confidence", "prediction"),
 level = 0.95, na.action = na.pass, od = FALSE, vcov. = vcov, ...)
 {
     ## Checking arguments

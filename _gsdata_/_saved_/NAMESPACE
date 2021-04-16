@@ -22,6 +22,3 @@ export(makeDrm, makeDrm2, makeDrm.new, makeNlin, makeSurv, makeSurv2,
   PmaxT1, PmaxT1.fun, PmaxTP1.fun, GR50TPM.fun)
 
 S3method(predict, drc)
-S3method(bread, drc)
-S3method(estfun, drc)
-

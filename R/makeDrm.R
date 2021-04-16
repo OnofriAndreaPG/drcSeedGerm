@@ -88,7 +88,8 @@ makeDrm.new <- function(counts, treat, nViable, moniTimes) {
   dFrame2$timeBef <- timeBef
   dFrame2 <- plyr::ddply(dFrame2, .(Dish_tmp), .fun=transform,
                          nCum = cumsum(nSeeds))
-  finData <- cbind(dFrame2[,2:(firstCol - 2)],
+
+  finData <- cbind(dplyr::select(dFrame2, c(2:(firstCol - 2))),
                    nViable = dFrame2$nViable,
                    timeBef = as.numeric(dFrame2$timeBef),
                    timeAf = as.numeric(dFrame2$timeAf),
