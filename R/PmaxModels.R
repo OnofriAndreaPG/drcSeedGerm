@@ -41,7 +41,7 @@ invisible(Pmax1)
 # mod <- drm(Pmax ~ Psi, fct = PmaxPsi1())
 # summary(mod)
 
-#Pmax vs Psi (shifted exponential, with asymptote)
+#Pmax vs Psi (shifted exponential, no asymptote)
 PmaxPsi1na.fun <- function(Psi, Psib, sigma) {
   Pmax <- 1 - exp( - (Psi - Psib)/sigma)
   Pmax <- ifelse(Pmax < 0 , 0, Pmax)
@@ -76,6 +76,7 @@ PmaxT1.fun <- function(Temp, G, Tc, sigmaTc) {
   Pmax <- G * (1 - exp( - (Tc - Temp) / sigmaTc))
   Pmax <- ifelse(Pmax < 0, 0, Pmax)
   return(Pmax)}
+
 "PmaxT1" <- function(){
 fct <- function(x, parm) {
   Pmax <- PmaxT1.fun(x, parm[,1], parm[,2], parm[,3])

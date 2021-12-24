@@ -8,7 +8,7 @@ Reshape a seed germination datasets to obey the requirements of drm()
 MakeDrm2: this function reshapes a datasets organised as necessary for nonlinear regression into the kind of dataset required by the function drm() in the drc package. It works with either the counts of germinated seeds at each monitoring time or the cumulative counts at each monitoring time.
 }
 \usage{
-makeDrm2(counts, treat, nViable, moniTimes, Dish,  cumulative=T)
+makeDrm2(counts, treat, nViable, moniTimes, Dish,  cumulative = T)
 }
 
 \arguments{

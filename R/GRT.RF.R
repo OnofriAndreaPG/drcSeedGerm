@@ -11,7 +11,8 @@ GRT.RF.fun <- function(Temp, k, Tb, Td, ThetaT) {
 ## Defining the non-linear function
 fct <- function(x, parm) {
   GR <- GRT.RF.fun(x, parm[,1], parm[,2], parm[,3], parm[,4])
-  return(ifelse(GR < 0 , 0 , GR))}
+  return(ifelse(GR < 0 , 0 , GR))
+  }
 
 ## Defining names
 names <- c("k", "Tb", "Td", "ThetaT")
@@ -98,6 +99,7 @@ ss <- function(data){
   Td <- - ss2[1] / k
   Tc <- Td + 1/k
   return(c(Tb, Td, Tc, ThetaT))}
+
 ## Defining derivatives
 deriv1 <- function(x, parm){
 

@@ -15,6 +15,7 @@ fct <- function(x, parm){
 }
 text <- "Hydrotime model with log-logistic distribution of Psib (Mesgaran et al., 2013)"
 names <- c("thetaH", "delta", "Psib50", "sigma")
+name <- "HTLL"
 ss <- function(data){
   x1 <- data[, 1]
   x2 <- data[, 2]
@@ -28,12 +29,13 @@ ss <- function(data){
   return(c(thetaH, delta, Psib50, sigma))
 }
 
-GR <- function(parms, respl, reference="control", type="relative", Psi){
-  HTLL.gra <- function(thetaH, delta, Psib50, sigma, Psi, g) {
+GT <- function(parms, respl, reference="control", type="relative", Psi){
+    HTLL.gra <- function(thetaH, delta, Psib50, sigma, Psi, g) {
     .temp1 <- sigma*(-log((1 - g)/g) ) + log(Psib50 + delta)
     .temp2 <- Psi + delta - exp(.temp1)
     GR <- .temp2 / thetaH
     GR <- ifelse(GR > 0, GR, 0)
+    1/GR
   }
   thetaH <- as.numeric(parms[1])
   delta <- as.numeric(parms[2])
@@ -111,7 +113,8 @@ deriv1 <- function(x, parm){
   cbind(d1, d2, d3, d4)
 }
 
-returnList <- list(fct=fct, ssfct=ss, names=names, text=text, edfct=GR, deriv1=deriv1)
+returnList <- list(fct=fct, ssfct=ss, names=names, text=text,
+                   edfct = GT, deriv1=deriv1, name = name)
 class(returnList) <- "drcMean"
 invisible(returnList)
 }

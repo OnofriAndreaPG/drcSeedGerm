@@ -5,7 +5,9 @@ TTEM.fun <- function(time, Temp, G, Tc, sigmaTc, Tb, ThetaT, b) {
   GR50 <- ifelse(GR50<=0, 1e-06, GR50)
   plogis(b * (log(time) - log(1/GR50)) )* Pmax
 }
+
 "TTEM" <- function(){
+#TT-to-event. With shifted exponential + GR50 Polynomial
 fct <- function(x, parm) {
   S <- TTEM.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3], parm[,4],
                 parm[,5], parm[,6])
@@ -133,5 +135,5 @@ deriv1 <- function(x, parm){
 
 returnList <- list(fct=fct, ssfct=ss, names=names, text=text, edfct=GR, deriv1 = deriv1)
 class(returnList) <- "drcMean"
-invisible(returnList)
+return(returnList)
 }

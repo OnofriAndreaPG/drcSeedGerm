@@ -2,10 +2,9 @@ importFrom(drc, LL.3, LL.2)
 importFrom(utils, tail)
 importFrom(plyr, ldply, ddply)
 import(stats)
-export(makeDrm, makeDrm2, makeDrm.new, makeNlin, makeSurv, makeSurv2,
+export(makeDrm, makeDrm2, makeDrm.new, makeNlin, makeSurv2,
        NLSLL.3, GRate, GTime,
        jackGroupSE, drm.sg, drmSG, predictSG, quantileSG, SGindices, drmHTT,
-       ED2.drc, estfun.drc, bread.drc, predict.drc, drm,
        LL.dist.fun, LL.dist,
   GRPsiLin, GRPsiLin.fun, GRPsiPol, GRPsiPol.fun, GRPsiPol2, GRPsiPol2.fun,
   GRT.Ex, GRT.Ex.fun, GRT.YL, GRT.YL.fun, GRT.BS, GRT.BS.fun, GRT.BS2, GRT.BS2.fun,
@@ -20,8 +19,4 @@ export(makeDrm, makeDrm2, makeDrm.new, makeNlin, makeSurv, makeSurv2,
   TTERFc, TTERFc.fun, TTERFgr, TTERFga,
   HTTEM, HTTEM.fun, HTTEMgr, HTTEMga,
   PmaxT1, PmaxT1.fun, PmaxTP1.fun, GR50TPM.fun)
-
-S3method(predict, drc)
-S3method(bread, drc)
-S3method(estfun, drc)
 

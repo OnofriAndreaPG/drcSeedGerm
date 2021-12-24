@@ -20,9 +20,6 @@ This files describes the germination of rapeseed (cv. Excalibur) at different wa
     \item{\code{propCum}}{a numeric vector: cumulative proportion of germinated seeds at timeAf}
   }
 }
-\details{
-%%  ~~ If necessary, more details than the __description__ above ~~
-}
 \source{
 Pace, R., Benincasa, P., Ghanem, M.E., Quinet, M., Lutts, S., 2012. Germination of untreated and primed seeds in rapeseed (Brassica napus var. oleifera Del.) under salinity and low matric potential. Experimental Agriculture 48, 238–251.
 }
@@ -30,8 +27,10 @@ Pace, R., Benincasa, P., Ghanem, M.E., Quinet, M., Lutts, S., 2012. Germination 
 Pace, R., Benincasa, P., Ghanem, M.E., Quinet, M., Lutts, S., 2012. Germination of untreated and primed seeds in rapeseed (Brassica napus var. oleifera Del.) under salinity and low matric potential. Experimental Agriculture 48, 238–251.}
 \examples{
 #Fitting a hydrotime model
-gmod <- drm(propCum ~ timeAf + Psi, fct=HT(), data=rape)
+library(drcte)
+data(rape)
+gmod <- drmte(nSeeds ~ timeBef + timeAf + Psi,
+                 data = rape, fct = HTE1())
 summary(gmod)
-jackGroupSE(gmod, rape, rape$Dish)
 }
 \keyword{seed germination, hydro-time models}

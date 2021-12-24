@@ -1,20 +1,3 @@
-makeSurv <- function(counts, treat, nViable, moniTimes) {
-#This function organises a dataset to be submitted to survival analysis
-#i.e. one row per each seed.
-
-#dataset is a dataframe listing for each Petri dish (rows) the number of germinated seeds
-# at each assessment time (culumns);
-# treat is a dataframe listing for each Petri dish (rows) the levels of each treatment (culumns)
-# seeds = vector listing the number of viable seeds for each Petri dish (same length as
-# number of rows in dataset and treat.
-# moniTimes = vector of monitoring times. Seme length as number of columns in dataset
-  df <- makeDrm.new(counts, treat, nViable, moniTimes)
-  df <- df[df$nSeeds > 0,]
-  frequency <- df$nSeeds
-  df_surv <- df[rep(seq_len(nrow(df)), frequency),]
-  row.names(df_surv) <- 1:(length(df_surv[,1]))
-  df_surv
-}
 
 makeSurv2 <- function(counts, data) {
 #This function organises a dataset to be submitted to survival analysis
