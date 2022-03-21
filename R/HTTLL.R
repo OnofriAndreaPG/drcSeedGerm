@@ -1,8 +1,8 @@
-# Hydro-Thermal time models
 HTTLL.fun <- function(time, Psi, Temp, thetaHT, Tb, Psib50, Kt, delta, sigmaPsib){
-  #Da Mohsen et al., 2017
-  #Rivedere le condizioni
-  #Deve essere Psi > Psib50 + Kt*.cond1 e .germ2>0
+  # Hydro-Thermal-Time model for seed germination
+  # From Mohsen et al., 2017
+  # Rivedere le condizioni
+  # Deve essere Psi > Psib50 + Kt*.cond1 e .germ2>0
   .cond1 <- ifelse(Temp > Tb, Temp - Tb, 0)
   .germ1 <- thetaHT/(.cond1*time)
   #.cond2 <- Psi > Psib50 + Kt*.cond1

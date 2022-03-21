@@ -1,5 +1,16 @@
 HTTnormRF.fun <- function(time, Psi, Temp, thetaHT, Tb, Td, Psib50, Kt, sigmaPsib){
-  #Da Mohsen et al., 2017
+  # Da Mohsen et al., 2017
+  t1 <- ifelse(Temp < Td, Td, Temp)
+  .germ1 <- thetaHT/((Temp - Tb)*time)
+  .germ2 <- Psi - Psib50 - Kt*(t1 - Td) - .germ1
+  .germ3 <- ifelse(Temp < Tb, 0, .germ2)
+  .germ4 <- .germ2/sigmaPsib
+  germ <- pnorm(.germ4)
+  ifelse(Temp < Tb, 0, germ)
+  }
+
+HTTnormRF.fun <- function(time, Psi, Temp, thetaHT, Tb, Td, Psib50, Kt, sigmaPsib){
+  # Da Mohsen et al., 2017
   t1 <- ifelse(Temp < Td, Td, Temp)
   .germ1 <- thetaHT/((Temp - Tb)*time)
   .germ2 <- Psi - Psib50 - Kt*(t1 - Td) - .germ1
