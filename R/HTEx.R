@@ -1,10 +1,11 @@
 #Hydrotime models ######################################
-HTEx.fun <- function(time, Psi, ThetaH, mu, sigma){
+HTex.fun <- function(time, Psi, ThetaH, mu, sigma){
   1 - exp(-exp( (Psi - (ThetaH/time) - mu)/sigma) ) }
-"HTEx" <- function(){
+"HTex" <- function(){
 fct <- function(x, parm){
-  HTEx.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3]) }
+  HTex.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3]) }
 names <- c("ThetaH", "mu", "sigma")
+name <- "HTex"
 text <- "Hydrotime model with Type II extreme distribution of Psib"
 ss <- function(data){
   x1 <- data[, 1]
@@ -17,7 +18,7 @@ ss <- function(data){
   ThetaH <- -coef(mod)[2]*sigmaPsib
   return(c(ThetaH, Psib50, sigmaPsib))
 }
-returnList <- list(fct=fct, ssfct=ss, names=names, text=text)
+returnList <- list(fct=fct, ssfct=ss, name = name, names=names, text=text)
 class(returnList) <- "drcMean"
 invisible(returnList)
 }

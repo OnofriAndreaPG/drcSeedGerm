@@ -83,8 +83,8 @@ deriv1 <- function(x, parm){
 
   cbind(d1, d2, d3)
 }
-
-returnList <- list(fct=fct, ssfct=ss, names=names, text=text, edfct=GR, deriv1=deriv1)
+name <- "HTL"
+returnList <- list(fct=fct, ssfct=ss, name = name, names=names, text=text, edfct=GR, deriv1=deriv1)
 class(returnList) <- "drcMean"
 invisible(returnList)
 }

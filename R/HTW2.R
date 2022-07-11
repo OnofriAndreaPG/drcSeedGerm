@@ -13,6 +13,7 @@ fct <- function(x, parm){
   mu <- parm[,3]; sigma <- parm[,4]
   HTW2.fun(time, Psi, thetaH, delta, mu, sigma)
 }
+name <- "HTW2"
 names <- c("thetaH", "delta", "mu", "sigma")
 ss <- function(data){
   x1 <- data[, 1]
@@ -110,7 +111,7 @@ deriv1 <- function(x, parm){
   cbind(d1, d2, d3, d4)
 }
 
-returnList <- list(fct=fct, ssfct=ss, names=names, text=text, edfct=GR, deriv1=deriv1)
+returnList <- list(fct=fct, ssfct=ss, name = name, names=names, text=text, edfct=GR, deriv1=deriv1)
 class(returnList) <- "drcMean"
 invisible(returnList)
 }

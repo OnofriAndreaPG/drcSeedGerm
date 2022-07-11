@@ -12,13 +12,15 @@ export(makeDrm, makeDrm2, makeDrm.new, makeNlin, makeSurv2,
   GRT.RF, GRT.RF.fun, GRT.RFb, GRT.RFb.fun, GRT.GH2, GRT.GH2.fun,
   GRTPsi.M, GRTPsi.M.fun, GRTPsi.BS, GRTPsi.BS.fun,
   PmaxPsi1, PmaxPsi1.fun, PmaxPsi1na, PmaxPsi1na.fun,
-  HTE1, HTE1.fun, HTE1na, HTE1na.fun,
+  # Hydro-time models
+  HTE1, HTE1.fun, HTE1na, HTE1na.fun, HTE2, HTE2.fun, HTE3, HTE3.fun,
+  # Hydro-time Models (Mesgaran)
   HTnorm, HTnorm.fun, HTLL, HTLL.fun,
-  HTL, HTL.fun, HTG, HTG.fun, HTEx, HTEx.fun, HTW1, HTW1.fun, HTW2, HTW2.fun,
+  HTL, HTL.fun, HTG, HTG.fun, HTex, HTex.fun, HTW1, HTW1.fun, HTW2, HTW2.fun,
   # Hydro-Thermal-Time models
   HTTnorm.M, HTTnorm.M.fun, HTTnorm.BS, HTTnorm.BS.fun,
   HTTLL.M, HTTLL.M.fun, HTTLL.BS, HTTLL.BS.fun,
-  HTE2, HTE2.fun, HTE3, HTE3.fun, TTEM, TTEM.fun, TTERF, TTERF.fun,
+  TTEM, TTEM.fun, TTERF, TTERF.fun,
   TTERFc, TTERFc.fun, TTERFgr, TTERFga,
   HTTEM, HTTEM.fun, HTTEMgr, HTTEMga,
   PmaxT1, PmaxT1.fun, PmaxTP1.fun, GR50TPM.fun)

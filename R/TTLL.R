@@ -3,7 +3,7 @@
 TTnorm.fun <- function(time, Temp, ThetaT50, Tb, b){
   pnorm((Psi - (ThetaH/time) - Psib50)/sigmaPsib) }
 
-"HTnorm" <- function(){
+"TTnorm" <- function(){
 fct <- function(x, parm){
   HTnorm.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3]) }
 names <- c("ThetaH", "Psib50", "sigmaPsib")

@@ -11,16 +11,25 @@ fct <- function(x, parm){
   return(S)
 }
 names <- c("G", "Psib", "sigmaPsib", "thetaH", "b")
+name <- "HTE3"
 ss <- function(data){
   data <- subset(data, is.finite(data[,1])==T)
   result <- c()
   PsiF <- factor(data[,2])
   for(i in 1:length(levels(PsiF))){
     temp <- subset(data, data[,2] == levels(PsiF)[i])
-    #modT <- try(drm(temp[,3] ~ temp[,1], fct=LL.3()), silent=T)
-    x <- temp[,1]; y <- temp[,3]
-    modT <- try(nls(y ~ NLSLL.3(x, a, b, c)), silent=T)
-    if(class(modT) == "try-error") {res <- as.numeric(levels(PsiF)[i])
+    x <- temp[,1] + 0.0001; y <- temp[,3]
+
+    # self-start
+    d <- max(y) * 1.05
+    pseudoY <- log((d - y)/(y + 0.00001)  + 1e-06 )
+    coefs <- coef( lm(pseudoY ~ log(x+0.000001)))
+    k <- -coefs[1]; b <- coefs[2]
+    ED50 <- exp(k/b)
+    modT <- try(nls(y ~ d/(1 + exp(b * (log(x + 0.000001) - log(ED50)))),
+                    start = list(d = d, b = b, ED50 = ED50)), silent=T)
+    if(class(modT) == "try-error") {
+      res <- as.numeric(levels(PsiF)[i])
     result <- c(result, res)}
   }
   result
@@ -157,7 +166,7 @@ deriv1 <- function(x, parm){
   cbind(d1, d2, d3, d4, d5)
 }
 text <- "Hydro-time model with shifted exponential for Pmax and polynomial model (convex up) for GR50"
-returnList <- list(fct=fct, ssfct=ss, names=names, text=text, edfct=GR, deriv1=deriv1)
+returnList <- list(fct=fct, ssfct=ss, name = name, names=names, text=text, edfct=GR, deriv1=deriv1)
 class(returnList) <- "drcMean"
 invisible(returnList)
 }

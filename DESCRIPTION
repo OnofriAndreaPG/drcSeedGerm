@@ -2,8 +2,8 @@ Package: drcSeedGerm
 Date: 2021-04-16
 Type: Package
 Title: Statistical approaches for data analyses in seed germination assays
-Version: 0.9.92
-Depends: R (>= 2.10.0), drc, plyr, tidyr, sandwich
+Version: 0.9.93
+Depends: R (>= 3.5.0), drc, plyr, tidyr, sandwich
 Author: Andrea Onofri <andrea.onofri@unipg.it>
 Maintainer: Andrea Onofri <andrea.onofri@unipg.it>
 Description: This package contains several service functions to be used in support to the package drc, to analyse datasets obtained from seed germination assays 

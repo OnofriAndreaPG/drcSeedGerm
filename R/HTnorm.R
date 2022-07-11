@@ -6,6 +6,7 @@ HTnorm.fun <- function(time, Psi, ThetaH, Psib50, sigmaPsib){
 fct <- function(x, parm){
   HTnorm.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3]) }
 names <- c("ThetaH", "Psib50", "sigmaPsib")
+name <- "HTnorm"
 text <- "Hydrotime model with normal distribution of Psib (Bradford et al., 2002)"
 ss <- function(data){
   x1 <- data[, 1]
@@ -83,8 +84,7 @@ deriv1 <- function(x, parm){
 
   cbind(d1, d2, d3)
 }
-
-returnList <- list(fct=fct, ssfct=ss, names=names, text=text, edfct=GR, deriv1=deriv1)
+returnList <- list(fct=fct, ssfct=ss, name = name, names=names, text=text, edfct=GR, deriv1=deriv1)
 class(returnList) <- "drcMean"
 invisible(returnList)
 }

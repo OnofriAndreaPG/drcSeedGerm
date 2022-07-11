@@ -5,6 +5,7 @@ HTG.fun <- function(time, Psi, ThetaH, mu, sigma){
 "HTG" <- function(){
 fct <- function(x, parm){
   HTG.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3]) }
+name <- "HTG"
 names <- c("ThetaH", "mu", "sigma")
 text <- "Hydrotime model with Gumbel distribution of Psib (Mesgaran et al., 2013)"
 ss <- function(data){
@@ -84,7 +85,7 @@ deriv1 <- function(x, parm){
   cbind(d1, d2, d3)
 }
 
-returnList <- list(fct=fct, ssfct=ss, names=names, text=text, edfct=GR, deriv1=deriv1)
+returnList <- list(fct=fct, ssfct=ss, name = name, names=names, text=text, edfct=GR, deriv1=deriv1)
 class(returnList) <- "drcMean"
 invisible(returnList)
 }
