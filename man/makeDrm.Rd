@@ -2,10 +2,10 @@
 \alias{makeDrm}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Reshape a seed germination datasets to obey the requirements of drm()
+Reshape a seed germination datasets for time-to-event analyses
 }
 \description{
-MakeDrm: this function reshapes a common recording sheet for germination assays into the kind of dataset required by the function drm() in the drc package. In the common dataset, there is one row per each Petri dish, which lists the number of germinated seeds at each assessment time.
+MakeDrm: this function reshapes a common field book for germination assays into the form that is required for time-to-event analyses with drm() in the drc package and drmte() in the drcte package. The common field book has one row per each Petri dish and the counts of germinated seeds at each assessment time are listed in different columns.
 }
 \usage{
 makeDrm(counts, treat, nViable, moniTimes)
@@ -16,7 +16,7 @@ makeDrm(counts, treat, nViable, moniTimes)
 Dataframe listing the counts of germinated seeds in each Petri dish (rows) at each assessment time (columns).
 }
 \item{treat}{
-Dataframe listing for each dish the levels of each treatment
+Dataframe listing for each dish the levels of each treatment. It has as many columns as there are treatments in the experiment.
 }
 \item{nViable}{
 A vector with the number of viable seeds per dish, at the beginning of the assay
@@ -51,7 +51,8 @@ Andrea Onofri
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-#makeDrm
+# makeDrm
+library(drcSeedGerm)
 data(lotusOr)
 counts <- lotusOr[,3:length(lotusOr[1,])]
 treat <- data.frame(tratt=lotusOr[,1])

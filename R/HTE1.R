@@ -76,11 +76,9 @@ ss <- function(data){
   # print(retVal)
   return(retVal) }
 GR <- function(parms, respl, reference="control", type="relative", Psi){
-   G <- as.numeric(parms[1]); Psib<- as.numeric(parms[2])
-   sigmaPsib<- as.numeric(parms[3]); thetaH<- as.numeric(parms[4])
-   b <- as.numeric(parms[5])
-   g <- respl/100
-  if(type=="absolute"){
+  # Questa funzione restituisce il germination rate, not time
+  # respl è su una scala relativa ]0,1[
+  HTE1.gra <- function(G, Psib, sigmaPsib, thetaH, b, Psi, g) {
     .Pmax <- PmaxPsi1.fun(Psi, G, Psib, sigmaPsib)
     .Pmax <- ifelse(.Pmax > 0, .Pmax, 0)
     .temp2 <- (.Pmax - g)/g
@@ -88,30 +86,72 @@ GR <- function(parms, respl, reference="control", type="relative", Psi){
     .GR50 <- GRPsiLin.fun(Psi, Psib, thetaH)
     .GR50 <- ifelse(.GR50>0, .GR50, 0)
     res <- as.numeric( exp( - (1/b)*log(.temp2) + log(1/.GR50) ) )
-    EDp <- 1/res
-    .GR <- EDp
-      EDder <- c(
-        1/.GR * ((1/b) * ((1/g) * (.Pmax/G)/((1/g) * (.Pmax - g))))/(1/.GR^2),
-        -( ((1/b) * ((1/g) * (G * (exp(-(Psi - Psib) * (1/sigmaPsib)) * (1/sigmaPsib)))/((.Pmax - g)/g)) + 1/(Psi - Psib))/(1/.GR)),
-        -(((1/b) * ((1/g) * (G * (exp(-(Psi - Psib) * (1/sigmaPsib)) * ((Psi - Psib) * (1/sigmaPsib^2))))/((.Pmax - g)/g)))/(1/.GR)),
-        -(1/(Psi - Psib)/(1/.GR50))/(1/.GR),
-        -(1/.GR * (1/b^2 * log((1/g) * (.Pmax - g)))/exp(-(1/b) * log((1/g) * (.Pmax - g)) + log(1/.GR50))^2)
-      )
-  } else{ if(type=="relative") {
-    .Pmax <- PmaxPsi1.fun(Psi, G, Psib, sigmaPsib)
-    .Pmax <- ifelse(.Pmax > 0, .Pmax, 0)
+    res
+  }
+  HTE1.graRel <- function(G, Psib, sigmaPsib, thetaH, b, Psi, g) {
     .temp2 <- (1 - g)/g
+    .temp2 <- ifelse(.temp2 < 0, 0, .temp2)
     .GR50 <- GRPsiLin.fun(Psi, Psib, thetaH)
     .GR50 <- ifelse(.GR50>0, .GR50, 0)
     res <- as.numeric( exp( - (1/b)*log(.temp2) + log(1/.GR50) ) )
-    EDp <- 1/res
-    .GR <- EDp
-    EDder <- c(0,
-        -(1/.GR * ((1/.GR50)/(Psi - Psib)/(1/.GR50))/(1/.GR50)^2),
-        0,
-        -(1/.GR * (1/(Psi - Psib)/(1/.GR50))/(1/.GR)^2),
-        -(.GR * log((1 - g)/g) )/ (b^2)
-      )
+    res
+  }
+   G <- as.numeric(parms[1]); Psib<- as.numeric(parms[2])
+   sigmaPsib <- as.numeric(parms[3]); thetaH <- as.numeric(parms[4])
+   b <- as.numeric(parms[5])
+   g <- respl #/100
+  if(type=="absolute"){
+    EDp <- HTE1.gra(G, Psib, sigmaPsib, thetaH, b, Psi, g)
+
+    #Approximation of derivatives(finite differences)
+    d1.1 <- HTE1.gra(G, Psib, sigmaPsib, thetaH, b, Psi, g)
+    d1.2 <- HTE1.gra(G + 10e-6, Psib, sigmaPsib, thetaH, b, Psi, g)
+    d1 <- (d1.2 - d1.1)/10e-6
+
+    d2.1 <- HTE1.gra(G, Psib, sigmaPsib, thetaH, b, Psi, g)
+    d2.2 <- HTE1.gra(G, Psib + 10e-6, sigmaPsib, thetaH, b, Psi, g)
+    d2 <- (d2.2 - d2.1)/10e-6
+
+    d3.1 <- HTE1.gra(G, Psib, sigmaPsib, thetaH, b, Psi, g)
+    d3.2 <- HTE1.gra(G, Psib, sigmaPsib + 10e-6, thetaH, b, Psi, g)
+    d3<- (d3.2 - d3.1)/10e-6
+
+    d4.1 <- HTE1.gra(G, Psib, sigmaPsib, thetaH, b, Psi, g)
+    d4.2 <- HTE1.gra(G, Psib, sigmaPsib, thetaH+ 10e-6, b, Psi, g)
+    d4 <- (d4.2 - d4.1)/10e-6
+
+    d5.1 <- HTE1.gra(G, Psib, sigmaPsib, thetaH, b, Psi, g)
+    d5.2 <- HTE1.gra(G, Psib, sigmaPsib, thetaH, b + 10e-6, Psi, g)
+    d5 <- (d5.2 - d5.1)/10e-6
+
+    EDder <- c(d1, d2, d3, d4, d5)
+
+  } else{ if(type == "relative") {
+    EDp <- HTE1.graRel(G, Psib, sigmaPsib, thetaH, b, Psi, g)
+
+    #Approximation of derivatives(finite differences)
+    d1.1 <- HTE1.graRel(G, Psib, sigmaPsib, thetaH, b, Psi, g)
+    d1.2 <- HTE1.graRel(G + 10e-6, Psib, sigmaPsib, thetaH, b, Psi, g)
+    d1 <- (d1.2 - d1.1)/10e-6
+
+    d2.1 <- HTE1.graRel(G, Psib, sigmaPsib, thetaH, b, Psi, g)
+    d2.2 <- HTE1.graRel(G, Psib + 10e-6, sigmaPsib, thetaH, b, Psi, g)
+    d2 <- (d2.2 - d2.1)/10e-6
+
+    d3.1 <- HTE1.graRel(G, Psib, sigmaPsib, thetaH, b, Psi, g)
+    d3.2 <- HTE1.graRel(G, Psib, sigmaPsib + 10e-6, thetaH, b, Psi, g)
+    d3<- (d3.2 - d3.1)/10e-6
+
+    d4.1 <- HTE1.graRel(G, Psib, sigmaPsib, thetaH, b, Psi, g)
+    d4.2 <- HTE1.graRel(G, Psib, sigmaPsib, thetaH+ 10e-6, b, Psi, g)
+    d4 <- (d4.2 - d4.1)/10e-6
+
+    d5.1 <- HTE1.graRel(G, Psib, sigmaPsib, thetaH, b, Psi, g)
+    d5.2 <- HTE1.graRel(G, Psib, sigmaPsib, thetaH, b + 10e-6, Psi, g)
+    d5 <- (d5.2 - d5.1)/10e-6
+
+    EDder <- c(d1, d2, d3, d4, d5)
+
   } }
 return(list(EDp, EDder))
 }

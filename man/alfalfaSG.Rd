@@ -59,8 +59,7 @@ Andrea Onofri
 }
 
 \examples{
-# Transform to LONG format
 data(alfalfaSG)
-## maybe str(barley) ; plot(barley) ...
+head(alfalfaSG)
 }
 \keyword{datasets}

@@ -1,4 +1,5 @@
 HTTnorm.M.fun <- Vectorize(function(time, Psi, Temp, thetaHT, Tb, Psib50, Kt, sigmaPsib){
+  # HTT model based on Psi and Temperature
   # Da Mohsen et al., 2017 - Psib50 decreases with Temperature
   # for any T > Tb
   .cond1 <- ifelse(Temp < Tb, 0, Temp - Tb)
@@ -44,7 +45,7 @@ ss <- function(data){
     # temp2
     # Kt <- coef(temp2)[2]
     # Psib50 <- coef(temp2)[1]
-  # thetaHT = 700; Tb = 3; Psib50 = -3; Kt = 0.06; sigmaPsib = 0.3
+  thetaHT = 700; Tb = 3; Psib50 = -3; Kt = 0.06; sigmaPsib = 0.3
 
   return(c(thetaHT, Tb, Psib50, Kt, sigmaPsib))
 }

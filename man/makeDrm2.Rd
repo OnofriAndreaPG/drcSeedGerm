@@ -1,11 +1,10 @@
 \name{makeDrm2}
 \alias{makeDrm2}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Reshape a seed germination datasets to obey the requirements of drm()
+Reshape a seed germination datasets for time-to-event model fitting.
 }
 \description{
-MakeDrm2: this function reshapes a datasets organised as necessary for nonlinear regression into the kind of dataset required by the function drm() in the drc package. It works with either the counts of germinated seeds at each monitoring time or the cumulative counts at each monitoring time.
+This function reshapes a datasets organised as necessary for nonlinear regression into the kind of dataset required by the drmte() function in the 'drcte' package. It works with either the counts of germinated seeds at each monitoring time or the cumulative counts at each monitoring time.
 }
 \usage{
 makeDrm2(counts, treat, nViable, moniTimes, Dish,  cumulative = T)
@@ -57,7 +56,7 @@ Andrea Onofri
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-#makeDrm2
+# makeDrm2
 data(lotusCum)
 moniTime <- lotusCum$Time
 count <- lotusCum$nCum

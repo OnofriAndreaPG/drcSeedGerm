@@ -1,11 +1,17 @@
-importFrom(drc, LL.3, LL.2)
-importFrom(utils, tail)
-importFrom(plyr, ldply, ddply)
+# Imports
 import(stats)
-export(makeDrm, makeDrm2, makeDrm.new, makeNlin, makeSurv2,
-       NLSLL.3, GRate, GTime,
-       drm.sg, drmSG, predictSG, quantileSG, SGindices, drmHTT,
-       LL.dist.fun, LL.dist,
+importFrom("drc", "drm", "LL.3", "LL.2")
+importFrom("mvtnorm", "dmvnorm")
+importFrom("drcte", "drmte")
+importFrom("survival", "survfit")
+importFrom("utils", "tail")
+importFrom("plyr", "ldply", "ddply")
+importFrom("dplyr", "select")
+
+export(
+  # Utilities
+  makeDrm, makeDrm2, NLSLL.3, LL.dist.fun, LL.dist, jackGroupSE,
+  # Second-step models
   GRPsiLin, GRPsiLin.fun, GRPsiPol, GRPsiPol.fun, GRPsiPol2, GRPsiPol2.fun,
   GRT.Ex, GRT.Ex.fun, GRT.YL, GRT.YL.fun, GRT.BS, GRT.BS.fun, GRT.BS2, GRT.BS2.fun,
   GRT.Exb, GRT.Exb.fun, GRT.GH, GRT.GH.fun, GRT.M, GRT.M.fun,

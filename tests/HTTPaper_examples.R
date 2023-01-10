@@ -1,17 +1,23 @@
+# Corrected on December 2022 and based on drcte
 library(devtools)
-install_github("onofriandreapg/drcSeedGerm")
-install_github("doseResponse/drcData")
-install_github("doseResponse/drc")
-install.packages("drc")
-library(drcSeedGerm)
+## install_github("onofriandreapg/drcSeedGerm")
+## devtools::install_github("onofriandreapg/drcte")
+# install_github("doseResponse/drcData")
+# install_github("doseResponse/drc")
+
+# install.packages("drc")
+library(drcte)
+## library(drcSeedGerm)
+devtools::load_all()
 library(lmtest)
 library(sandwich)
+library(ggplot2)
 
 # library(drc)
 #HTE model fitting - Code Snippets 1-4
 data(rape)
-modHTE <- drm( nSeeds ~ timeBef + timeAf + Psi,
-            data=rape, fct=HTE1(), type="event")
+modHTE <- drmte( nSeeds ~ timeBef + timeAf + Psi,
+            data=rape, fct=HTE1())
 summary(modHTE)
 
 # Model fitted: Hydro-time model with shifted exponential
@@ -28,7 +34,7 @@ summary(modHTE)
 # ---
 # Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-coeftest(modHTE, vcov=vcovCL, cluster=rape$Dish)
+summary(modHTE, vcov = vcovCL, units = Dish)
 
 # t test of coefficients:
 #
@@ -40,8 +46,8 @@ coeftest(modHTE, vcov=vcovCL, cluster=rape$Dish)
 # b:(Intercept)          4.0272972  0.1934579   20.8174 < 2.2e-16 ***
 
 #Code snippet 4 ############################################
-ED(modHTE, Psi=-1, respLev=c(50, 30, 10))
-
+ED(modHTE, Psi = -1, respLev=c(50, 30, 10), type = "relative", rate = T)
+quantile(modHTE, probs = c(0.5, 0.3, 0.1), Psi = -1, restricted = T, rate = T)
 # Estimated effective doses
 #
 #         Estimate Std. Error
@@ -49,8 +55,8 @@ ED(modHTE, Psi=-1, respLev=c(50, 30, 10))
 # e:1:30 0.0540987  0.0029981
 # e:1:10 0.0756414  0.0029027
 
-ED(modHTE, Psi=-1, respLev=c(50, 30, 10),
-     type="absolute")
+ED(modHTE, Psi=-1, respLev=c(0.50, 0.30, 0.10), type = "absolute", rate = T)
+quantile(modHTE, probs = c(0.5, 0.3, 0.1), Psi = -1, restricted = F, rate = T)
 
 # Estimated effective doses
 #
@@ -60,24 +66,29 @@ ED(modHTE, Psi=-1, respLev=c(50, 30, 10),
 # e:1:10 0.051297   0.006222
 
 #Cluster robust ED level
-ED(modHTE, Psi=-1, respLev=c(50, 30, 10), vcov. = vcovCL)
 ED(modHTE, Psi=-1, respLev=c(50, 30, 10), vcov. = sandwich)
-
-ED(modHTE, Psi=-1, respLev=c(50, 30, 10), vcov. = vcovCL, cluster = rape$Dish)
+quantile(modHTE, probs = c(0.5, 0.3, 0.1), Psi = -1,
+         restricted = T, robust = TRUE)
+ED(modHTE, Psi=-1, respLev=c(50, 30, 10), vcov. = vcovCL, units = rape$Dish)
+quantile(modHTE, probs = c(0.5, 0.3, 0.1), Psi = -1,
+         restricted = T, robust = TRUE, units = Dish)
 
 vcovMat <- vcovCL(modHTE, cluster = rape$Dish)
-ED2.drc(modHTE, Psi=-1, respLev=c(50, 30, 10), vcov. = vcovMat)
+ED(modHTE, Psi=-1, respLev=c(50, 30, 10), vcov. = vcovMat)
 
 #Code snippet 5 ##############################
+rm(list = ls())
 data(hordeum)
 head(hordeum)
-modHTTE <- drm(nSeeds ~ timeBef + timeAf + water + temp, data=hordeum,
-  fct=HTTEM(), type="event",
+modHTTE <- drmte(nSeeds ~ timeBef + timeAf + water + temp,
+                 data=hordeum,
+                 fct = HTTEM(),
   start=c(0.8,-2, 0.05, 3, 0.2, 2000, 0.5))
 summary(modHTTE)
 
 #Sandwich standard errors
 coeftest(modHTTE, vcov=vcovCL, cluster=hordeum$Dish)
+summary(modHTTE, units = Dish)
 # t test of coefficients:
 #
 #                          Estimate  Std. Error  t value Pr(>|t|)
@@ -89,7 +100,11 @@ coeftest(modHTTE, vcov=vcovCL, cluster=hordeum$Dish)
 # ThetaHT:(Intercept)    1.3091e+03  4.0638e+01  32.2130   <2e-16 ***
 # b:(Intercept)          4.1650e+00  1.1332e-01  36.7548   <2e-16 ***
 
-
+devtools::load_all()
+mod <- modHTTE
+datS <- hordeum
+mod2 <- try(update(mod, data = datS), silent=T) #refit model
+    any(class(mod2) == "try-error")
 jackGroupSE(modHTTE, hordeum, cluster=hordeum$Dish) #Takes long!
 #                            Estimate           SE    Robust SE
 # G:(Intercept)            0.98819850  0.013094129  0.011940148

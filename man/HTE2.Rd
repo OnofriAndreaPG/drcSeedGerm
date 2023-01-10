@@ -1,6 +1,6 @@
-\name{HTE1}
-\alias{HTE1}
-\alias{HTE1.fun}
+\name{HTE2}
+\alias{HTE2}
+\alias{HTE2.fun}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Hydro-time model with shifted exponential for Pmax and linear model for GR50
@@ -9,7 +9,7 @@ Hydro-time model with shifted exponential for Pmax and linear model for GR50
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-HTE1()
+HTE2()
 }
 %- maybe also 'usage' for other objects documented here.
 \details{

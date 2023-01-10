@@ -30,6 +30,8 @@ ss <- function(data){
 }
 
 GT <- function(parms, respl, reference="control", type="relative", Psi){
+    # This function produces the quantiles for times-to-event
+    # Respl is the quantile on a relative value (from 0 to 1)
     HTLL.gra <- function(thetaH, delta, Psib50, sigma, Psi, g) {
     .temp1 <- sigma*(-log((1 - g)/g) ) + log(Psib50 + delta)
     .temp2 <- Psi + delta - exp(.temp1)
@@ -41,7 +43,7 @@ GT <- function(parms, respl, reference="control", type="relative", Psi){
   delta <- as.numeric(parms[2])
   Psib50 <- as.numeric(parms[3])
   sigma <- as.numeric(parms[4])
-  g <- respl/100
+  g <- respl #/100
   if(type=="absolute"){
 
     EDp <- HTLL.gra(thetaH, delta, Psib50, sigma, Psi, g)

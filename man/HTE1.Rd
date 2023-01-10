@@ -3,17 +3,17 @@
 \alias{HTE1.fun}
 
 \title{
-Hydro-time model for seed germination, relating the time-course of the proportion of germinated seeds to the water potential in the substrate
+Hydro-time-to-event model for seed germination.
 }
 \description{
-This model is based on a truncated log-logistic distribution of germination time, where the three parameters of this distribution ('Pmax', 'GR50' and 'b') are expressed as functions of water potential (Psi). The 'HTE1.fun()' is a generic function, which can be used for plotting or other applications, while the HTE1() function is meant to be used to fit this model by the 'drmte()' function in the 'drcte()' package.
+This model relates the time-course of the proportion of germinated seeds to the water potential in the substrate. It is based on four submodels: (1) a truncated log-logistic distribution of germination time, where the three usual parameters ('d', 'e' and 'b') are expressed as functions of water potential (Psi); (2) for the parameter 'd', the dependency on Psi is described by using a shifted exponential distribution; (3) for the parameter 'e', it is assumed that its inverse (i.e. 1/e = GR50) is linearly related to Psi; (4) for the 'b' parameter, it is assumed that it is unaffected by Psi. The 'HTE1.fun()' is a generic function, which can be used for plotting or other applications, while the HTE1() function is meant to be used to fit this model by the 'drmte()' function in the 'drcte()' package.
 }
 \usage{
 HTE1()
 HTE1.fun(time, Psi, G, Psib, sigmaPsib, thetaH, b)
 }
 \details{
-The detail of these functions are described in Onofri et al. (2018).
+The detail of this time-to-event model is described in Onofri et al. (2018). See Table 2, where this model is abbreviated as HTE.
 }
 \arguments{
   The HTE1() function has no arguments. The HTE1.fun() function has the following arguments:
