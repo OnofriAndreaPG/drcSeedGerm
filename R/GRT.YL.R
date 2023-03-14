@@ -4,6 +4,7 @@ GRT.YL.fun <- function(Temp, q, tmin, tmax, theta) {
   dt <- ifelse(t > tmin & t < tmax, t - tmin, 0)
   GR <- (dt/theta) * (1 - q*( dt/(tmax - tmin))/(1 + (q - 1)*(dt/(tmax - tmin))))
   return(ifelse(GR < 0 , 0 , GR)) }
+
 "GRT.YL" <- function(){
 fct <- function(x, parm) {
   t <- x

@@ -13,7 +13,6 @@ The germination of alfalfa was assayed at 7 temperature levels, on three replica
   \describe{
     \item{\code{Dish}}{a numeric vector with the coding for Petri dishes}
     \item{\code{Temp}}{a numeric vector with the temperature level}
-    \item{\code{Dish}}{a numeric vector: code of Petri dish}
     \item{\code{nViable}}{a numeric vector: number of viable seeds per dish}
     \item{\samp{1}}{a numeric vector: count at day 1}
     \item{\samp{2}}{a numeric vector: count at day 2}

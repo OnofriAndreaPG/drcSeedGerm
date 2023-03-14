@@ -71,7 +71,7 @@ invisible(returnList)
 }
 
 #Rowse and Finch-Savage (with Tc and Td explicit, instead of k)
-GRT.RFb.fun <- function(Temp, Tb, Td, Tc, ThetaT) {
+GRT.RFb.fun <- function(Temp, Tc, Tb, Td, ThetaT) {
   T2 <- ifelse(Temp < Tb, Tb, Temp)
   T1 <- ifelse(Temp < Td, Td, Temp)
   psival <- ifelse(1 - (T1 - Td)/(Tc - Td) > 0, 1 - (T1 - Td)/(Tc - Td), 0)
@@ -81,7 +81,7 @@ GRT.RFb.fun <- function(Temp, Tb, Td, Tc, ThetaT) {
 fct <- function(x, parm) {
   GR <- GRT.RFb.fun(x, parm[,1], parm[,2], parm[,3], parm[,4])
   return(ifelse(GR < 0 , 0 , GR))}
-names <- c("Tb", "Td", "Tc", "ThetaT")
+names <- c("Tc", "Tb", "Td", "ThetaT")
 ss <- function(data){
   pos <- which( data[,2]==max(data[,2]) )
   len <- length( data[,2] )
@@ -98,7 +98,7 @@ ss <- function(data){
   k <- ss2[2]
   Td <- - ss2[1] / k
   Tc <- Td + 1/k
-  return(c(Tb, Td, Tc, ThetaT))}
+  return(c(Tc, Tb, Td, ThetaT))}
 
 ## Defining derivatives
 deriv1 <- function(x, parm){

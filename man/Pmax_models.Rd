@@ -11,25 +11,31 @@ These models are used to describe the germination capability of a seed lot, depe
 \usage{
 PmaxPsi1(fixed = c(NA, NA, NA), names = c("G", "Psib", "sigma"))
 PmaxT1(fixed = c(NA, NA, NA), names = c("G", "Tc", "sigmaTc"))
+PmaxPsi1.fun(Psi, G, Psib, sigma)
+PmaxT1.fun(Temp, G, Tc, sigmaTc)
 }
-%- maybe also 'usage' for other objects documented here.
 \details{
-This R function is meant to be used with the 'drm()' function, within the 'drc' package.}
+The R functions 'PmaxPsi1()' and 'PmaxT1()' are meant to be used for model fitting with the 'drm()' function, within the 'drc' package. On the other hand, 'PmaxPsi1.fun()' and 'PmaxT1.fun()' are general purpose functions, to bu used for plotting or other applications.}
 \arguments{
   \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. Defaults to NAs for parameter that are not fixed.}
   \item{names}{a vector of character strings giving the names of the parameters (should not contain ":"). The default is reasonable.}
+  \item{Psi}{Water potential level}
+  \item{Temp}{Temperature level}
+  \item{G}{Maximum proportion of germinated seeds}
+  \item{Psib}{Base water potential level}
+  \item{sigma}{Variability of base water potential within the seed lot}
+  \item{Tc}{Ceiling temperature level}
+  \item{sigmaTc}{Variability of ceiling temperature level within the population}
 }
 \value{
-The value returned is a list containing the nonlinear function, the self starter function and the parameter names.
+'PmaxPsi1()' and 'PmaxT1()' return a list containing the nonlinear function, the self starter function and the parameter names, that are internally used for model fitting. 'PmaxPsi1.fun()' and 'PmaxT1.fun()' return the maximum proportion of germinated seeds for any given level of temperature or water potential in the substrate.
 }
 \references{
-\url{https://www.statforbiology.com/2021/stat_seedgermination_htt2step/#one-threshold-exponential}
+\url{https://www.statforbiology.com/2021/stat_drcte_12_HTT2step}
 }
 \author{
 Andrea Onofri
 }
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \examples{
 library(drcte)
@@ -40,11 +46,11 @@ Pmax <- c(0, 0, 0.076, 0.413, 0.514, 0.643, 0.712,
 mod <- drm(Pmax ~ Psi, fct = PmaxPsi1())
 summary(mod)
 
-#Pmax vs Psi (shifted exponential, with asymptote)
+# Pmax vs Psi (shifted exponential, with asymptote)
 Psi <- seq(-2.2, 0, by = 0.2)
 Pmax <- c(0, 0, 0.076, 0.413, 0.514, 0.643, 0.712,
           0.832, 0.865, 0.849, 0.89, 0.90)
-mod <- drm(Pmax ~ Psi, fct = PmaxPsi1(fixed = c(NA, NA, 1)))
+mod <- drm(Pmax ~ Psi, fct = PmaxPsi1(fixed = c(1, NA, NA)))
 summary(mod)
 
 # Pmax vs temperature

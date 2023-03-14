@@ -7,7 +7,7 @@ A series of germination assays with Phalaris minor
 \description{
 The germination of Phalaris minor was assayed at 6 mater potential levels and 6 temperature levels, on four replicated Petri dishes at each temperature and water potential. Twenty-five seeds per Petri dish were used. Inspections were made daily for twenty days.
 }
-\usage{data("barley")}
+\usage{data("phalaris")}
 \format{
   A data frame with 3024 observations on the following 9 variables.
   \describe{

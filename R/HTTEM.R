@@ -4,27 +4,13 @@ PmaxTP1.fun <- function(Psi, Temp, G, Psib50, kt, Tb, sigmaPsi) {
   Pmax <- ifelse(Temp < Tb | Psi < (Psib50 - kt * (Temp - Tb)), 0, Pmax)
   Pmax[Pmax<0] <- 0
   return(Pmax) }
-# PmaxTP1.fct <- function(x, parm) {
-#   Pmax <- PmaxTP1.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3], parm[,4], parm[,5])
-#   return(Pmax) }
-# PmaxTP1.names <- c("G", "Psib50", "kt", "Tb", "sigmaPsi")
-# PmaxTP1.ss <- function(data){G=0.9; Psib50=-2; kt=0.05; Tb=3; sigmaPsi=0.2
-# return(c(G, Psib50, kt, Tb, sigmaPsi))}
-# PmaxTP1 <- list(PmaxTP1.fct, PmaxTP1.ss, PmaxTP1.names)
 
 GR50TPM.fun <- function(Psi, Temp, k, tb, ThetaHT, Psib) {
   t2 <- ifelse(Temp < tb, tb, Temp)
   psival <- ifelse(Psi - Psib - k*(Temp - tb) > 0, Psi - Psib - k*(Temp - tb), 0)
   GR <- psival * (t2 - tb)/ThetaHT
   return(ifelse(GR < 0 , 0 , GR)) }
-# GR50TPM.fct <- function(x, parm) {
-#   GR <- GR50TPM.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3], parm[,4])
-#   return(GR)  }
-# GR50TPM.names <- c("k", "tb", "ThetaHT", "Psib")
-# GR50TPM.ss <- function(data){
-#   k <- 0.1; tb <- 2; ThetaHT <-35; Psib <- 1
-#   return(c(k, tb, ThetaHT, Psib))}
-# GR50TPM <- list(GR50TPM.fct, GR50TPM.ss, GR50TPM.names)
+
 HTTEMgr <- function(Psi, Temp, respl, parms) {
    G <- as.numeric(parms[1]); Psib <- as.numeric(parms[2])
    k <- as.numeric(parms[3]);

@@ -1,178 +1,68 @@
 \name{HTE3}
 \alias{HTE3}
 \alias{HTE3.fun}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
-Hydro-time model with shifted exponential for Pmax and linear model for GR50
+Hydrotime model with log-logistic distribution of germination time (Onofri et al., 2018)
 }
+
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+This model relates the time-course of the proportion of germinated seeds to the water potential in the substrate. It is based on a truncated log-logistic distribution of germination time:
+
+
+\deqn{P(t) = \frac{d}{1 + exp\left[ b (\log(x) - \log(e)\right]}}
+
+where two of the three usual parameters ('d' and 'e') are expressed as functions of water potential (\eqn{\Psi}). In this function, the two submodels are: (1) for the parameter 'd', we used a shifted exponential function:
+
+\deqn{d = G \left[ 1 - \exp \left( \frac{ \Psi - \Psi_b }{\sigma_{\Psi_b}} \right) \right]}
+
+while, (2) for the parameter 'e' we considered that its inverse corresponds to the median Germination Rate within the population (i.e. \eqn{1/e = GR_{50}}) and modelled this latter parameter as:
+
+\deqn{GR_{50} = \frac{\Psi^2 - \Psi^2_b}{\theta_H} }
+
+The difference with the 'HTE1()' function is that, in this case, the relationship between GR50 and water potential is not linear, but curvilinear (convex up).
+The 'HTE3.fun()' is a generic function, which can be used for plotting or other applications, while the 'HTE3()' function is meant to be used for model fitting with the 'drmte()' function in the 'drcte()' package.
+}
+
+\details{
+No more detail, at the moment.
 }
 \usage{
-HTE3()
+HTE3(fixed = c(NA, NA, NA, NA, NA),
+                  names = c("G", "Psib", "sigmaPsib", "thetaH", "b"))
+HTE3.fun(time, Psi, G, Psib, sigmaPsib, thetaH, b)
 }
-%- maybe also 'usage' for other objects documented here.
-\details{
-%%  ~~ If necessary, more details than the description above ~~
+\arguments{
+These functions have the following arguments:
+  \item{fixed}{numeric vector. Specifies which parameters are fixed and at what value they are fixed. NAs for parameter that are not fixed. At the moment, only the parameter G can be held fixed.}
+ \item{names}{a vector of character strings giving the names of the parameters. The default is reasonable.}
+  \item{time}{time}
+  \item{Psi}{water potential in the substrate}
+  \item{G}{maximum germination capability of the seed lot}
+  \item{Psib}{base water potential}
+  \item{sigmaPsib}{standard deviation for the base water potential within the seed lot}
+  \item{thetaH}{hydro-time constant}
+  \item{b}{shape parameter for the cumulative distribution function of germination time}
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+The 'HTE3.fun()' function returns the proportion of germinated seeds, for any given values of time and water potential in the substrate, depending on model parameters G, Psib, sigmaPsib, thetaH and b. The 'HTE3()' function returns a list containing the nonlinear function, the self starter function, the parameter names and other items which are internally used by the 'drmte()' function.
 }
+
 \references{
-%% ~put references to the literature/web site here ~
+Onofri, A., Benincasa, P., Mesgaran, M.B., Ritz, C., 2018. Hydrothermal-time-to-event models for seed germination. European Journal of Agronomy 101, 129–139.
+\url{https://www.statforbiology.com/2020/stat_seedgermination_ht1step/}
 }
 \author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+Andrea Onofri
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function ()
-{
-    HTE1.fct <- function(x, parm) {
-        S <- HTE1.fun(x[, 1], x[, 2], parm[, 1], parm[, 2], parm[,
-            3], parm[, 4], parm[, 5])
-        return(S)
-    }
-    HTE1.names <- c("G", "Psib", "sigmaPsib", "thetaH", "b")
-    HTE1.ss <- function(data) {
-        data <- subset(data, is.finite(data[, 1]) == T)
-        result <- c()
-        PsiF <- factor(data[, 2])
-        for (i in 1:length(levels(PsiF))) {
-            temp <- subset(data, data[, 2] == levels(PsiF)[i])
-            x <- temp[, 1]
-            y <- temp[, 3]
-            modT <- try(nls(y ~ NLSLL.3(x, a, b, c)), silent = T)
-            if (class(modT) == "try-error") {
-                res <- as.numeric(levels(PsiF)[i])
-                result <- c(result, res)
-            }
-        }
-        result
-        dataset_cum <- subset(data, is.finite(data[, 1]) == T)
-        if (is.null(result) != T) {
-            for (i in 1:length(result)) dataset_cum <- subset(dataset_cum,
-                dataset_cum[, 2] != result[i])
-        }
-        PsiF <- factor(dataset_cum[, 2])
-        x1 <- dataset_cum[, 1]
-        x2 <- dataset_cum[, 2]
-        y <- dataset_cum[, 3]
-        modI <- drm(y ~ x1, fct = LL.3(), curveid = PsiF, pmodels = list(~1,
-            ~PsiF - 1, ~PsiF - 1), data = dataset_cum)
-        psiLevels <- as.numeric(levels(PsiF))
-        b <- -coef(modI)[1]
-        Pmax <- coef(modI)[2:(length(psiLevels) + 1)]
-        modPmax <- drm(Pmax ~ psiLevels, fct = PmaxPsi1())
-        G <- coef(modPmax)[3]
-        Psib <- coef(modPmax)[1]
-        sigmaPsib <- coef(modPmax)[2]
-        GR50 <- 1/coef(modI)[(length(psiLevels) + 2):length(coef(modI))]
-        modGR <- drm(GR50 ~ psiLevels, fct = GRPsiLin())
-        thetaH <- coef(modGR)[2]
-        Psib2 <- coef(modGR)[1]
-        psib <- mean(Psib, Psib2)
-        return(c(G, psib, sigmaPsib, thetaH, b))
-    }
-    HTE1.GR <- function(parms, respl, reference = "control",
-        type = "relative", Psi) {
-        G <- as.numeric(parms[1])
-        Psib <- as.numeric(parms[2])
-        sigmaPsib <- as.numeric(parms[3])
-        thetaH <- as.numeric(parms[4])
-        b <- as.numeric(parms[5])
-        g <- respl/100
-        if (type == "absolute") {
-            .Pmax <- Pmax2b.fun(Psi, G, Psib, sigmaPsib)
-            .Pmax <- ifelse(.Pmax > 0, .Pmax, 0)
-            .temp2 <- (.Pmax - g)/g
-            .temp2 <- ifelse(.temp2 < 0, 0, .temp2)
-            .GR50 <- GR501.fun(Psi, Psib, thetaH)
-            .GR50 <- ifelse(.GR50 > 0, .GR50, 0)
-            res <- as.numeric(exp(-(1/b) * log(.temp2) + log(1/.GR50)))
-            EDp <- 1/res
-            .GR <- EDp
-            EDder <- c(1/.GR * ((1/b) * ((1/g) * (.Pmax/G)/((1/g) *
-                (.Pmax - g))))/(1/.GR^2), -(((1/b) * ((1/g) *
-                (G * (exp(-(Psi - Psib) * (1/sigmaPsib)) * (1/sigmaPsib)))/((.Pmax -
-                g)/g)) + 1/(Psi - Psib))/(1/.GR)), -(((1/b) *
-                ((1/g) * (G * (exp(-(Psi - Psib) * (1/sigmaPsib)) *
-                  ((Psi - Psib) * (1/sigmaPsib^2))))/((.Pmax -
-                  g)/g)))/(1/.GR)), -(1/(Psi - Psib)/(1/.GR50))/(1/.GR),
-                -(1/.GR * (1/b^2 * log((1/g) * (.Pmax - g)))/exp(-(1/b) *
-                  log((1/g) * (.Pmax - g)) + log(1/.GR50))^2))
-        }
-        else {
-            if (type == "relative") {
-                .Pmax <- Pmax2b.fun(Psi, G, Psib, sigmaPsib)
-                .Pmax <- ifelse(.Pmax > 0, .Pmax, 0)
-                .temp2 <- (1 - g)/g
-                .GR50 <- GR501.fun(Psi, Psib, thetaH)
-                .GR50 <- ifelse(.GR50 > 0, .GR50, 0)
-                res <- as.numeric(exp(-(1/b) * log(.temp2) +
-                  log(1/.GR50)))
-                EDp <- 1/res
-                .GR <- EDp
-                EDder <- c(0, -(1/.GR * ((1/.GR50)/(Psi - Psib)/(1/.GR50))/(1/.GR50)^2),
-                  0, -(1/.GR * (1/(Psi - Psib)/(1/.GR50))/(1/.GR)^2),
-                  -(.GR * log((1 - g)/g))/(b^2))
-            }
-        }
-        return(list(EDp, EDder))
-    }
-    HTE1.deriv1 <- function(x, parm) {
-        d1.1 <- HTE1.fun(x[, 1], x[, 2], parm[, 1], parm[, 2],
-            parm[, 3], parm[, 4], parm[, 5])
-        d1.2 <- HTE1.fun(x[, 1], x[, 2], (parm[, 1] + 1e-05),
-            parm[, 2], parm[, 3], parm[, 4], parm[, 5])
-        d1 <- (d1.2 - d1.1)/1e-05
-        d2.1 <- HTE1.fun(x[, 1], x[, 2], parm[, 1], parm[, 2],
-            parm[, 3], parm[, 4], parm[, 5])
-        d2.2 <- HTE1.fun(x[, 1], x[, 2], parm[, 1], (parm[, 2] +
-            1e-05), parm[, 3], parm[, 4], parm[, 5])
-        d2 <- (d2.2 - d2.1)/1e-05
-        d3.1 <- HTE1.fun(x[, 1], x[, 2], parm[, 1], parm[, 2],
-            parm[, 3], parm[, 4], parm[, 5])
-        d3.2 <- HTE1.fun(x[, 1], x[, 2], parm[, 1], parm[, 2],
-            (parm[, 3] + 1e-05), parm[, 4], parm[, 5])
-        d3 <- (d3.2 - d3.1)/1e-05
-        d4.1 <- HTE1.fun(x[, 1], x[, 2], parm[, 1], parm[, 2],
-            parm[, 3], parm[, 4], parm[, 5])
-        d4.2 <- HTE1.fun(x[, 1], x[, 2], parm[, 1], parm[, 2],
-            parm[, 3], (parm[, 4] + 1e-05), parm[, 5])
-        d4 <- (d4.2 - d4.1)/1e-05
-        d5.1 <- HTE1.fun(x[, 1], x[, 2], parm[, 1], parm[, 2],
-            parm[, 3], parm[, 4], parm[, 5])
-        d5.2 <- HTE1.fun(x[, 1], x[, 2], parm[, 1], parm[, 2],
-            parm[, 3], parm[, 4], (parm[, 5] + 1e-05))
-        d5 <- (d5.2 - d5.1)/1e-05
-        cbind(d1, d2, d3, d4, d5)
-    }
-    HTE1.text <- "Hydro-time model with shifted exponential for Pmax and linear model for GR50"
-    HTE1 <- list(fct = HTE1.fct, ssfct = HTE1.ss, names = HTE1.names,
-        text = HTE1.text, edfct = HTE1.GR, deriv1 = HTE1.deriv1)
-    class(HTE1) <- "drcMean"
-    invisible(HTE1)
-  }
+# Fitting model
+data(rape)
+modHTE3 <- drmte( nSeeds ~ timeBef + timeAf + Psi,
+            data = rape, fct=HTE3())
+summary(modHTE3)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }% use one of  RShowDoc("KEYWORDS")
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{ seed germination }
+\keyword{ hydro-time model }
+\keyword{ time-to-event model }

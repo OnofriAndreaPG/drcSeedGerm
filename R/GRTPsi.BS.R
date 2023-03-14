@@ -63,7 +63,7 @@
 # invisible(returnList)
 # }
 
-#From Bradford 2002 - Broken-Stick Model - Original
+# From Bradford 2002 - Broken-Stick Model - Original
 GRTPsi.BS.fun <- function(Temp, Psi, k, Tb, To, ThetaHT, Psib){
   t2 <- ifelse(Temp < Tb, Tb, ifelse(Temp > To, To, Temp))
   t1 <- ifelse(Temp < To, To, Temp)

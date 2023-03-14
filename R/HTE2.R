@@ -1,17 +1,35 @@
-#HT-to-event. With shifted exponential + GR50polynomial (convex down)
+# HT-to-event. With shifted exponential + GR50polynomial (convex down)
 HTE2.fun <- function(time, Psi, G, Psib, sigmaPsib, thetaH, b){
   Pmax <- PmaxPsi1.fun(Psi, G, Psib, sigmaPsib)
   GR50 <- GRPsiPol2.fun(Psi, Psib, thetaH)
   plogis(b * (log(time) - log(1/GR50)))*Pmax
 }
-"HTE2" <- function(){
+"HTE2" <- function(fixed = c(NA, NA, NA, NA, NA),
+                   names = c("G", "Psib", "sigmaPsib", "thetaH", "b")){
+  ## Checking arguments
+    numParm <- 5
+    if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
+    if ( !(length(fixed) == numParm) ) {stop("Not correct 'fixed' argument")}
+    # Only G can be constrained
+    if (any(!is.na(fixed[2:5]))) {stop("Only the G parameter can be constrained, at the moment")}
+
+    ## Handling 'fixed' argument
+    notFixed <- is.na(fixed)
+    parmVec <- rep(0, numParm)
+    parmVec[!notFixed] <- fixed[!notFixed]
+
 fct <- function(x, parm){
+  parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
+  parmMat[, notFixed] <- parm
+  parm <- parmMat
+
   S <- HTE2.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3],
                 parm[,4], parm[,5])
   return(S)
 }
-names <- c("G", "Psib", "sigmaPsib", "thetaH", "b")
+names <- names[notFixed]
 name <- "HTE2"
+
 ss <- function(data){
   data <- subset(data, is.finite(data[,1])==T)
   result <- c()
@@ -28,7 +46,7 @@ ss <- function(data){
     ED50 <- exp(k/b)
     modT <- try(nls(y ~ d/(1 + exp(b * (log(x + 0.000001) - log(ED50)))),
                     start = list(d = d, b = b, ED50 = ED50)), silent=T)
-    if(class(modT) == "try-error") {
+    if(inherits(modT, "try-error")) {
       res <- as.numeric(levels(PsiF)[i])
     result <- c(result, res)}
   }
@@ -47,13 +65,20 @@ ss <- function(data){
   b <- - coef(modI)[1]
   Pmax <- coef(modI)[2:(length(psiLevels)+1)]
   modPmax <- drm(Pmax ~ psiLevels, fct=PmaxPsi1())
-  G <- coef(modPmax)[3]; Psib <- coef(modPmax)[1]; sigmaPsib <- coef(modPmax)[2]
+
+  if(is.na(fixed[1])){
+    G <- coef(modPmax)[1]; Psib <- coef(modPmax)[2]; sigmaPsib <- coef(modPmax)[3]
+  } else {
+    G <- fixed[1]; Psib <- coef(modPmax)[1]; sigmaPsib <- coef(modPmax)[2]
+  }
+  # G <- coef(modPmax)[3]; Psib <- coef(modPmax)[1]; sigmaPsib <- coef(modPmax)[2]
 
   GR50 <- 1/coef(modI)[(length(psiLevels)+2):length(coef(modI))]
   modGR <- drm(GR50 ~ psiLevels, fct=GRPsiPol2())
   thetaH <- coef(modGR)[2]; Psib2 <- coef(modGR)[1]
   psib <- mean(Psib, Psib2)
-  return(c(G, Psib, sigmaPsib, thetaH, b)) }
+  return(c(G, Psib, sigmaPsib, thetaH, b)[is.na(fixed)]) }
+
 GR <- function(parms, respl, reference="control", type="relative", Psi){
    G <- as.numeric(parms[1]); Psib<- as.numeric(parms[2])
    sigmaPsib<- as.numeric(parms[3]); thetaH<- as.numeric(parms[4])
@@ -128,6 +153,10 @@ GR <- function(parms, respl, reference="control", type="relative", Psi){
 return(list(EDp, EDder))
 }
 deriv1 <- function(x, parm){
+  parmMat <- matrix(parmVec, nrow(parm),
+                        numParm, byrow = TRUE)
+  parmMat[, notFixed] <- parm
+  parm <- parmMat
   #Approximation by using finite differences
 
   d1.1 <- HTE2.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3],
@@ -160,7 +189,7 @@ deriv1 <- function(x, parm){
                    parm[,4], (parm[,5] + 10e-6))
   d5 <- (d5.2 - d5.1)/10e-6
 
-  cbind(d1, d2, d3, d4, d5)
+  cbind(d1, d2, d3, d4, d5)[,notFixed]
 }
 text <- "Hydro-time model with shifted exponential for Pmax and polynomial model for GR50"
 returnList <- list(fct=fct, ssfct=ss, name = name, names=names, text=text, edfct=GR, deriv1=deriv1)

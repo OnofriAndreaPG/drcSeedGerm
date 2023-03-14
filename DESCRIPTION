@@ -4,7 +4,7 @@ Type: Package
 Title: Utilities for data analyses in seed germination/emergence assays
 Version: 1.0.01
 Depends: R (>= 3.5.0), drc, drcte
-Imports: plyr, dplyr, tidyr, mvtnorm, survival
+Imports: plyr, dplyr, mvtnorm, survival
 Author: Andrea Onofri <andrea.onofri@unipg.it>
 Maintainer: Andrea Onofri <andrea.onofri@unipg.it>
 Description: This package contains several service functions to be used with the packages drc and drcte, to analyse datasets obtained from seed germination/emergence assays. 
@@ -12,4 +12,4 @@ URL: https://www.statforbiology.com
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.2.0

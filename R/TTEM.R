@@ -1,7 +1,7 @@
 # TTEM - Based on PmaxT1 + GR50M
 TTEM.fun <- function(time, Temp, G, Tc, sigmaTc, Tb, ThetaT, b) {
   Pmax <- PmaxT1.fun(Temp, G, Tc, sigmaTc)
-  GR50 <- GRT.M.fun(Temp, Tc, Tb, ThetaT)
+  GR50 <- GRT.Mb.fun(Temp, Tb, Tc, ThetaT)
   GR50 <- ifelse(GR50<=0, 1e-06, GR50)
   plogis(b * (log(time) - log(1/GR50)) )* Pmax
 }
@@ -22,7 +22,7 @@ ss <- function(data){
     x <- temp[,1]; y <- temp[,3]
     modT <- try(drm(y ~ x, fct=LL.3()), silent=T)
     #modT <- try(nls(y ~ NLSLL.3(x, a, b, c)), silent=T)
-    if(class(modT) == "try-error") {res <- as.numeric(levels(TempF)[i])
+    if(inherits(modT, "try-error")) {res <- as.numeric(levels(TempF)[i])
     result <- c(result, res) }
   }
   dataset_cum <- subset(data, is.finite(data[,1])==T)
@@ -42,11 +42,11 @@ ss <- function(data){
   G <- coef(modPmax)[1]; Tc1 <- coef(modPmax)[2]; sigmaTc <- coef(modPmax)[3]
 
   GR50 <- 1/coef(modI)[(length(psiLevels)+2):length(coef(modI))]
-  modGR <- drm(GR50 ~ psiLevels, fct=GRT.M())
-  Tc2 <- coef(modGR)[1]; Tb <- coef(modGR)[2]; ThetaT <- coef(modGR)[3]
+  modGR <- drm(GR50 ~ psiLevels, fct=GRT.Mb())
+  Tc2 <- coef(modGR)[2]; Tb <- coef(modGR)[1]; ThetaT <- coef(modGR)[3]
   Tc <- (Tc1 + Tc2)/2
-  #temp <- c(G, Tc, sigmaTc, k, Tb, ThetaT, b)
-  #print(temp)
+  # temp <- c(G, Tc, sigmaTc, Tb, ThetaT, b)
+  # print(temp)
   return(c(G, Tc, sigmaTc, Tb, ThetaT, b)) }
 text <- "Thermal-time model with shifted exponential for Pmax and Mesgaran model for GR50"
 GR <- function(parms, respl=50, reference="control", type="relative", Temp){
@@ -60,7 +60,7 @@ GR <- function(parms, respl=50, reference="control", type="relative", Temp){
     .Pmax <- ifelse(.Pmax > 0, .Pmax, 0)
     .temp2 <- (.Pmax - g)/g
     .temp2 <- ifelse(.temp2 < 0, 0, .temp2)
-    .GR50 <- GRT.M.fun(Temp, Tc, Tb, ThetaT)
+    .GR50 <- GRT.Mb.fun(Temp, Tb, Tc, ThetaT)
     .GR50 <- ifelse(.GR50>0, .GR50, 0)
      res <- as.numeric( exp( - (1/b)*log(.temp2) + log(1/.GR50) ) )
      EDp <- 1/res
@@ -76,7 +76,7 @@ GR <- function(parms, respl=50, reference="control", type="relative", Temp){
     .Pmax <- PmaxT1.fun(Temp, G, Tc, sigmaTc)
     .Pmax <- ifelse(.Pmax > 0, .Pmax, 0)
     .temp2 <- (1 - g)/g
-    .GR50 <- GRT.M.fun(Temp, Tc, Tb, ThetaT)
+    .GR50 <- GRT.Mb.fun(Temp, Tb, Tc, ThetaT)
     .GR50 <- ifelse(.GR50>0, .GR50, 0)
      res <- as.numeric( exp( - (1/b)*log(.temp2) + log(1/.GR50) ) )
      EDp <- 1/res

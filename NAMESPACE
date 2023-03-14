@@ -8,26 +8,34 @@ importFrom("utils", "tail")
 importFrom("plyr", "ldply", "ddply")
 importFrom("dplyr", "select")
 
+#Exports
 export(
   # Utilities
-  makeDrm, makeDrm2, NLSLL.3, LL.dist.fun, LL.dist, jackGroupSE,
-  # Second-step models
+  makeDrm, makeDrm2, jackGroupSE,
+  # Rimosse: NLSLL.3, LL.dist ancora disponibili se servono
+  # Second-step HT models
   GRPsiLin, GRPsiLin.fun, GRPsiPol, GRPsiPol.fun, GRPsiPol2, GRPsiPol2.fun,
-  GRT.Ex, GRT.Ex.fun, GRT.YL, GRT.YL.fun, GRT.BS, GRT.BS.fun, GRT.BS2, GRT.BS2.fun,
-  GRT.Exb, GRT.Exb.fun, GRT.GH, GRT.GH.fun, GRT.M, GRT.M.fun,
+  GRPsi.Lin, GRPsi.Pol, GRPsi.Pol2,
+  # Second-step TT models
+  GRT.GH, GRT.GH.fun, GRT.M, GRT.M.fun, GRT.Mb, GRT.Mb.fun,
+  GRT.Ex, GRT.Ex.fun, GRT.Exb, GRT.Exb.fun,
+  GRT.YL, GRT.YL.fun, GRT.BS, GRT.BS.fun, GRT.BSb, GRT.BSb.fun,
   GRT.RF, GRT.RF.fun, GRT.RFb, GRT.RFb.fun, GRT.GH2, GRT.GH2.fun,
+  # Second-step HTT models
   GRTPsi.M, GRTPsi.M.fun, GRTPsi.BS, GRTPsi.BS.fun,
-  PmaxPsi1, PmaxPsi1.fun, PmaxPsi1na, PmaxPsi1na.fun,
-  # Hydro-time models
-  HTE1, HTE1.fun, HTE1na, HTE1na.fun, HTE2, HTE2.fun, HTE3, HTE3.fun,
-  # Hydro-time Models (Mesgaran)
+  # GR50TPM.fun,
+  PmaxPsi1, PmaxPsi1.fun,
+  PmaxT1, PmaxT1.fun,
+  # Hydro-time models (Onofri et al)
+  HTE1, HTE1.fun, HTE2, HTE2.fun, HTE3, HTE3.fun,
+  # Hydro-time Models (Mesgaran et al)
   HTnorm, HTnorm.fun, HTLL, HTLL.fun,
   HTL, HTL.fun, HTG, HTG.fun, HTex, HTex.fun, HTW1, HTW1.fun, HTW2, HTW2.fun,
   # Hydro-Thermal-Time models
   HTTnorm.M, HTTnorm.M.fun, HTTnorm.BS, HTTnorm.BS.fun,
   HTTLL.M, HTTLL.M.fun, HTTLL.BS, HTTLL.BS.fun,
+  HTTEM, HTTEM.fun, # HTTEMgr, HTTEMga,
+  # Thermal time models
   TTEM, TTEM.fun, TTERF, TTERF.fun,
-  TTERFc, TTERFc.fun, TTERFgr, TTERFga,
-  HTTEM, HTTEM.fun, HTTEMgr, HTTEMga,
-  PmaxT1, PmaxT1.fun, PmaxTP1.fun, GR50TPM.fun)
+  TTERFc, TTERFc.fun) #, TTERFgr, TTERFga)
 

@@ -1,29 +1,38 @@
 \name{HTG}
 \alias{HTG}
 \alias{HTG.fun}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
-Hydrotime model with logistic distribution of base water potential (Mesgaran et al., 2013)
+Hydrotime model with Gumbel distribution of base water potential (Mesgaran et al., 2013)
 }
+
 \description{
-This equation corresponds to the hydrotime model for seed germination, which describes the time-course for the proportion of germinated seeds, based on a logistic distribution of base water potential within the seed lot.}
-\usage{
-HTG()
-}
-%- maybe also 'usage' for other objects documented here.
-\arguments{
-  This function has no arguments
+This model relates the time-course of the proportion of germinated seeds to the water potential in the substrate. It is based on a Gumbel distribution of base water potential within the seed lot. The equation is:
+
+\deqn{ P(t) = \exp \left\{ { - \exp \left[ { - \left( {\frac{{\Psi - (\theta _H / t ) - \mu }}{\sigma }} \right)} \right]} \right\} }
+
+In contrast to other hydrotime models (e.g., 'HTE1()', 'HTE2()', 'HTE3()', describing the distribution of germination time), this models describes the distribution of base water potential within the population, while the distribution of germination times is indirectly modelled, but it is not, in itself, gaussian (you see that 't' is at the denominator).
+The 'HTG.fun()' is a generic function, which can be used for plotting or other applications, while the 'HTG()' function is meant to be used for model fitting with the 'drmte()' function in the 'drcte()' package.
 }
 
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+The detail of this time-to-event model and the meaning of parameters are described in Mesgaran et al. (2013).
+}
+
+\usage{
+HTG()
+HTG.fun(time, Psi, ThetaH, mu, sigma)
+}
+\arguments{
+The 'HTG()' function has no arguments. The 'HTG.fun()' function has the following arguments:
+  \item{time}{time}
+  \item{Psi}{water potential in the substrate}
+  \item{ThetaH}{hydro-time constant}
+  \item{mu}{location parameter for the Gumbel distribution}
+  \item{sigma}{scale parameter for the Gumbel distribution}
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+The 'HTG.fun()' function returns the proportion of germinated seeds, for any given values of time and water potential in the substrate. The 'HTG()' function returns a list containing the nonlinear function, the self-starter function, the parameter names and other items which are internally used by the 'drmte()' function.
 }
 \references{
 Mesgaran, M.B., Mashhadi, H.R., Alizadeh, H., Hunt, J., Young, K.R., Cousens, R.D., 2013. Importance of distribution function selection for hydrothermal time models of seed germination. Weed Research 53, 89–101.
@@ -32,21 +41,14 @@ Mesgaran, M.B., Mashhadi, H.R., Alizadeh, H., Hunt, J., Young, K.R., Cousens, R.
 Andrea Onofri
 }
 \note{
-This function is for use with the function drm
+This function is for use with the function 'drmte()'
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
 \examples{
 data(rape)
 modg <- drm( propCum ~ timeAf + Psi, fct=HTG(), data=rape)
 summary(modg)
-jackGroupSE(modg, rape, rape$Dish)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ seed germination }% use one of  RShowDoc("KEYWORDS")
-\keyword{ hydrotime models }% __ONLY ONE__ keyword per line
+\keyword{ seed germination }
+\keyword{ hydro-time model }
+\keyword{ time-to-event model }

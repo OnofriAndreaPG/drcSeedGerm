@@ -1,7 +1,7 @@
 #TTERF: exponential Pmax + GRT.RF
 TTERF.fun <- function(time, Temp, G, Tc, sigmaTc, Td, Tb, ThetaT, b){
   Pmax <- PmaxT1.fun(Temp, G, Tc, sigmaTc)
-  GR50 <- GRT.RFb.fun(Temp, Tb, Td, Tc, ThetaT)
+  GR50 <- GRT.RFb.fun(Temp, Tc, Tb, Td, ThetaT)
   plogis( b * (log(time) - log(1/GR50)) )*Pmax
 }
 
@@ -22,7 +22,7 @@ ss <- function(data){
     x <- temp[,1]; y <- temp[,3]
     modT <- try(drm(y ~ x, fct=LL.3()), silent=T)
     #modT <- try(nls(y ~ NLSLL.3(x, a, b, c)), silent=T)
-    if(class(modT) == "try-error") {res <- as.numeric(levels(TempF)[i])
+    if(inherits(modT, "try-error")) {res <- as.numeric(levels(TempF)[i])
     result <- c(result, res) }
   }
 
@@ -44,8 +44,8 @@ ss <- function(data){
 
   GR50 <- 1/coef(modI)[(length(psiLevels)+2):length(coef(modI))]
   modGR <- drm(GR50 ~ psiLevels, fct=GRT.RFb())
-  Tb <- coef(modGR)[1]; Td <- coef(modGR)[2];
-  Tc2 <- coef(modGR)[3]; ThetaT <- coef(modGR)[4]
+  Tc2 <- coef(modGR)[1]; Tb <- coef(modGR)[2];
+  Td <- coef(modGR)[3]; ThetaT <- coef(modGR)[4]
   Tc <- mean(c(Tc1, Tc2))
 
   #temp <- c(G, Tc, sigmaTc, Td, Tb, ThetaT, b)
@@ -65,7 +65,7 @@ GR <- function(parms, respl, reference="control", type="relative", Psi, Temp){
        .Pmax <- ifelse(.Pmax > 0, .Pmax, 0)
        .temp2 <- (.Pmax - g)/g
        .temp2 <- ifelse(.temp2 < 0, 0, .temp2)
-       .GR50 <- GRT.RFb.fun(Temp, Tb, Td, Tc, ThetaT)
+       .GR50 <- GRT.RFb.fun(Temp, Tc, Tb, Td, ThetaT)
        .GR50 <- ifelse(.GR50>0, .GR50, 0)
        .b <- b
        res <- as.numeric( exp( - (1/.b)*log(.temp2) + log(1/.GR50) ) )
@@ -110,7 +110,7 @@ GR <- function(parms, respl, reference="control", type="relative", Psi, Temp){
        .Pmax <- ifelse(.Pmax > 0, .Pmax, 0)
        .temp2 <- (1 - g)/g
        .temp2 <- ifelse(.temp2 < 0, 0, .temp2)
-       .GR50 <- GRT.RFb.fun(Temp, Tb, Td, Tc, ThetaT)
+       .GR50 <- GRT.RFb.fun(Temp, Tc, Tb, Td, ThetaT)
        .GR50 <- ifelse(.GR50>0, .GR50, 0)
        .b <- b
        res <- as.numeric( exp( - (1/.b)*log(.temp2) + log(1/.GR50) ) )
@@ -205,7 +205,7 @@ TTERFgr <- function(Temp, respl, parms, relative=T) {
    .Pmax <- ifelse(.Pmax > 0, .Pmax, 0)
    .temp2 <- (1 - g)/g
    .temp2 <- ifelse(.temp2 < 0, 0, .temp2)
-   .GR50 <- GRT.RFb.fun(Temp, Tb, Td, Tc, ThetaT)
+   .GR50 <- GRT.RFb.fun(Temp, Tc, Tb, Td, ThetaT)
    .GR50 <- ifelse(.GR50>0, .GR50, 0)
    .b <- b
    res <- as.numeric( exp( - (1/.b)*log(.temp2) + log(1/.GR50) ) )
@@ -221,7 +221,7 @@ TTERFga <- function(Temp, respl, parms, relative=T) {
    .Pmax <- ifelse(.Pmax > 0, .Pmax, 0)
    .temp2 <- (.Pmax - g)/g
    .temp2 <- ifelse(.temp2 < 0, 0, .temp2)
-   .GR50 <- GRT.RFb.fun(Temp, Tb, Td, Tc, ThetaT)
+   .GR50 <- GRT.RFb.fun(Temp, Tc, Tb, Td, ThetaT)
    .GR50 <- ifelse(.GR50>0, .GR50, 0)
    .b <- b
    res <- as.numeric( exp( - (1/.b)*log(.temp2) + log(1/.GR50) ) )

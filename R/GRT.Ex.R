@@ -1,13 +1,12 @@
-# Exponential with switch-off (Catara et al., 2017)
-#Original. ThetaT is not comparable to the other models
-GRT.Ex.fun <- function(Temp, Tb, ThetaT, k, Tc) {
-  GR50 <- ((Temp - Tb)/ThetaT) * (1 - exp(k * (Temp - Tc)))
+# Exponential with switch-off (From Masin et al., 2017 - modified)
+GRT.Ex.fun <- function(Temp, k, Tb, Tc, ThetaT) {
+  GR50 <- ((Temp - Tb)/ThetaT) * ((1 - exp(k * (Temp - Tc)))/(1 - exp(k * (Tb - Tc))))
   return(ifelse(GR50 < 0 , 0 , GR50)) }
 "GRT.Ex" <- function(){
 fct <- function(x, parm) {
   GR50 <- GRT.Ex.fun(x, parm[,1], parm[,2], parm[,3], parm[,4])
   return(GR50) }
-names <- c("Tb", "ThetaT", "k", "Tc")
+names <- c("k", "Tb", "Tc", "ThetaT")
 ss <- function(data){
   pos <- which( data[,2]==max(data[,2]) )
   len <- length( data[,2] )
@@ -24,10 +23,11 @@ ss <- function(data){
   k <- ss2[2]
   To <- - ss2[1] / k
   Tc <- (1 - ss2[1])/ss2[2]
+return(c(k, Tb, Tc, ThetaT))}
 
-  return(c(Tb, ThetaT, k, Tc))}
 deriv1 <- function(x, parm){
   #Approximation by using finite differences
+  # derivate parziali sui parametri
   d1.1 <- GRT.Ex.fun(x, parm[,1], parm[,2], parm[,3],
                    parm[,4])
   d1.2 <- GRT.Ex.fun(x, (parm[,1] + 10e-6), parm[,2], parm[,3],
@@ -54,6 +54,7 @@ deriv1 <- function(x, parm){
 
   cbind(d1, d2, d3, d4)
 }
+
 derivx <- function(x, parm){
   d1.1 <- GRT.Ex.fun(x, parm[,1], parm[,2], parm[,3],
                    parm[,4])
@@ -70,17 +71,17 @@ class(returnList) <- "drcMean"
 invisible(returnList)
 }
 
-
-
-# Exponential with switch-off (From Masin et al., 2017 - modified)
-GRT.Exb.fun <- function(Temp, Tb, ThetaT, k, Tc) {
-  GR50 <- ((Temp - Tb)/ThetaT) * ((1 - exp(k * (Temp - Tc)))/(1 - exp(k * (Tb - Tc))))
+# Exponential with switch-off (Masin et al., 2017)
+# Original. ThetaT is not comparable to the other models
+GRT.Exb.fun <- function(Temp, k, Tb, Tc, ThetaT) {
+  GR50 <- ((Temp - Tb)/ThetaT) * (1 - exp(k * (Temp - Tc)))
   return(ifelse(GR50 < 0 , 0 , GR50)) }
+
 "GRT.Exb" <- function(){
 fct <- function(x, parm) {
   GR50 <- GRT.Exb.fun(x, parm[,1], parm[,2], parm[,3], parm[,4])
   return(GR50) }
-names <- c("Tb", "ThetaT", "k", "Tc")
+names <- c("k", "Tb", "Tc", "ThetaT")
 ss <- function(data){
   pos <- which( data[,2]==max(data[,2]) )
   len <- length( data[,2] )
@@ -97,11 +98,10 @@ ss <- function(data){
   k <- ss2[2]
   To <- - ss2[1] / k
   Tc <- (1 - ss2[1])/ss2[2]
-return(c(Tb, ThetaT, k, Tc))}
 
+  return(c(k, Tb, Tc, ThetaT))}
 deriv1 <- function(x, parm){
   #Approximation by using finite differences
-  # derivate parziali sui parametri
   d1.1 <- GRT.Exb.fun(x, parm[,1], parm[,2], parm[,3],
                    parm[,4])
   d1.2 <- GRT.Exb.fun(x, (parm[,1] + 10e-6), parm[,2], parm[,3],
@@ -128,7 +128,6 @@ deriv1 <- function(x, parm){
 
   cbind(d1, d2, d3, d4)
 }
-
 derivx <- function(x, parm){
   d1.1 <- GRT.Exb.fun(x, parm[,1], parm[,2], parm[,3],
                    parm[,4])
@@ -138,10 +137,11 @@ derivx <- function(x, parm){
   d1
 }
 
-text <- "Exponential effect of temperature on GR50 (Type II - Masin et al., 2017)"
+text <- "Exponential effect of temperature on GR50 (Masin et al., 2017)"
 returnList <- list(fct=fct, ssfct=ss, names=names, text=text, deriv1 = deriv1,
                    derivx = derivx)
 class(returnList) <- "drcMean"
 invisible(returnList)
 }
+
 

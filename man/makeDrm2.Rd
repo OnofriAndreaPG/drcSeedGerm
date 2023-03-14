@@ -30,46 +30,24 @@ Vector of codes for dishes.
 Logical: True if counts are cumulative, False if they are not.
 }
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
 \value{
 Returns a dataframe
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
 }
 \author{
 Andrea Onofri
 }
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
 \examples{
-# makeDrm2
-data(lotusCum)
-moniTime <- lotusCum$Time
-count <- lotusCum$nCum
-nViable <- rep(25, length(lotusCum[,1]))
-Dish <- as.factor(lotusCum$Dish)
-treatGroups <- lotusCum[,1]
-dataset_sd <- makeDrm2(count, treatGroups, nViable, moniTime, Dish)
-head(dataset_sd)
-count <- lotusCum$nSeeds
-dataset_sd <- makeDrm2(count, treatGroups, nViable, moniTime, Dish,  cumulative = FALSE)
-head(dataset_sd)
+# makeDrm2 (deprecated, example not run)
+# data(lotusCum)
+# moniTime <- lotusCum$Time
+# count <- lotusCum$nCum
+# nViable <- rep(25, length(lotusCum[,1]))
+# Dish <- as.factor(lotusCum$Dish)
+# treatGroups <- lotusCum[,1]
+# dataset_sd <- makeDrm2(count, treatGroups, nViable, moniTime, Dish)
+# head(dataset_sd)
+# count <- lotusCum$nSeeds
+# dataset_sd <- makeDrm2(count, treatGroups, nViable, moniTime, Dish,  # cumulative = FALSE)
+# head(dataset_sd)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }% use one of  RShowDoc("KEYWORDS")
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{seed germination}

@@ -35,7 +35,9 @@ Onofri, A, P Benincasa, MB Mesgaran, C Ritz (2018) Hydrothermal-time-to-event mo
 }
 \examples{
 # Fitting a hydrotime model
-gmod <- drm(propCum ~ timeAf + Psi, fct=HT(), data=rape)
+data(rape)
+gmod <- drmte(nSeeds ~ timeBef + timeAf + Psi,
+              fct=HTnorm(), data=rape)
 summary(gmod)
 jackGroupSE(gmod, rape, rape$Dish)
 }

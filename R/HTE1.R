@@ -5,27 +5,33 @@ HTE1.fun <- function(time, Psi, G, Psib, sigmaPsib, thetaH, b){
   plogis(b * (log(time) - log(1/GR50)))*Pmax
 }
 
-"HTE1"<- function(){
-#HT-to-event. With shifted exponential + GR50 linear
+"HTE1"<- function(fixed = c(NA, NA, NA, NA, NA),
+                  names = c("G", "Psib", "sigmaPsib", "thetaH", "b")){
+# HT-to-event. With shifted exponential + GR50 linear
+
   ## Checking arguments
     numParm <- 5
-    # if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
-    # if ( !(length(fixed) == numParm) ) {stop("Not correct 'fixed' argument")}
-    #
-    # ## Handling 'fixed' argument
-    # notFixed <- is.na(fixed)
+    if (!is.character(names) | !(length(names) == numParm)) {stop("Not correct 'names' argument")}
+    if ( !(length(fixed) == numParm) ) {stop("Not correct 'fixed' argument")}
+    # Only G can be constrained
+    if (any(!is.na(fixed[2:5]))) {stop("Only the G parameter can be constrained, at the moment")}
+
+    ## Handling 'fixed' argument
+    notFixed <- is.na(fixed)
     parmVec <- rep(0, numParm)
-    # parmVec[!notFixed] <- fixed[!notFixed]
+    parmVec[!notFixed] <- fixed[!notFixed]
 
 fct <- function(x, parm){
   parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
-  parmMat <- parm
-  parm <- parmMat
-  S <- HTE1.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3],
-                parm[,4], parm[,5])
+  parmMat[, notFixed] <- parm
+
+  S <- HTE1.fun(x[,1], x[,2], parmMat[,1], parmMat[,2], parmMat[,3],
+                parmMat[,4], parmMat[,5])
   return(S)
 }
-names <- c("G", "Psib", "sigmaPsib", "thetaH", "b")
+
+names <- names[notFixed]
+
 ss <- function(data){
 
   data <- subset(data, is.finite(data[,1])==T)
@@ -45,7 +51,7 @@ ss <- function(data){
     ED50 <- exp(k/b)
     modT <- try(nls(y ~ d/(1 + exp(b * (log(x + 0.000001) - log(ED50)))),
                     start = list(d = d, b = b, ED50 = ED50)), silent=T)
-    if(class(modT) == "try-error") {
+    if(inherits(modT, "try-error")) {
       res <- as.numeric(levels(PsiF)[i])
     result <- c(result, res)}
   }
@@ -65,16 +71,22 @@ ss <- function(data){
   psiLevels <- as.numeric(levels(PsiF))
   b <- - coef(modI)[1]
   Pmax <- coef(modI)[2:(length(psiLevels)+1)]
-  modPmax <- drm(Pmax ~ psiLevels, fct=PmaxPsi1())
-  G <- coef(modPmax)[1]; Psib <- coef(modPmax)[2]; sigmaPsib <- coef(modPmax)[3]
+  modPmax <- drm(Pmax ~ psiLevels, fct=PmaxPsi1(fixed = fixed[1:3]))
+
+  if(is.na(fixed[1])){
+    G <- coef(modPmax)[1]; Psib <- coef(modPmax)[2]; sigmaPsib <- coef(modPmax)[3]
+  } else {
+    G <- fixed[1]; Psib <- coef(modPmax)[1]; sigmaPsib <- coef(modPmax)[2]
+  }
 
   GR50 <- 1/coef(modI)[(length(psiLevels)+2):length(coef(modI))]
   modGR <- drm(GR50 ~ psiLevels, fct=GRPsiLin())
   thetaH <- coef(modGR)[2]; Psib2 <- coef(modGR)[1]
   psib <- mean(Psib, Psib2)
   retVal <- c(G, psib, sigmaPsib, thetaH, b)
-  # print(retVal)
-  return(retVal) }
+
+  return(retVal[is.na(fixed)]) }
+
 GR <- function(parms, respl, reference="control", type="relative", Psi){
   # Questa funzione restituisce il germination rate, not time
   # respl è su una scala relativa ]0,1[
@@ -96,7 +108,7 @@ GR <- function(parms, respl, reference="control", type="relative", Psi){
     res <- as.numeric( exp( - (1/b)*log(.temp2) + log(1/.GR50) ) )
     res
   }
-   G <- as.numeric(parms[1]); Psib<- as.numeric(parms[2])
+   G <- as.numeric(parms[1]); Psib <- as.numeric(parms[2])
    sigmaPsib <- as.numeric(parms[3]); thetaH <- as.numeric(parms[4])
    b <- as.numeric(parms[5])
    g <- respl #/100
@@ -158,40 +170,47 @@ return(list(EDp, EDder))
 
 deriv1 <- function(x, parm){
   #Approximation by using finite differences
-  parmMat <- matrix(parmVec, nrow(parm), numParm, byrow = TRUE)
-  parmMat <- parm
-  parm <- parmMat
-  d1.1 <- HTE1.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3],
-                   parm[,4], parm[,5])
-  d1.2 <- HTE1.fun(x[,1], x[,2], (parm[,1] + 10e-6), parm[,2], parm[,3],
-                   parm[,4], parm[,5])
+  parmMat <- matrix(parmVec, nrow(parm),
+                        numParm, byrow = TRUE)
+  parmMat[, notFixed] <- parm
+
+  a <- as.numeric(parmMat[,1])
+  b <- as.numeric(parmMat[,2])
+  ci <- as.numeric(parmMat[,3])
+  di <- as.numeric(parmMat[,4])
+  e <- as.numeric(parmMat[,5])
+
+  d1.1 <- HTE1.fun(x[,1], x[,2], a, b, ci,
+                   di, e)
+  d1.2 <- HTE1.fun(x[,1], x[,2], (a + 10e-6), b, ci,
+                   di, e)
   d1 <- (d1.2 - d1.1)/10e-6
 
-  d2.1 <- HTE1.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3],
-                   parm[,4], parm[,5])
-  d2.2 <- HTE1.fun(x[,1], x[,2], parm[,1], (parm[,2] + 10e-6), parm[,3],
-                   parm[,4], parm[,5])
+  d2.1 <- HTE1.fun(x[,1], x[,2], a, b, ci,
+                   di, e)
+  d2.2 <- HTE1.fun(x[,1], x[,2], a, (b + 10e-6), ci,
+                   di, e)
   d2 <- (d2.2 - d2.1)/10e-6
 
-  d3.1 <- HTE1.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3],
-                   parm[,4], parm[,5])
-  d3.2 <- HTE1.fun(x[,1], x[,2], parm[,1], parm[,2], (parm[,3] + 10e-6),
-                   parm[,4], parm[,5])
+  d3.1 <- HTE1.fun(x[,1], x[,2], a, b, ci,
+                   di, e)
+  d3.2 <- HTE1.fun(x[,1], x[,2], a, b, (ci + 10e-6),
+                   di, e)
   d3 <- (d3.2 - d3.1)/10e-6
 
-  d4.1 <- HTE1.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3],
-                   parm[,4], parm[,5])
-  d4.2 <- HTE1.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3],
-                   (parm[,4] + 10e-6), parm[,5])
+  d4.1 <- HTE1.fun(x[,1], x[,2], a, b, ci,
+                   di, e)
+  d4.2 <- HTE1.fun(x[,1], x[,2], a, b, ci,
+                   (di + 10e-6), e)
   d4 <- (d4.2 - d4.1)/10e-6
 
-  d5.1 <- HTE1.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3],
-                   parm[,4], parm[,5])
-  d5.2 <- HTE1.fun(x[,1], x[,2], parm[,1], parm[,2], parm[,3],
-                   parm[,4], (parm[,5] + 10e-6))
+  d5.1 <- HTE1.fun(x[,1], x[,2], a, b, ci,
+                   di, e)
+  d5.2 <- HTE1.fun(x[,1], x[,2], a, b, ci,
+                   di, (e + 10e-6))
   d5 <- (d5.2 - d5.1)/10e-6
 
-  cbind(d1, d2, d3, d4, d5)
+  cbind(d1, d2, d3, d4, d5)[,notFixed]
 }
 name <- "HTE1"
 text <- "Hydro-time model with shifted exponential for Pmax and linear model for GR50"
@@ -199,3 +218,4 @@ returnList <- list(fct=fct, ssfct=ss, name = name, names=names, text=text, edfct
 class(returnList) <- "drcMean"
 invisible(returnList)
 }
+

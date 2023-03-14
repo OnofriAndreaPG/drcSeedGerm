@@ -18,9 +18,6 @@ This files describes the relationship between germination rate and water potenti
     \item{\code{GR}}{a numeric vector: germination rates in d^{-1}}
   }
 }
-\details{
-%%  ~~ If necessary, more details than the __description__ above ~~
-}
 \source{
 Pace, R., Benincasa, P., Ghanem, M.E., Quinet, M., Lutts, S., 2012. GERMINATION OF UNTREATED AND PRIMED SEEDS IN RAPESEED (BRASSICA NAPUS VAR OLEIFERA DEL.) UNDER SALINITY AND LOW MATRIC POTENTIAL. Experimental Agriculture 48, 238–251.
 

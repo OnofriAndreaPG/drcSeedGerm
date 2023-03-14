@@ -5,7 +5,10 @@
 \alias{GRPsiPol}
 \alias{GRPsiPol2.fun}
 \alias{GRPsiPol2}
-\title{Hydro-time models for seed germination}
+\alias{GRPsi.Lin}
+\alias{GRPsi.Pol}
+\alias{GRPsi.Pol2}
+\title{Hydro-time models based on the germination rate}
 \description{
 These models describe the response of germination rate to water potential in the substrate.
 }
@@ -13,20 +16,31 @@ These models describe the response of germination rate to water potential in the
 GRPsiLin()
 GRPsiPol()
 GRPsiPol2()
+GRPsi.Lin()
+GRPsi.Pol()
+GRPsi.Pol2()
+GRPsiLin.fun(Psi, Psib, thetaH)
+GRPsiPol.fun(Psi, Psib, thetaH)
+GRPsiPol2.fun(Psi, Psib, thetaH)
 }
 
 \arguments{
-  These functions have no arguments
+The functions 'GRPsiLin()', 'GRPsiPol()', 'GRPsiPol2()', GRPsi.Lin(), GRPsi.Pol(), GRPsi.Pol2() have no arguments. The functions 'GRPsiLin.fun()', 'GRPsiPol.fun()' and 'GRPsiPol2.fun()' have the following arguments:
+  \item{Psi}{Water potential in the substrate}
+  \item{Psib}{Base water potential within the population}
+  \item{thetaH}{Hydro-time parameter}
 }
 
 \details{
-These functions are meant to be used with the 'drm()' function in the 'drc' package. The function 'GRPsiLin()' assumes that the germination rate increases linearly with water potential in the substrate. 'GRPsiPol()' and 'GRPsiPol2()' assume a curvilinear increase with concave and convex shapes, respectively.
+The functions 'GRPsiLin()', 'GRPsiPol()', 'GRPsiPol2()', GRPsi.Lin(), GRPsi.Pol(), GRPsi.Pol2() are meant to be used with the 'drm()' function in the 'drc' package ('GRPsiLin()' and 'GRPsi.Lin()', 'GRPsiPol()' and 'GRPsi.Pol()', 'GRPsiPol2()' and 'GRPsiPol2()' are totally equivalent, apart from the names). The functions 'GRPsiLin.fun()', 'GRPsiPol.fun()' and 'GRPsiPol2.fun()' are used for general purposes (plotting and other uses). Details about these functions and the meaning of parameters are described in Bradford (2002) and in the package ducumentation (see references below).
 }
+
 \value{
-The value returned is a list containing the nonlinear function, the self starter function and the parameter names.
+The 'GRPsiLin.fun()', 'GRPsiPol.fun()' and 'GRPsiPol2.fun()' functions return the germination rate for any given values of water potential in the substrate. The 'GRPsiLin()', 'GRPsiPol()' and 'GRPsiPol2()' (and 'GRPsi.Lin()', 'GRPsi.Pol()' and 'GRPsi.Pol2()') functions return a list containing the nonlinear function, the self starter function, the parameter names and other items which are internally used by the 'drc()' function.
 }
+
 \references{
-\url{https://www.statforbiology.com/2021/stat_seedgermination_htt2step/#one-threshold-polynomial}
+    See package documentation at: \url{https://www.statforbiology.com/2021/stat_drcte_12_HTT2step}
 }
 \author{
 Andrea Onofri
