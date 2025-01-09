@@ -67,7 +67,7 @@ All these functions are named according to this rule: 'GRT' (Germination Rate Te
 The 'GRT.funName.fun()' functions return a vector of responses, for given values of temperature and parameters. The 'GRT.funName()' functions return a list containing the nonlinear function, the self starter function, the parameter names and other items which are internally used by the 'drm()' function.
 }
 \references{
-\url{https://www.statforbiology.com/2021/stat_drcte_12_HTT2step}
+\url{https://www.statforbiology.com/2023/stat_drcte_12-htt2step/}
 }
 \author{
 Andrea Onofri

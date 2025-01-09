@@ -39,6 +39,10 @@ data(rape)
 gmod <- drmte(nSeeds ~ timeBef + timeAf + Psi,
               fct=HTnorm(), data=rape)
 summary(gmod)
+\donttest{
 jackGroupSE(gmod, rape, rape$Dish)
 }
-\keyword{seed germination, hydro-time models}
+}
+\keyword{datasets}
+\keyword{seed germination}
+\keyword{hydrotime models}

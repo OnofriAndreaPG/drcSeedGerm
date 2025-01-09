@@ -38,4 +38,6 @@ modGR2 <- drm(GR ~ Psi, fct=GRPsiPol2(), data=excalibur, curveid=Perc)
 summary(modGR2)
 plot(modGR2, log="", legendPos=c(-0.9, 1))
 }
-\keyword{datasets, seed germination, hydrotime models}
+\keyword{datasets}
+\keyword{seed germination}
+\keyword{hydrotime models}

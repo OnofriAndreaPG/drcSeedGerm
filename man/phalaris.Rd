@@ -32,7 +32,7 @@ Mesgaran, MB, A Onofri, HR Mashhadi, RD Cousens (2017) Water availability shifts
 Mesgaran, MB, A Onofri, HR Mashhadi, RD Cousens (2017) Water availability shifts the optimal temperatures for seed germination: A modelling approach. Ecological Modelling 351, 87–95
 }
 \author{
-Mohsen Mesganaran
+Mohsen Mesgaran
 }
 
 \examples{

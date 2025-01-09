@@ -71,7 +71,7 @@ The 'TTEM.fun()', 'TTERF.fun()' and 'TTERFc.fun()' functions return the proporti
 \references{
 Onofri, A., Benincasa, P., Mesgaran, M.B., Ritz, C., 2018. Hydrothermal-time-to-event models for seed germination. European Journal of Agronomy 101, 129–139.
 Rowse, H.R., Finch-Savage, W.E., 2003. Hydrothermal threshold models can describe the germination response of carrot (Daucus carota) and onion (Allium cepa) seed populations across both sub- and supra-optimal temperatures. New Phytologist 158, 101–108.
-\url{https://www.statforbiology.com/2020/stat_drcte_11_ExampleTTE}
+\url{https://www.statforbiology.com/2023/stat_drcte_11-examplette/}
 }
 \author{
 Andrea Onofri

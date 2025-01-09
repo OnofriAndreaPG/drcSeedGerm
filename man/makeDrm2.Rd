@@ -7,7 +7,7 @@ Reshape a seed germination datasets for time-to-event model fitting.
 This function reshapes a datasets organised as necessary for nonlinear regression into the kind of dataset required by the drmte() function in the 'drcte' package. It works with either the counts of germinated seeds at each monitoring time or the cumulative counts at each monitoring time.
 }
 \usage{
-makeDrm2(counts, treat, nViable, moniTimes, Dish,  cumulative = T)
+makeDrm2(counts, treat, nViable, moniTimes, Dish,  cumulative = TRUE)
 }
 
 \arguments{
@@ -37,17 +37,17 @@ Returns a dataframe
 Andrea Onofri
 }
 \examples{
-# makeDrm2 (deprecated, example not run)
-# data(lotusCum)
-# moniTime <- lotusCum$Time
-# count <- lotusCum$nCum
-# nViable <- rep(25, length(lotusCum[,1]))
-# Dish <- as.factor(lotusCum$Dish)
-# treatGroups <- lotusCum[,1]
-# dataset_sd <- makeDrm2(count, treatGroups, nViable, moniTime, Dish)
-# head(dataset_sd)
-# count <- lotusCum$nSeeds
-# dataset_sd <- makeDrm2(count, treatGroups, nViable, moniTime, Dish,  # cumulative = FALSE)
-# head(dataset_sd)
+# makeDrm2 (deprecated)
+data(lotusCum)
+moniTime <- lotusCum$Time
+count <- lotusCum$nCum
+nViable <- rep(25, length(lotusCum[,1]))
+Dish <- as.factor(lotusCum$Dish)
+treatGroups <- lotusCum[,1]
+dataset_sd <- makeDrm2(count, treatGroups, nViable, moniTime, Dish)
+head(dataset_sd)
+count <- lotusCum$nSeeds
+dataset_sd <- makeDrm2(count, treatGroups, nViable, moniTime, Dish, cumulative = FALSE)
+head(dataset_sd)
 }
 \keyword{seed germination}

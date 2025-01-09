@@ -22,11 +22,13 @@ GR <- function(parms, respl, reference="control", type="relative", Psi){
   HTL.gra <- function(thetaH, Psib50, sigma, Psi, g) {
     GR <- - (sigma * qlogis(g) - Psi + Psib50 )/ thetaH
     GR <- ifelse(GR > 0, GR, 0)
+    1/GR # returns time
   }
   thetaH <- as.numeric(parms[1])
   Psib50 <- as.numeric(parms[2])
   sigma <- as.numeric(parms[3])
-  g <- respl/100
+  # g <- respl/100
+  g <- respl
   if(type=="absolute"){
 
     EDp <- HTL.gra(thetaH, Psib50, sigma, Psi, g)

@@ -33,4 +33,6 @@ gmod <- drmte(nSeeds ~ timeBef + timeAf + Psi,
                  data = rape, fct = HTE1())
 summary(gmod)
 }
-\keyword{seed germination, hydro-time models}
+\keyword{datasets}
+\keyword{seed germination}
+\keyword{hydrotime models}

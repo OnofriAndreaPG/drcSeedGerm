@@ -32,7 +32,7 @@ level = 0.95, na.action = na.pass, od = FALSE, vcov. = vcov, ...)
 #            newdata <- data.frame(dataList[["dose"]], dataList[["curveid"]])
 #        }
     } else {
-      #I added these lines in 2018. Not yet on gitHub#################
+      # I added these lines in 2018.
       if(is.vector(dataList[["dose"]])==T){
         dName <- dataList[["names"]][["dName"]]
         if (any(names(newdata) %in% dName))

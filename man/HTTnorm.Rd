@@ -57,11 +57,13 @@ This function is for use with the function 'drmte()'
 
 \examples{
 data(hordeum)
+\donttest{
 modHTTnorm.M <- drmte(nSeeds ~ timeBef + timeAf + water + temp,
                  data=hordeum,
                  fct = HTTnorm.M(),
   start=c(932,-2.5, -3, 0.07, 0.5))
 summary(modHTTnorm.M)
+}
 }
 \keyword{ seed germination }
 \keyword{ hydro-thermal-time model }

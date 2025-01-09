@@ -29,7 +29,7 @@ The 'GRT.M.fun()' is a generic R function, while the GRT.M() function is meant t
 The 'GRT.M.fun()' functions returns a vector of responses, for given values of temperature, Tc, Tb and ThetaH. The GRT.M() function returns a list containing the nonlinear function, the self starter function, the parameter names and other items which are internally used by the 'drm()' function.
 }
 \references{
-\url{https://www.statforbiology.com/2021/stat_seedgermination_htt2step/#polynomial-model}
+\url{https://www.statforbiology.com/2023/stat_drcte_12-htt2step/}
 }
 \author{
 Andrea Onofri

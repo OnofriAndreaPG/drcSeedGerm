@@ -23,11 +23,14 @@ GR <- function(parms, respl, reference="control", type="relative", Psi){
   HTG.gra <- function(thetaH, mu, sigma, Psi, g) {
     .rquant <- -log(-log(g))
     GR <- - (sigma * .rquant - Psi + mu )/ thetaH
-    GR <- ifelse(GR > 0, GR, 0) }
+    GR <- ifelse(GR > 0, GR, 0)
+    1/GR # returns time
+    }
   thetaH <- as.numeric(parms[1])
   mu <- as.numeric(parms[2])
   sigma <- as.numeric(parms[3])
-  g <- respl/100
+  # g <- respl/100
+  g <- respl
   if(type=="absolute"){
 
     EDp <- HTG.gra(thetaH, mu, sigma, Psi, g)

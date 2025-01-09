@@ -40,7 +40,7 @@ The 'GRPsiLin.fun()', 'GRPsiPol.fun()' and 'GRPsiPol2.fun()' functions return th
 }
 
 \references{
-    See package documentation at: \url{https://www.statforbiology.com/2021/stat_drcte_12_HTT2step}
+    See package documentation at: \url{https://www.statforbiology.com/_seedtutorial/}
 }
 \author{
 Andrea Onofri

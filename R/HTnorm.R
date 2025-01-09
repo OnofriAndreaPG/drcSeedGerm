@@ -1,4 +1,4 @@
-#Hydrotime model with normal distribution of base water potential
+# Hydrotime model with normal distribution of base water potential
 HTnorm.fun <- function(time, Psi, ThetaH, Psib50, sigmaPsib){
   pnorm((Psi - (ThetaH/time) - Psib50)/sigmaPsib) }
 
@@ -23,11 +23,13 @@ GR <- function(parms, respl, reference="control", type="relative", Psi){
   HTnorm.gra <- function(thetaH, Psib50, sigmaPsib, Psi, g) {
     GR <- - (sigmaPsib * qnorm(g) - Psi + Psib50 )/ thetaH
     GR <- ifelse(GR > 0, GR, 0)
+    1/GR # returns time
   }
   thetaH <- as.numeric(parms[1])
   Psib50 <- as.numeric(parms[2])
   sigmaPsib <- as.numeric(parms[3])
-  g <- respl/100
+  # g <- respl/100 # bug corrected on 8/1/2025
+  g <- respl
   if(type=="absolute"){
 
     EDp <- HTnorm.gra(thetaH, Psib50, sigmaPsib, Psi, g)
@@ -88,3 +90,4 @@ returnList <- list(fct=fct, ssfct=ss, name = name, names=names, text=text, edfct
 class(returnList) <- "drcMean"
 invisible(returnList)
 }
+

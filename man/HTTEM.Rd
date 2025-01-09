@@ -57,11 +57,13 @@ Andrea Onofri
 
 \examples{
 data(hordeum)
+\donttest{
 modHTTEM <- drmte(nSeeds ~ timeBef + timeAf + water + temp,
-                 data=hordeum,
-                 fct = HTTEM(),
-  start=c(0.8,-2, 0.05, 3, 0.2, 2000, 0.5))
+                  data=hordeum,
+                  fct = HTTEM(),
+   start=c(0.8,-2, 0.05, 3, 0.2, 2000, 0.5))
 summary(modHTTEM)
+}
 }
 \keyword{ seed germination }
 \keyword{ hydro-thermal-time model }

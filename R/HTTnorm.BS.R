@@ -79,7 +79,9 @@ deriv1 <- function(x, parm){
 
   cbind(d1, d2, d3, d4, d5, d6)
 }
-returnList <- list(fct=fct, names=names, text=text, deriv1 = deriv1) #ssfct=ss,
+name <- "HTTnorm.BS"
+returnList <- list(fct=fct, names=names, text=text, deriv1 = deriv1,
+                   name = name) #ssfct=ss,
 class(returnList) <- "drcMean"
 invisible(returnList)
 }

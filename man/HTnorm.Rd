@@ -46,7 +46,10 @@ This function is for use with the R function 'drmte()'
 
 \examples{
 data(rape)
+# non linear regression (wrong)
 modg <- drm( propCum ~ timeAf + Psi, fct=HTnorm(), data=rape)
+# time-to-event regression (right)
+modg <- drmte(nSeeds ~ timeBef + timeAf + Psi, fct=HTnorm(), data=rape)
 summary(modg)
 }
 \keyword{ seed germination }

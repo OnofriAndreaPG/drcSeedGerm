@@ -34,6 +34,5 @@ Andrea Onofri
 
 \examples{
 data(barley)
-## maybe str(barley) ; plot(barley) ...
 }
 \keyword{datasets}

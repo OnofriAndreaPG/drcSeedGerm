@@ -31,7 +31,7 @@ The R functions 'PmaxPsi1()' and 'PmaxT1()' are meant to be used for model fitti
 'PmaxPsi1()' and 'PmaxT1()' return a list containing the nonlinear function, the self starter function and the parameter names, that are internally used for model fitting. 'PmaxPsi1.fun()' and 'PmaxT1.fun()' return the maximum proportion of germinated seeds for any given level of temperature or water potential in the substrate.
 }
 \references{
-\url{https://www.statforbiology.com/2021/stat_drcte_12_HTT2step}
+\url{https://www.statforbiology.com/2023/stat_drcte_12-htt2step/}
 }
 \author{
 Andrea Onofri

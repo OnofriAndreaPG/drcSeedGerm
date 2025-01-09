@@ -198,7 +198,9 @@ deriv1 <- function(x, parm){
   cbind(d1, d2, d3, d4, d5, d6, d7)
 }
 text <- "Hydro-thermal-time-model (Mesgaran et al., 2017)"
-returnList <- list(fct=fct, ssfct=ss, names=names, edfct=GR, text=text, deriv1=deriv1)
+name <- "HTTEM"
+returnList <- list(fct=fct, ssfct=ss, names=names, edfct=GR,
+                   text=text, deriv1=deriv1, name = name)
 class(returnList) <- "drcMean"
 invisible(returnList)
 }

@@ -38,4 +38,3 @@ export(
   # Thermal time models
   TTEM, TTEM.fun, TTERF, TTERF.fun,
   TTERFc, TTERFc.fun) #, TTERFgr, TTERFga)
-

@@ -28,4 +28,6 @@ modGR1 <- drm(GR ~ Psi, fct=GRPsiLin(),
             data=festuca, curveid=g)
 summary(modGR1)
 }
-\keyword{datasets, seed germination, hydrotime models}
+\keyword{datasets}
+\keyword{seed germination}
+\keyword{hydrotime models}

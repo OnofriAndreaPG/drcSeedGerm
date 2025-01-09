@@ -31,10 +31,12 @@ Andrea Onofri
 }
 \examples{
 data(rape)
+\donttest{
 modHTE <- drmte( nSeeds ~ timeBef + timeAf + Psi,
                data=rape, fct=HTE1())
 robust <- jackGroupSE(modHTE, rape, rape$Dish)
 robust
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

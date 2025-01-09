@@ -34,12 +34,14 @@ GR <- function(parms, respl, reference="control", type="relative", Psi){
     .temp2 <- Psi + delta - exp(.temp1)
     GR <- .temp2 / thetaH
     GR <- ifelse(GR > 0, GR, 0)
+    1/GR # returns time
   }
   thetaH <- as.numeric(parms[1])
   delta <- as.numeric(parms[2])
   mu <- as.numeric(parms[3])
   sigma <- as.numeric(parms[4])
-  g <- respl/100
+  # g <- respl/100
+  g <- respl
   if(type=="absolute"){
 
     EDp <- HTW2.gra(thetaH, delta, mu, sigma, Psi, g)

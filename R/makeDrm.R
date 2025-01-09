@@ -59,9 +59,9 @@ makeDrm <- function(counts, treat, nViable, moniTimes) {
   return(datiFin)
 }
 
-makeDrm2 <- function(counts, treat, nViable, moniTimes, Dish,  cumulative=T){
+makeDrm2 <- function(counts, treat, nViable, moniTimes, Dish,  cumulative=TRUE){
   #This function transform a dataset as cumulative germinations in a dataset for
-  #use with DRM type = "event. Dish is a factor that identidfies seeds
+  #use with DRM type = "event. Dish is a factor that identifies seeds
   #Group is a data.frame
   count <- counts; treatGroups <- treat; moniTime <- moniTimes
   temp <- data.frame()

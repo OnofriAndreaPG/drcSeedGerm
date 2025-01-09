@@ -34,4 +34,6 @@ modHTE <- drmte( nSeeds ~ timeBef + timeAf + Psi,
             curveid = CV)
 summary(modHTE)
 }
-\keyword{seed germination, hydro-time models}
+\keyword{datasets}
+\keyword{seed germination}
+\keyword{hydrotime models}

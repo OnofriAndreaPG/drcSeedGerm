@@ -2,7 +2,7 @@
 \alias{makeDrm}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Reshape a seed germination datasets for time-to-event analyses
+Reshape a seed germination datasets for time-to-event analyses (deprecated)
 }
 \description{
 MakeDrm: this function reshapes a common field book for germination assays into the form that is required for time-to-event analyses with drm() in the drc package and drmte() in the drcte package. The common field book has one row per each Petri dish and the counts of germinated seeds at each assessment time are listed in different columns.
@@ -31,18 +31,4 @@ This function returns a dataframe
 \author{
 Andrea Onofri
 }
-
-\examples{
-# makeDrm is deprecated (example not run)
-# library(drcSeedGerm)
-# data(lotusOr)
-# counts <- lotusOr[,3:length(lotusOr[1,])]
-# treat <- data.frame(tratt=lotusOr[,1])
-# nViable <- rep(25,12)
-# moniTimes <- c(1:15)
-# datasetDrc <- makeDrm(counts=counts, treat=treat, nViable=nViable, # moniTimes)
-# head(datasetDrc, 30)
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{seed germination}% use one of  RShowDoc("KEYWORDS")

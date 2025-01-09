@@ -20,7 +20,7 @@ The 'HTTLL.M.fun()' and 'HTTLL.BS.fun()' are two generic functions, which can be
 }
 
 \details{
-The detail of this time-to-event model and the meaning of parameters are described in Mesgaran et al. (2017).
+The detail of this time-to-event model and the meaning of parameters are described in Mesgaran et al. (2017). PLEASE, NOTE that Psi (water potential) and Temp (temperature) must be given in the correct order
 }
 
 \usage{
@@ -57,10 +57,11 @@ This function is for use with the function 'drmte()'
 
 \examples{
 data(hordeum)
+\donttest{
 modHTTLL.M <- drmte(nSeeds ~ timeBef + timeAf + water + temp,
-                 data=hordeum,
-                 fct = HTTLL.M(),
-  start=c(832,-2.5, -3, 0.07, 3, 0.5))
+                  data=hordeum,
+                  fct = HTTLL.M(),
+                  start=c(832,-2.5, -3, 0.07, 3, 0.5))
 summary(modHTTLL.M)
 
 modHTTLL.BS <- drmte(nSeeds ~ timeBef + timeAf + water + temp,
@@ -68,6 +69,7 @@ modHTTLL.BS <- drmte(nSeeds ~ timeBef + timeAf + water + temp,
                  fct = HTTLL.BS(),
   start=c(932,-2.5, 15, -3, 0.07, 3, 0.5))
 summary(modHTTLL.BS)
+}
 }
 \keyword{ seed germination }
 \keyword{ hydro-thermal-time model }
