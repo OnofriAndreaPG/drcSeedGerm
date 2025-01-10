@@ -2,11 +2,11 @@
 # 9/1/2024
 HaloTLL.fun <- function(time, SConc, thetaHalo, SConcb50, sigma){
   .germ2 <- SConc + thetaHalo/time
-  # .germ2 <- ifelse(.germ2 < 0, 0.000001, .germ2)
+  .germ2 <- ifelse(.germ2 < 0, 0.000001, .germ2)
   .germ3 <- .germ2/SConcb50
-  germ <- 1 - 1/(1 + exp(-(log(.germ3)/sigma)))
-  germ
-  # plogis(log(.germ3)/sigma, lower.tail = F)
+  # germ <- 1 - 1/(1 + exp(-(log(.germ3)/sigma)))
+  # germ
+  plogis(log(.germ3)/sigma, lower.tail = F)
 }
 "HaloTLL" <- function(){
 fct <- function(x, parm){
@@ -23,11 +23,12 @@ ss <- function(data){
   x2 <- data[, 2]
   y <- data[, 3]
   # delta <- - (min(x2) - 0.05)
-  pseudoY <- qnorm((y+10e-6)*0.99, lower.tail = F)
+  pseudoY <- qnorm((y+10e-6) * 0.99, lower.tail = F)
   mod <- lm(pseudoY ~ I(1/x1) + x2)
-  sigma <- 1/coef(mod)[3]
-  SConcb50 <- -coef(mod)[1]*sigma
-  thetaHalo <- coef(mod)[2]*sigma
+  sigma <- log(1/coef(mod)[3])
+  SConcb50 <- -coef(mod)[1] * sigma
+  thetaHalo <- coef(mod)[2] * sigma
+  # print(c(thetaHalo, SConcb50, sigma))
   return(c(thetaHalo, SConcb50, sigma))
 }
 
