@@ -31,6 +31,9 @@ export(
   # Hydro-time Models (Mesgaran et al)
   HTnorm, HTnorm.fun, HTLL, HTLL.fun,
   HTL, HTL.fun, HTG, HTG.fun, HTex, HTex.fun, HTW1, HTW1.fun, HTW2, HTW2.fun,
+  # Halo-time models
+  HaloTnorm, HaloTnorm.fun, HaloTLL, HaloTLL.fun,
+  HaloTL, HaloTL.fun,
   # Hydro-Thermal-Time models
   HTTnorm.M, HTTnorm.M.fun, HTTnorm.BS, HTTnorm.BS.fun,
   HTTLL.M, HTTLL.M.fun, HTTLL.BS, HTTLL.BS.fun,

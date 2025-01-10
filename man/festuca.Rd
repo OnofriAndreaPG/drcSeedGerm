@@ -13,7 +13,7 @@ This files describes the relationship between germination rate and Festuca arund
   \describe{
     \item{\code{g}}{a numeric vector: the germination percentile}
     \item{\code{Psi}}{a numeric vector: water potential in the substrate (in MPa)}
-    \item{\code{GR}}{a numeric vector: germination rates in d^{-1}}
+    \item{\code{GR}}{a numeric vector: germination rates in 1/d}
   }
 }
 \source{

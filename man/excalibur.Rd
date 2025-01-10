@@ -15,7 +15,7 @@ This files describes the relationship between germination rate and water potenti
     \item{\code{Psi}}{a numeric vector: water potential in the substrate (in MPa)}
     \item{\code{Tg}}{a numeric vector: germination time in days}
     \item{\code{SE}}{a numeric vector: standard errors for germination times (in days)}
-    \item{\code{GR}}{a numeric vector: germination rates in d^{-1}}
+    \item{\code{GR}}{a numeric vector: germination rates in 1/d}
   }
 }
 \source{

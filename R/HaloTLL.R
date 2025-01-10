@@ -69,7 +69,7 @@ GT <- function(parms, respl, reference="control", type="relative", SConc){
 
     EDder <- c(d1, d2, d3)
   } else{ if(type=="relative") {
-    .Pmax <- HaloTLL.fun(Inf, SConc, thetaHalo, delta, SConcb50, sigma)
+    .Pmax <- HaloTLL.fun(Inf, SConc, thetaHalo, SConcb50, sigma)
     grel <- .Pmax*g
     EDp <- HaloTLL.gra(thetaHalo, SConcb50, sigma, SConc, grel)
 
