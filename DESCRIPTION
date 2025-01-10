@@ -2,7 +2,7 @@ Package: drcSeedGerm
 Date: 2023-04-20
 Type: Package
 Title: Utilities for Data Analyses in Seed Germination/Emergence Assays
-Version: 1.1.0
+Version: 1.1.1
 Depends: R (>= 3.5.0), drc, drcte
 Imports: plyr, dplyr, mvtnorm, survival
 Author: Andrea Onofri <andrea.onofri@unipg.it>
